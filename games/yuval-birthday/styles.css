@@ -1,0 +1,2162 @@
+/* Base Reset & Variables */
+:root {
+    --color-primary: #FFD700;
+    /* Bright Gold */
+    --color-secondary: #00BFFF;
+    /* Deep Sky Blue */
+    --color-accent: #FF4500;
+    /* Orange Red */
+    --color-success: #32CD32;
+    /* Lime Green */
+    --color-text: #333333;
+    --color-white: #FFFFFF;
+
+    --font-main: 'Fredoka', 'Comic Sans MS', sans-serif;
+
+    --transition-speed: 0.5s;
+}
+
+* {
+    box-sizing: border-box;
+    user-select: none;
+    /* kid-proof: prevent text selection */
+    -webkit-tap-highlight-color: transparent;
+}
+
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* Prevent scrolling */
+    background-color: var(--color-secondary);
+    font-family: var(--font-main);
+    color: var(--color-text);
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Screen container - fills the viewport */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: radial-gradient(circle, #ffffff 0%, var(--color-secondary) 100%);
+
+    /* Transition setup */
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity var(--transition-speed) ease-in-out,
+        transform var(--transition-speed) ease-in-out;
+    pointer-events: none;
+    /* Prevent clicks when hidden */
+    z-index: 1;
+}
+
+/* Active screen state */
+.screen.active {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+    z-index: 10;
+}
+
+/* Exiting screen state (optional for specific exit animations) */
+.screen.exit {
+    opacity: 0;
+    transform: scale(1.1);
+}
+
+/* Typography */
+h1 {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--color-accent);
+    text-shadow: 2px 2px 0px var(--color-white);
+}
+
+/* Buttons */
+.btn-next {
+    background-color: var(--color-primary);
+    border: 4px solid var(--color-white);
+    border-radius: 50px;
+    padding: 20px 60px;
+    font-size: 2rem;
+    font-family: var(--font-main);
+    font-weight: 700;
+    color: var(--color-text);
+    cursor: pointer;
+    box-shadow: 0 10px 0 rgba(0, 0, 0, 0.1);
+    transition: transform 0.1s, box-shadow 0.1s;
+    outline: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.btn-next:active {
+    transform: translateY(5px);
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Visual debugging helper to distinguish screens slightly if titles are same */
+.screen[data-screen="welcome"],
+.welcome-screen {
+    background: linear-gradient(135deg,
+            #FFD700 0%,
+            #FFA500 25%,
+            #FF69B4 50%,
+            #00BFFF 75%,
+            #9370DB 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.welcome-background-effects {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.welcome-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 40px 20px;
+    gap: 40px;
+}
+
+.welcome-header {
+    text-align: center;
+    animation: fadeIn 1s ease-out;
+}
+
+.welcome-title {
+    font-size: 4.5rem;
+    font-weight: 900;
+    margin: 0;
+    line-height: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.title-line {
+    display: block;
+    opacity: 0;
+    transform: translateY(50px) scale(0.8);
+    text-shadow:
+        3px 3px 0 rgba(255, 255, 255, 0.8),
+        6px 6px 0 rgba(0, 0, 0, 0.2),
+        0 0 30px rgba(255, 255, 255, 0.5);
+    color: #fff;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+}
+
+@keyframes titleLineEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.8) rotate(-10deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+    }
+}
+
+.welcome-subtitle {
+    font-size: 2rem;
+    color: #fff;
+    margin-top: 20px;
+    font-weight: 600;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.welcome-illustration {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    min-height: 150px;
+}
+
+.floating-emoji {
+    font-size: 4rem;
+    opacity: 0;
+    animation: welcomeEmojiFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes welcomeEmojiFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg) scale(1);
+        opacity: 0.8;
+    }
+
+    25% {
+        transform: translateY(-20px) rotate(-10deg) scale(1.1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateY(-30px) rotate(10deg) scale(1.15);
+        opacity: 1;
+    }
+
+    75% {
+        transform: translateY(-15px) rotate(-5deg) scale(1.05);
+        opacity: 0.9;
+    }
+}
+
+.welcome-particle {
+    position: absolute;
+    top: -50px;
+    pointer-events: none;
+    animation: particleFloat linear;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes particleFloat {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(calc(100vh + 50px)) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.welcome-footer {
+    margin-top: 20px;
+}
+
+.welcome-btn {
+    font-size: 2rem;
+    padding: 25px 60px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    border: 5px solid #fff;
+    border-radius: 50px;
+    color: #fff;
+    font-weight: 900;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        0 0 40px rgba(255, 215, 0, 0.6),
+        inset 0 2px 10px rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    opacity: 0;
+    transform: scale(0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: rotate(45deg);
+    animation: buttonShine 3s infinite;
+}
+
+@keyframes buttonShine {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+
+@keyframes buttonEntrance {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-180deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.welcome-btn:hover {
+    transform: scale(1.1);
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.4),
+        0 0 60px rgba(255, 215, 0, 0.8),
+        inset 0 2px 10px rgba(255, 255, 255, 0.4);
+}
+
+.welcome-btn:active {
+    transform: scale(0.95);
+}
+
+.btn-text {
+    position: relative;
+    z-index: 1;
+}
+
+.btn-sparkle {
+    position: relative;
+    z-index: 1;
+    animation: sparkle 1.5s infinite;
+    font-size: 1.5rem;
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.3) rotate(180deg);
+        opacity: 0.7;
+    }
+}
+
+.screen[data-screen="final-celebration"],
+.screen.final-celebration-screen {
+    background: radial-gradient(circle, #fff 0%, #E6E6FA 100%);
+    justify-content: flex-start;
+    padding-top: 40px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Asset Styles */
+.game-asset {
+    max-width: 100%;
+    max-height: 50vh;
+    /* Reduced to fit grid */
+    object-fit: contain;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+    pointer-events: none;
+    /* Allow clicks to pass through to card */
+}
+
+.video-asset {
+    background: transparent;
+}
+
+.placeholder-asset {
+    width: 250px;
+    height: 250px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 4px dashed var(--color-white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-white);
+    font-weight: bold;
+}
+
+.placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: 10px;
+}
+
+.placeholder-text {
+    font-size: 1.2rem;
+    word-break: break-all;
+    padding: 0 10px;
+    text-align: center;
+}
+
+/* Selection Cards System */
+.selection-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    z-index: 5;
+}
+
+.selection-card {
+    background: rgba(255, 255, 255, 0.8);
+    border: 6px solid var(--color-white);
+    border-radius: 30px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    width: 45%;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+/* Magin Hover Effect */
+.selection-card:hover {
+    transform: scale(1.05) rotate(-2deg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px var(--color-primary);
+    border-color: var(--color-primary);
+    z-index: 2;
+}
+
+.selection-card:active {
+    transform: scale(0.95);
+}
+
+/* Selected State - Pop Animation */
+.selection-card.selected {
+    animation: selectedPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    border-color: var(--color-success);
+    background: #fff;
+    z-index: 10;
+}
+
+@keyframes selectedPop {
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.15) rotate(3deg);
+        box-shadow: 0 0 80px var(--color-primary);
+    }
+
+    100% {
+        transform: scale(1.1) rotate(0deg);
+        box-shadow: 0 0 50px var(--color-primary);
+    }
+}
+
+/* Disabled/Unselected State */
+.selection-card.disabled {
+    pointer-events: none;
+    filter: grayscale(0.6) opacity(0.5);
+    transition: filter 0.3s ease-in-out;
+}
+
+/* Disabled but not visually greyed out - for initial state on enemy screens */
+.selection-card.disabled-no-visual {
+    pointer-events: none !important;
+    /* No visual filter - cards look normal but can't be clicked */
+    /* Use !important to ensure it overrides inline styles */
+}
+
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Team-up Preview Overlay */
+.team-preview-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+}
+
+.team-preview-content {
+    width: 90%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.team-preview-content .game-asset {
+    max-height: 80vh;
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.5);
+    /* Gold glow */
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0.5);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+/* Dessert Enemy Specifics (Separated from Robot) */
+.dessert-enemy-asset {
+    max-height: 100%;
+    max-width: 80%;
+    filter: drop-shadow(0 0 15px rgba(255, 105, 180, 0.6));
+    transition: all 0.5s ease;
+}
+
+.dessert-enemy-entry-anim {
+    animation: dessertEnemyEntry 1.0s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes dessertEnemyEntry {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(-180deg);
+    }
+
+    60% {
+        transform: scale(1.1) rotate(10deg);
+    }
+
+    80% {
+        transform: scale(0.95) rotate(-5deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.dessert-enemy-defeated-anim {
+    animation: dessertEnemyDefeat 1s ease-in forwards;
+}
+
+@keyframes dessertEnemyDefeat {
+    0% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+
+    20% {
+        transform: scale(1.2) rotate(10deg);
+        filter: brightness(1.5) hue-rotate(90deg);
+    }
+
+    40% {
+        transform: scale(0.8) rotate(-10deg);
+    }
+
+    100% {
+        transform: scale(0) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .selection-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .selection-card {
+        width: 80%;
+        min-height: 200px;
+    }
+}
+
+/* Team Reveal Specifics */
+.team-reveal-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+.reveal-title {
+    font-size: 3.5rem;
+    color: var(--color-primary);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 2px 2px 0 #000;
+    margin-bottom: 20px;
+    animation: slideDown 1s ease-out;
+}
+
+.reveal-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: 60vh;
+    animation: zoomInReveal 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.team-reveal-asset {
+    max-width: 90%;
+    max-height: 100%;
+    border-radius: 20px;
+    box-shadow: 0 0 80px rgba(0, 191, 255, 0.6);
+    /* Blue glow */
+    object-fit: contain;
+}
+
+.reveal-btn {
+    margin-top: 30px;
+    animation: fadeInUp 1s ease-out 1s forwards;
+    /* Delay the button */
+    opacity: 0;
+    /* Start hidden */
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes zoomInReveal {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Enhancements for Mobile */
+@media (max-width: 768px) {
+    .reveal-title {
+        font-size: 2.5rem;
+    }
+}
+
+/* Restaurant Screen & Dragon */
+
+.restaurant-screen {
+    justify-content: space-evenly;
+    /* Spread out vertical space */
+    padding-top: 10px;
+}
+
+.dragon-container {
+    width: 100%;
+    height: 45vh;
+    /* Upper half for the dragon */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    /* Dragon on top of background */
+}
+
+.dragon-asset {
+    max-height: 100%;
+    max-width: 80%;
+    filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
+    transition: all 0.5s ease;
+}
+
+/* Dragon Entry Animation */
+.dragon-entry-anim {
+    animation: dragonEntry 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes dragonEntry {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Dragon Hit/Damage Animation */
+.dragon-hit {
+    animation: dragonHit 0.6s ease-in-out forwards;
+}
+
+@keyframes dragonHit {
+    0% {
+        filter: brightness(1) sepia(0) hue-rotate(0);
+        transform: scale(1);
+    }
+
+    10% {
+        filter: brightness(2) sepia(1) hue-rotate(-50deg);
+        transform: scale(1.1);
+    }
+
+    30% {
+        transform: scale(0.9) translateX(-10px);
+    }
+
+    50% {
+        transform: scale(1.05) translateX(10px);
+    }
+
+    70% {
+        transform: scale(0.95);
+    }
+
+    100% {
+        filter: brightness(1);
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+/* Dragon Defeated State */
+.dragon-defeated-anim {
+    animation: dragonCollapse 1s ease-out forwards;
+}
+
+@keyframes dragonCollapse {
+    from {
+        opacity: 0;
+        transform: scale(1.2);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Hide enemy containers after defeat */
+.enemy-container-defeated {
+    display: none !important;
+}
+
+/* Give more space to options after enemy is defeated */
+.restaurant-screen.enemy-defeated .restaurant-options-container,
+.attraction-screen.enemy-defeated .attraction-options-container,
+.dessert-screen.enemy-defeated .dessert-options-container {
+    height: auto;
+    min-height: 60vh;
+    flex: 1;
+    padding-top: 2rem;
+    transition: min-height 0.6s ease-in-out, padding-top 0.6s ease-in-out;
+}
+
+/* Smooth fade-in for options when re-enabled */
+.restaurant-card,
+.attraction-card,
+.dessert-card {
+    transition: opacity 0.6s ease-in;
+}
+
+/* Restaurant Options Grid */
+.restaurant-options-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+    flex-wrap: wrap;
+    height: 40vh;
+    /* Lower half */
+    z-index: 5;
+    position: relative;
+}
+
+/* Specific adjustments for restaurant cards to fit 4 in a view */
+.restaurant-card {
+    width: 22%;
+    /* 4 items roughly */
+    min-width: 150px;
+    max-width: 250px;
+    min-height: 150px;
+    padding: 10px;
+    border-radius: 20px;
+    border-width: 4px;
+}
+
+.restaurant-card .game-asset {
+    max-height: 150px;
+    /* Constrain image size */
+}
+
+/* Mobile Adjustments for Restaurant */
+@media (max-width: 768px) {
+    .dragon-container {
+        height: 35vh;
+    }
+
+    .restaurant-options-container {
+        height: auto;
+        gap: 15px;
+        padding-bottom: 20px;
+    }
+
+    .restaurant-card {
+        width: 45%;
+        /* 2x2 grid on mobile */
+        min-height: 120px;
+    }
+
+    .restaurant-card .game-asset {
+        max-height: 100px;
+    }
+}
+
+/* Explosion Animation for Restaurant Selection */
+.restaurant-card.explosion-active {
+    animation: explosionSelect 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    z-index: 100 !important;
+    border-color: var(--color-accent);
+}
+
+@keyframes explosionSelect {
+    0% {
+        transform: scale(1);
+    }
+
+    15% {
+        transform: scale(0.9) rotate(-5deg);
+        /* Anticipation shrink */
+        box-shadow: 0 0 10px var(--color-accent);
+    }
+
+    40% {
+        transform: scale(1.3) rotate(5deg);
+        /* BOOM */
+        box-shadow: 0 0 60px 40px rgba(255, 69, 0, 0.6);
+        background-color: #FFF8DC;
+    }
+
+    60% {
+        transform: scale(1.25) rotate(-3deg);
+        box-shadow: 0 0 50px 20px rgba(255, 69, 0, 0.4);
+    }
+
+    100% {
+        transform: scale(1.2) rotate(0deg);
+        box-shadow: 0 0 40px var(--color-accent);
+        border-color: var(--color-accent);
+    }
+}
+
+/* Visual Explosion Overlay */
+.restaurant-card.explosion-active::after {
+    content: '💥';
+    /* Or just a shape */
+    font-size: 0;
+    /* hidden text, using for positioning context/placeholder if needed, but lets use background */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0px;
+    height: 0px;
+    background: radial-gradient(circle, #fff700 10%, #ff8c00 40%, #ff0000 70%, transparent 80%);
+    border-radius: 50%;
+    z-index: 102;
+    /* Above the card content */
+    opacity: 1;
+    pointer-events: none;
+    animation: realExplosion 0.6s ease-out forwards;
+    box-shadow: 0 0 20px #ff4500;
+}
+
+@keyframes realExplosion {
+    0% {
+        width: 0px;
+        height: 0px;
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.9;
+    }
+
+    100% {
+        width: 400px;
+        /* Big boom */
+        height: 400px;
+        opacity: 0;
+    }
+}
+
+/* =========================================
+   DESSERT SCREEN & ROBOT
+   ========================================= */
+
+.dessert-screen {
+    justify-content: space-evenly;
+    /* Better spacing */
+    padding-top: 10px;
+    background: radial-gradient(circle, #fdfbfb 0%, #ebedee 100%);
+    overflow: hidden;
+    /* Prevent scrolling */
+}
+
+/* Specific Robot Container size for Dessert to fit better */
+.dessert-screen .robot-container {
+    height: 35vh;
+}
+
+.robot-container {
+    width: 100%;
+    /* Default height, overridden by specific screens */
+    height: 45vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.robot-asset {
+    max-height: 100%;
+    max-width: 80%;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+    transition: all 0.5s ease;
+}
+
+/* Robot Entry Animation */
+.robot-entry-anim {
+    animation: robotEntry 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes robotEntry {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Robot Defeated / Power Down State */
+.robot-defeated-anim {
+    animation: robotPowerDown 1.5s ease-out forwards;
+}
+
+@keyframes robotPowerDown {
+    0% {
+        filter: brightness(1);
+        transform: scale(1);
+    }
+
+    20% {
+        /* Jolt */
+        transform: translate(5px, 0);
+        filter: brightness(2);
+    }
+
+    40% {
+        /* Jolt back */
+        transform: translate(-5px, 0);
+    }
+
+    100% {
+        /* Power off */
+        filter: brightness(0.7) contrast(1.2);
+        transform: translateY(20px) scale(0.95) rotate(5deg);
+    }
+}
+
+/* Dessert Options Grid */
+.dessert-options-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    /* Reduced gap */
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    height: auto;
+    flex: 1;
+    /* Take remaining space */
+    padding-bottom: 10px;
+    z-index: 5;
+    position: relative;
+}
+
+.dessert-card {
+    width: 45%;
+    min-width: 200px;
+    max-width: 350px;
+    min-height: 160px;
+    height: 20vh;
+    padding: 10px;
+    border-radius: 30px;
+    /* Rounded rectangle */
+    border: 5px solid #fff;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 10px 20px rgba(255, 105, 180, 0.2);
+    margin-bottom: 10px;
+}
+
+.dessert-card .game-asset {
+    max-height: 95%;
+    max-width: 95%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 0;
+    box-shadow: none;
+    filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
+}
+
+.dessert-card:hover {
+    transform: scale(1.05) rotate(2deg);
+    border-color: #2420f6;
+    box-shadow: 0 0 30px rgba(255, 105, 180, 0.5);
+}
+
+.dessert-card.selected {
+    animation: dessertSelectPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    background: #fff;
+    border-color: var(--color-success);
+    z-index: 10;
+}
+
+/* Magic Ripple/Ring Animation for Dessert Selection */
+.dessert-card.selected::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid var(--color-primary);
+    box-shadow: 0 0 20px var(--color-primary);
+    animation: rippleRing 0.8s ease-out forwards;
+    z-index: -1;
+    opacity: 0;
+}
+
+@keyframes rippleRing {
+    0% {
+        width: 100%;
+        height: 100%;
+        opacity: 0.8;
+        border-width: 10px;
+    }
+
+    100% {
+        width: 250%;
+        /* Expand huge */
+        height: 250%;
+        opacity: 0;
+        border-width: 0px;
+    }
+}
+
+@keyframes dessertSelectPop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2) rotate(10deg);
+        /* Added rotation */
+        box-shadow: 0 0 60px var(--color-primary), 0 0 100px rgba(255, 215, 0, 0.5);
+        /* Big glow */
+    }
+
+    100% {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px var(--color-success);
+    }
+}
+
+/* =========================================
+   ATTRACTION SCREEN
+   ========================================= */
+
+.attraction-screen {
+    justify-content: space-evenly;
+    /* Better spacing */
+    padding-top: 10px;
+    background: radial-gradient(circle, #e0f7fa 0%, #80deea 100%);
+    overflow: hidden;
+    /* Prevent scrolling if possible */
+}
+
+/* Adjust Robot Container for Attraction Screen to fit better */
+.attraction-screen .robot-container {
+    height: 35vh;
+    /* Reduced from default 45vh */
+}
+
+.attraction-options-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    /* Reduced gap */
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    height: auto;
+    flex: 1;
+    /* Take remaining space */
+    padding-bottom: 10px;
+    z-index: 5;
+    position: relative;
+}
+
+.attraction-card {
+    width: 40%;
+    min-width: 200px;
+    max-width: 350px;
+    height: 22vh;
+    /* Responsive height */
+    min-height: 180px;
+    padding: 10px;
+    /* Reduced padding */
+    border-radius: 30px;
+    border: 5px solid #fff;
+    background: rgba(255, 255, 255, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.attraction-card .game-asset {
+    max-height: 100%;
+    /* Fill the card */
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 0;
+    box-shadow: none;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+    /* Add depth to image */
+}
+
+.attraction-card:hover {
+    transform: scale(1.05) rotate(-2deg);
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 30px rgba(0, 191, 255, 0.6);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.attraction-card.selected {
+    animation: attractionSelectPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    background: #fff;
+    border-color: var(--color-success);
+    z-index: 10;
+}
+
+/* Ripple for Attraction */
+.attraction-card.selected::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+    border: 4px solid var(--color-secondary);
+    box-shadow: 0 0 20px var(--color-secondary);
+    animation: rippleRing 0.8s ease-out forwards;
+    z-index: -1;
+    opacity: 0;
+}
+
+@keyframes attractionSelectPop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1) rotate(-3deg);
+        box-shadow: 0 0 50px var(--color-secondary);
+    }
+
+    100% {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px var(--color-success);
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .attraction-card {
+        width: 45%;
+        height: 18vh;
+        min-height: 140px;
+        border-radius: 20px;
+        padding: 5px;
+    }
+
+    .attraction-card .game-asset {
+        max-height: 90%;
+    }
+
+    .attraction-screen .robot-container {
+        height: 30vh;
+        /* Further reduce for mobile */
+    }
+
+    .attraction-options-container {
+        gap: 15px;
+    }
+
+
+    .dessert-card {
+        width: 40%;
+        min-height: 120px;
+        border-radius: 30px;
+        /* Less circular on mobile to fit better? Or keep circular. Let's keep distinct shape but maybe softer radius if needed */
+    }
+
+    .robot-container {
+        height: 40vh;
+    }
+
+    .dessert-options-container {
+        height: auto;
+    }
+}
+
+/* =========================================
+   FINAL CELEBRATION SCREEN
+   ========================================= */
+
+.final-celebration-screen {
+    background: radial-gradient(circle, #fff 0%, #E6E6FA 100%);
+    /* Lavender mist */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0 10px 0;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.celebration-header {
+    text-align: center;
+    padding: 0 20px 10px 20px;
+    z-index: 10;
+    position: relative;
+    margin-top: 0;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.celebration-title {
+    font-size: 2.5rem;
+    color: #FFD700;
+    margin-bottom: 5px;
+    margin-top: 0;
+    padding: 0;
+    text-shadow:
+        3px 3px 0 #FF4500,
+        6px 6px 0 rgba(0, 0, 0, 0.2),
+        0 0 20px rgba(255, 215, 0, 0.5);
+    animation: bounceTitle 1.5s infinite, rainbowText 3s infinite;
+    z-index: 10;
+    font-weight: 900;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+}
+
+.celebration-subtitle {
+    font-size: 1.5rem;
+    color: #FF4500;
+    text-shadow: 2px 2px 0 #fff;
+    animation: fadeInScale 1s ease-out, pulse 2s infinite 1s;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+@keyframes rainbowText {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+
+    50% {
+        filter: hue-rotate(180deg);
+    }
+
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes bounceTitle {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-20px);
+    }
+
+    60% {
+        transform: translateY(-10px);
+    }
+}
+
+.celebration-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    flex: 1;
+    justify-content: center;
+    gap: 15px;
+    z-index: 5;
+    padding: 0 20px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.team-container-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 30vh;
+    flex-shrink: 0;
+}
+
+.team-container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.team-glow {
+    position: absolute;
+    width: 80vh;
+    height: 80vh;
+    background: radial-gradient(circle,
+            rgba(255, 215, 0, 0.6) 0%,
+            rgba(255, 69, 0, 0.4) 30%,
+            rgba(0, 191, 255, 0.3) 60%,
+            transparent 100%);
+    border-radius: 50%;
+    z-index: 1;
+    animation: rotateGlow 8s infinite linear, pulseGlow 3s infinite ease-in-out;
+    pointer-events: none;
+}
+
+@keyframes rotateGlow {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Add a glowing aura behind the team */
+.team-container::before {
+    content: '';
+    position: absolute;
+    width: 60vh;
+    height: 60vh;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+    animation: pulseGlow 3s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+}
+
+.celebration-team-asset {
+    max-height: 100%;
+    max-width: 90%;
+    border-radius: 20px;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+    animation: gentleFloat 4s ease-in-out infinite;
+}
+
+@keyframes gentleFloat {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.choices-recap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px 30px;
+    border-radius: 25px;
+    border: 4px solid #FFD700;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.2),
+        0 0 40px rgba(255, 215, 0, 0.4);
+    backdrop-filter: blur(10px);
+    z-index: 5;
+    max-width: 95%;
+    flex-shrink: 0;
+}
+
+.recap-label {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #FF4500;
+    text-shadow: 2px 2px 0 #fff;
+    margin-bottom: 5px;
+}
+
+.choices-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.choice-item-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 140px;
+}
+
+.choice-label {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0031f6;
+    text-shadow: 2px 2px 0 #fff, 0 0 10px rgba(255, 255, 255, 0.8);
+    margin-bottom: 3px;
+}
+
+.choice-item {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 6px solid #FFD700;
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.4),
+        0 0 35px rgba(255, 215, 0, 0.7),
+        inset 0 0 15px rgba(255, 215, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    transition: transform 0.3s, box-shadow 0.3s;
+    animation: choiceFloat 3s ease-in-out infinite;
+    animation-delay: calc(var(--delay, 0) * 0.2s);
+}
+
+.choice-item:hover {
+    transform: scale(1.25) rotate(10deg);
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.4),
+        0 0 50px rgba(255, 215, 0, 0.8);
+}
+
+@keyframes choiceFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(5deg);
+    }
+}
+
+@keyframes teamEntrance {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-180deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes choiceEntrance {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(360deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.choice-item img,
+.choice-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.celebration-footer {
+    padding: 10px 20px 15px 20px;
+    z-index: 10;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.restart-btn {
+    margin-top: 0;
+    background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
+    color: #fff;
+    border-color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    padding: 15px 30px;
+    box-shadow:
+        0 6px 15px rgba(0, 0, 0, 0.3),
+        0 0 25px rgba(50, 205, 50, 0.5);
+    animation: buttonPulse 2s infinite;
+    transition: all 0.3s;
+}
+
+.restart-btn:hover {
+    transform: scale(1.1);
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.4),
+        0 0 50px rgba(50, 205, 50, 0.8);
+}
+
+@keyframes buttonPulse {
+
+    0%,
+    100% {
+        box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.3),
+            0 0 30px rgba(50, 205, 50, 0.5);
+    }
+
+    50% {
+        box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.3),
+            0 0 50px rgba(50, 205, 50, 0.8);
+    }
+}
+
+.restart-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+/* Sparkles */
+.celebration-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.sparkle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle 3s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.5);
+        box-shadow: 0 0 10px currentColor;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .celebration-header {
+        padding: 5px 15px 15px 15px;
+        margin-top: 10px;
+    }
+
+    .celebration-title {
+        font-size: 2.5rem;
+        margin-top: 0;
+    }
+
+    .team-container {
+        height: 35vh;
+    }
+
+    .choice-item {
+        width: 140px;
+        height: 140px;
+        border-width: 6px;
+    }
+
+    .choice-label {
+        font-size: 1.3rem;
+    }
+
+    .choices-recap {
+        gap: 20px;
+        padding: 20px 30px;
+        max-width: 95%;
+    }
+
+    .choices-grid {
+        gap: 25px;
+    }
+}
+
+/* =========================================================
+   FINAL CELEBRATION SCREEN: PREMIUM UI & MAGIC
+   ========================================================= */
+
+.final-celebration-screen {
+    background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.celebration-title {
+    font-size: 4.5rem;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 4px 4px 0 rgba(0, 0, 0, 0.3);
+    margin-bottom: 30px;
+    z-index: 100;
+    font-weight: 900;
+    letter-spacing: 2px;
+    animation: bounceTitle 2s infinite, glowPulse 1.5s infinite;
+}
+
+@keyframes glowPulse {
+
+    0%,
+    100% {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 215, 0, 0.6);
+    }
+
+    50% {
+        text-shadow: 0 0 40px rgba(255, 255, 255, 1), 0 0 70px rgba(255, 215, 0, 0.9);
+    }
+}
+
+/* Team Aura */
+.team-container {
+    position: relative;
+    padding: 20px;
+    z-index: 10;
+}
+
+.team-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: conic-gradient(from 0deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    filter: blur(40px);
+    opacity: 0.3;
+    animation: rainbowSpin 10s linear infinite;
+    z-index: -1;
+    border-radius: 50%;
+}
+
+@keyframes rainbowSpin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.celebration-team-asset {
+    max-height: 55vh;
+    border: 8px solid rgba(255, 255, 255, 0.3);
+    border-radius: 30px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+/* Choices Recap Layout */
+.choices-recap {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+   
+    padding: 20px 40px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 100px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    z-index: 100;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.choice-item {
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.choice-item:hover {
+    transform: scale(1.2) rotate(10deg);
+    z-index: 110;
+}
+
+.choice-item::before {
+    content: attr(title);
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.choice-item:hover::before {
+    opacity: 1;
+}
+
+.choice-item .game-asset {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: none;
+}
+
+/* Layers for Magic */
+.magic-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.balloons-layer {
+    z-index: 150;
+}
+
+.fireworks-layer {
+    z-index: 5;
+}
+
+.confetti-layer {
+    z-index: 140;
+}
+
+.dust-layer {
+    z-index: 20;
+}
+
+/* Balloon Enhancements */
+.balloon {
+    position: absolute;
+    bottom: -150px;
+    width: 80px;
+    height: 100px;
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    box-shadow: inset -5px -5px 15px rgba(0, 0, 0, 0.2), 5px 5px 20px rgba(0, 0, 0, 0.3);
+    animation: balloonFloatUp linear forwards;
+}
+
+.balloon::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.balloon::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    width: 20px;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    transform: rotate(45deg);
+}
+
+/* Firework Pop */
+.firework-pop {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: fireworkBurst 1.5s ease-out forwards;
+    mix-blend-mode: screen;
+}
+
+@keyframes fireworkBurst {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+        filter: brightness(2);
+    }
+
+    100% {
+        transform: scale(30);
+        opacity: 0;
+        filter: blur(10px);
+    }
+}
+
+/* Confetti Piece */
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+    animation: confettiFall 4s linear forwards;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* Magic Dust */
+.dust-sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #fff, 0 0 20px rgba(255, 215, 0, 0.5);
+    animation: dustTwinkle 2s ease-in-out infinite alternate;
+}
+
+@keyframes dustTwinkle {
+    from {
+        opacity: 0.2;
+        transform: scale(0.5);
+        filter: blur(0px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.5);
+        filter: blur(2px);
+    }
+}
+
+/* Floating Emoji Icons */
+.floating-icon {
+    position: absolute;
+    bottom: -50px;
+    font-size: 2.5rem;
+    animation: emojiFloat 5s ease-in forwards;
+    pointer-events: none;
+    z-index: 120;
+}
+
+@keyframes emojiFloat {
+    0% {
+        transform: translateY(0) scale(0.5) rotate(0deg);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateY(-10vh) scale(1.2) rotate(10deg);
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-120vh) scale(0.8) rotate(-20deg);
+        opacity: 0;
+    }
+}
+
+/* Restart Button Premium */
+.restart-btn {
+    margin-top: 40px;
+    background: linear-gradient(to bottom, #FFD700, #FFA500);
+    border: 4px solid #fff;
+    padding: 15px 40px;
+    font-size: 1.8rem;
+    color: #1a2a6c;
+    border-radius: 50px;
+    box-shadow: 0 10px 0 #cc8e00, 0 15px 30px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    z-index: 100;
+}
+
+.restart-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 0 #cc8e00, 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.restart-btn:active {
+    transform: translateY(5px);
+    box-shadow: 0 5px 0 #cc8e00;
+}
+
+.restart-icon {
+    display: inline-block;
+    animation: spin 3s linear infinite;
+    margin-right: 15px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
