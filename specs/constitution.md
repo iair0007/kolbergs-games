@@ -1,33 +1,101 @@
-# Kolberg's Games Platform Constitution
+Purpose
 
-## Purpose
-The platform hosts multiple independent games for children, presented through a single shared platform page and deployed as a static website.
+The purpose of this project is to create a reusable, child friendly game platform that enables the creation of multiple personalized games using shared infrastructure and assets, while keeping development simple, maintainable, and joyful.
 
-## Core Principles
+The system must allow new games to be added with minimal code changes and maximum reuse of existing logic and resources.
 
-1. Static-first  
-   The platform and all games must work on static hosting such as GitHub Pages.
+Core Principles
 
-2. Independent games  
-   Each game is a self-contained mini application with its own HTML, JavaScript, and styling.
+Data Driven Games
 
-3. Optional sharing  
-   Games may use shared utilities or assets, but are not required to do so.
+Each game must be defined primarily through data, not custom code.
 
-4. Isolation  
-   One game must not affect or break other games or the platform itself.
+Game behavior, assets, and flow should be configurable via structured files such as JSON.
 
-5. Clear structure  
-   Platform code, individual games, shared utilities, and assets must live in clearly separated directories.
+Adding a new game should not require modifying the core engine.
 
-6. Simple navigation  
-   Users must be able to enter a game from the platform page and return back easily.
+Shared Engine, Isolated Games
 
-7. Child-friendly by design  
-   All games and platform interactions must remain simple, safe, and predictable for children.
+A single shared engine must power all games.
 
-8. Backend optional  
-   No backend or database is required for core functionality. If added later, it must not be mandatory for existing games.
+Games must not depend on each other.
 
-9. Future growth  
-   The platform must allow adding new games, shared utilities, or shared assets without modifying existing games.
+The engine must not contain game specific assets or logic.
+
+Static First Architecture
+
+The system must work entirely on static hosting.
+
+GitHub Pages compatibility is a hard requirement.
+
+No runtime server dependency is allowed by default.
+
+Optional Backend, Never Required
+
+Backend services or databases may be added later.
+
+The core architecture must not assume their existence.
+
+Switching from static data to a backend must not require rewriting the engine.
+
+Asset Reuse and Composition
+
+Assets may be shared across games.
+
+Games must be able to reference shared assets explicitly.
+
+Asset loading must be centralized and consistent.
+
+Simplicity Over Abstraction
+
+Prefer simple, explicit structures over clever abstractions.
+
+Readability and ease of understanding matter more than flexibility.
+
+The project should be approachable by future contributors or by the author returning after time away.
+
+Child Safety and Privacy
+
+No personal data is collected or stored by default.
+
+Games must run without accounts or tracking.
+
+All content is explicitly provided and controlled by the project.
+
+Incremental Growth
+
+The architecture must support small beginnings.
+
+Features should be added only when needed.
+
+The system should scale by composition, not complexity.
+
+Non Goals
+
+Multiplayer functionality
+
+Real time server communication
+
+User authentication or accounts
+
+Monetization or ads
+
+Analytics or tracking by default
+
+Architectural Boundaries
+
+The engine may load game definitions but must not embed them.
+
+Game definitions may reference assets but must not manipulate engine internals.
+
+Rendering, input handling, and asset loading are engine responsibilities.
+
+Story, characters, levels, and visuals are game responsibilities.
+
+Evolution Policy
+
+Any new feature must respect static hosting compatibility unless explicitly marked as optional.
+
+Backend features must be additive and replaceable.
+
+Breaking changes to game definitions should be avoided or versioned.

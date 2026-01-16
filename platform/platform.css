@@ -1,0 +1,59 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+    background: linear-gradient(180deg, #1e90ff, #00bfff);
+    color: #ffffff;
+  }
+  
+  main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px;
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 32px;
+  }
+  
+  #games-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+  }
+  
+  .game-card {
+    background: #ffcc00;
+    border-radius: 16px;
+    padding: 24px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000000;
+    font-size: 1.4rem;
+    font-weight: bold;
+    box-shadow: 0 6px 0 #cc9900;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+  
+  .game-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 0 #cc9900;
+  }
+  
+  .game-card:active {
+    transform: translateY(2px);
+    box-shadow: 0 4px 0 #cc9900;
+  }
+  
+  .game-description {
+    display: block;
+    font-size: 1rem;
+    font-weight: normal;
+    margin-top: 12px;
+  }
+  
