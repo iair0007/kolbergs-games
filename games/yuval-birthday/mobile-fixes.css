@@ -1,0 +1,91 @@
+/* Back to Platform Link - ensure it doesn't block game content */
+.back-to-platform {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 8px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    color: #333;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s;
+    pointer-events: auto;
+}
+
+.back-to-platform:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.05);
+}
+
+/* Mobile: Make back link smaller and less intrusive */
+@media (max-width: 768px) {
+    .back-to-platform {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+        top: 5px;
+        left: 5px;
+    }
+}
+
+/* Ensure selection cards are clickable and have proper touch targets */
+.selection-card {
+    /* Ensure cards are above other elements */
+    position: relative;
+    z-index: 10;
+
+    /* Ensure touch events work */
+    pointer-events: auto;
+    cursor: pointer;
+
+    /* Minimum touch target size for mobile (48x48px recommended) */
+    min-height: 150px;
+    min-width: 150px;
+}
+
+/* Mobile: Smaller cards that fit the screen better */
+@media (max-width: 768px) {
+    .selection-card {
+        width: 85%;
+        max-width: 300px;
+        min-height: 140px;
+        padding: 10px;
+    }
+
+    .game-asset {
+        max-height: 30vh;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .selection-card {
+        width: 90%;
+        max-width: 280px;
+        min-height: 130px;
+        padding: 8px;
+    }
+
+    .game-asset {
+        max-height: 22vh;
+    }
+}
+
+/* Ensure disabled cards don't block clicks to enabled cards */
+.selection-card.disabled {
+    pointer-events: none !important;
+    z-index: 5;
+}
+
+.selection-card.disabled-no-visual {
+    pointer-events: none !important;
+    z-index: 5;
+}
+
+/* Active/enabled cards should be on top */
+.selection-card:not(.disabled):not(.disabled-no-visual) {
+    z-index: 15;
+}

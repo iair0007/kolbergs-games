@@ -33,8 +33,13 @@ html {
 }
 
 #app {
-    /* Platform responsive.css handles width, height, overflow for game root containers */
+    /* Override platform responsive.css to prevent off-screen content on mobile */
     position: relative;
+    display: block;
+    /* Remove flexbox that causes centering issues */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 /* Screen container - fills the viewport */
@@ -50,6 +55,11 @@ html {
     align-items: center;
     padding: 20px;
     background: radial-gradient(circle, #ffffff 0%, var(--color-secondary) 100%);
+
+    /* Allow scrolling on mobile when content doesn't fit */
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 
     /* Transition setup */
     opacity: 0;
@@ -77,11 +87,14 @@ html {
 
 /* Typography */
 h1 {
-    font-size: 3rem;
+    font-size: clamp(1.5rem, 5vw, 3rem);
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: clamp(0.5rem, 2vh, 2rem);
+    margin-top: clamp(0.5rem, 1vh, 1rem);
     color: var(--color-accent);
     text-shadow: 2px 2px 0px var(--color-white);
+    flex-shrink: 0;
+    /* Prevent title from being squeezed out */
 }
 
 /* Buttons */
@@ -445,18 +458,20 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 40px;
+    gap: clamp(15px, 3vw, 40px);
     width: 100%;
     max-width: 1200px;
     flex-wrap: wrap;
     z-index: 5;
+    flex-shrink: 1;
+    /* Allow container to shrink on small screens */
 }
 
 .selection-card {
     background: rgba(255, 255, 255, 0.8);
-    border: 6px solid var(--color-white);
-    border-radius: 30px;
-    padding: 20px;
+    border: clamp(3px, 1vw, 6px) solid var(--color-white);
+    border-radius: clamp(15px, 3vw, 30px);
+    padding: clamp(10px, 2vw, 20px);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
@@ -465,7 +480,8 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 300px;
+    min-height: clamp(180px, 30vh, 300px);
+    flex-shrink: 1;
 }
 
 /* Magin Hover Effect */
@@ -637,14 +653,27 @@ h1 {
 
 /* Mobile Adjustments */
 @media (max-width: 768px) {
+    .screen {
+        justify-content: flex-start;
+        /* Start from top on mobile */
+        padding: 15px;
+    }
+
     .selection-container {
         flex-direction: column;
-        gap: 20px;
+        gap: 15px;
+        margin-top: 10px;
     }
 
     .selection-card {
-        width: 80%;
-        min-height: 200px;
+        width: 85%;
+        max-width: 350px;
+        min-height: 150px;
+        padding: 12px;
+    }
+
+    .game-asset {
+        max-height: 35vh;
     }
 }
 
@@ -2281,12 +2310,36 @@ h1 {
     }
 
     h1 {
-        font-size: 1.3rem !important;
-        margin: 5px 0 !important;
+        font-size: 1.1rem !important;
+        margin: 3px 0 !important;
     }
 
     .screen {
         padding: 5px !important;
+        justify-content: flex-start !important;
+    }
+
+    .selection-container {
+        flex-direction: row !important;
+        gap: 10px !important;
+        overflow-x: auto;
+        overflow-y: hidden;
+        width: 100%;
+        justify-content: flex-start;
+        padding-bottom: 5px;
+    }
+
+    .selection-card {
+        width: 45% !important;
+        min-width: 140px !important;
+        max-width: 180px !important;
+        min-height: 100px !important;
+        padding: 8px !important;
+        flex-shrink: 0;
+    }
+
+    .game-asset {
+        max-height: 18vh !important;
     }
 
     /* Also reduce particle effects */
@@ -2295,22 +2348,45 @@ h1 {
     }
 }
 
-/* Mobile Width - Narrow Screens */
+/* Mobile Width - Narrow Screens (Phones) */
 @media (max-width: 480px) {
+    .screen {
+        padding: 10px;
+        justify-content: flex-start;
+    }
+
+    h1 {
+        font-size: clamp(1.3rem, 6vw, 2rem);
+        margin-bottom: 0.8rem;
+        margin-top: 0.5rem;
+    }
+
+    .selection-container {
+        gap: 12px;
+        margin-top: 5px;
+    }
+
     .selection-card {
         width: 90%;
-        min-height: 200px;
-        padding: 15px;
+        max-width: 320px;
+        min-height: 140px;
+        padding: 10px;
+        border-width: 3px;
+    }
+
+    .game-asset {
+        max-height: 25vh;
     }
 
     .btn-next {
-        padding: 15px 40px;
-        font-size: 1.5rem;
+        padding: 12px 35px;
+        font-size: 1.3rem;
+        margin-top: 10px;
     }
 
     .welcome-btn {
-        font-size: 1.5rem;
-        padding: 20px 45px;
+        font-size: 1.4rem;
+        padding: 18px 40px;
     }
 }
 
@@ -2389,4 +2465,12 @@ h1 {
     font-size: clamp(1.2rem, 4vw, 1.8rem);
     padding: clamp(12px, 2vh, 20px) clamp(30px, 6vw, 50px);
     margin-top: clamp(15px, 3vh, 30px);
+}
+
+/* Mobile: Force screens to start from top to ensure title visibility */
+@media (max-width: 768px) {
+    .screen:not(.welcome-screen):not(.final-celebration-screen) {
+        justify-content: flex-start !important;
+        padding-top: 60px !important;
+    }
 }
