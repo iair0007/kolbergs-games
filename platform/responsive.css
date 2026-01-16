@@ -1,0 +1,243 @@
+/**
+ * Platform Responsive Layout CSS
+ * 
+ * This file provides responsive layout guarantees for all games.
+ * It ensures games render correctly on desktop, tablet, and mobile devices
+ * without clipping, cut-off UI, or scrollbars.
+ * 
+ * All games MUST include this file in their HTML.
+ * 
+ * See specs/responsive-layout.md for full documentation.
+ */
+
+/* ============================================
+   1. VIEWPORT FOUNDATION
+   ============================================ */
+
+html {
+    /* Use 100svh (small viewport height) instead of 100vh for mobile */
+    /* This accounts for browser chrome (address bar, etc.) */
+    height: 100%;
+    height: 100svh;
+    
+    /* Prevent text size adjustment on orientation change */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    /* Full viewport size with no margin/padding */
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Prevent scrollbars */
+    overflow: hidden;
+    
+    /* Safe area padding for notches (iOS, Android) */
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    
+    /* Ensure body takes full height accounting for safe areas */
+    box-sizing: border-box;
+}
+
+/* ============================================
+   2. GAME ROOT CONTAINER
+   ============================================ */
+
+/**
+ * All games should render inside a single container.
+ * Common IDs: #app, #game-root, #game-container
+ * 
+ * This ensures consistent sizing and positioning.
+ */
+#app,
+#game-root,
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    
+    /* Center content */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   3. RESPONSIVE UTILITIES
+   ============================================ */
+
+/**
+ * Responsive container that scales content while preserving aspect ratio
+ * Use this class on containers that need to maintain aspect ratio
+ */
+.responsive-container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/**
+ * For content that should scale proportionally
+ */
+.responsive-content {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* ============================================
+   4. ORIENTATION HANDLING
+   ============================================ */
+
+/**
+ * Ensure smooth transitions on orientation change
+ */
+@media (orientation: portrait) {
+    .landscape-only {
+        display: none;
+    }
+}
+
+@media (orientation: landscape) {
+    .portrait-only {
+        display: none;
+    }
+}
+
+/* ============================================
+   5. MOBILE-SPECIFIC FIXES
+   ============================================ */
+
+/**
+ * Prevent pull-to-refresh on mobile browsers
+ */
+body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+/**
+ * Prevent zoom on double-tap (iOS Safari)
+ */
+* {
+    touch-action: manipulation;
+}
+
+/**
+ * Fix for iOS Safari bottom bar
+ * Use dvh (dynamic viewport height) as fallback
+ */
+@supports (height: 100dvh) {
+    html {
+        height: 100dvh;
+    }
+}
+
+/* ============================================
+   6. CANVAS-SPECIFIC SUPPORT
+   ============================================ */
+
+/**
+ * For canvas-based games, ensure canvas fills container
+ * while maintaining aspect ratio
+ */
+canvas.game-canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+    
+    /* Crisp rendering on retina displays */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* ============================================
+   7. BREAKPOINT HELPERS
+   ============================================ */
+
+/* Mobile (portrait phones) */
+@media (max-width: 480px) {
+    .hide-on-mobile {
+        display: none !important;
+    }
+}
+
+/* Tablet (portrait tablets and large phones) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .hide-on-tablet {
+        display: none !important;
+    }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+    .hide-on-desktop {
+        display: none !important;
+    }
+}
+
+/* ============================================
+   8. SAFE SPACING
+   ============================================ */
+
+/**
+ * Use these classes for elements that need safe spacing
+ * from screen edges (accounting for notches)
+ */
+.safe-padding {
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-right: max(20px, env(safe-area-inset-right));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    padding-left: max(20px, env(safe-area-inset-left));
+}
+
+.safe-margin {
+    margin-top: max(20px, env(safe-area-inset-top));
+    margin-right: max(20px, env(safe-area-inset-right));
+    margin-bottom: max(20px, env(safe-area-inset-bottom));
+    margin-left: max(20px, env(safe-area-inset-left));
+}
+
+/* ============================================
+   9. ACCESSIBILITY
+   ============================================ */
+
+/**
+ * Ensure focus indicators are visible
+ */
+*:focus-visible {
+    outline: 3px solid rgba(0, 123, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/**
+ * Reduce motion for users who prefer it
+ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

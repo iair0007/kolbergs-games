@@ -125,6 +125,35 @@ http://localhost:8000
 
 Opening index.html directly from the filesystem is not recommended, as asset loading relies on HTTP requests.
 
+Responsive Design
+
+All games MUST follow the responsive layout specification to ensure correct rendering on desktop, tablet, and mobile devices.
+
+See specs/responsive-layout.md for:
+
+Required viewport meta tag
+
+Required platform responsive CSS inclusion
+
+Canvas resize utility usage (for canvas-based games)
+
+Testing checklist for device compatibility
+
+Common responsive issues and solutions
+
+
+Key requirements:
+
+Include platform/responsive.css in every game
+
+Use proper viewport meta tag with viewport-fit=cover
+
+Test on mobile devices (or browser DevTools device emulation)
+
+Avoid fixed pixel sizes that exceed viewport
+
+
+
 AI Agent Guidelines
 
 When modifying or generating code:

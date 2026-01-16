@@ -25,22 +25,16 @@
 
 body,
 html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    /* Prevent scrolling */
+    /* Platform responsive.css handles margin, padding, width, height, overflow */
+    /* Game-specific styling only */
     background-color: var(--color-secondary);
     font-family: var(--font-main);
     color: var(--color-text);
 }
 
 #app {
-    width: 100%;
-    height: 100%;
+    /* Platform responsive.css handles width, height, overflow for game root containers */
     position: relative;
-    overflow: hidden;
 }
 
 /* Screen container - fills the viewport */
@@ -1913,7 +1907,7 @@ h1 {
     display: flex;
     justify-content: center;
     gap: 30px;
-   
+
     padding: 20px 40px;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
@@ -2159,4 +2153,240 @@ h1 {
     to {
         transform: rotate(360deg);
     }
+}
+
+/* ============================================
+   RESPONSIVE FIXES FOR MOBILE DEVICES
+   ============================================ */
+
+/* Use responsive typography with clamp() */
+.welcome-title {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+}
+
+.welcome-subtitle {
+    font-size: clamp(1.2rem, 4vw, 2rem);
+}
+
+h1 {
+    font-size: clamp(2rem, 6vw, 3rem);
+}
+
+/* Mobile Portrait - Small Height (e.g., iPhone SE) */
+@media (max-height: 700px) {
+    .welcome-content {
+        padding: 20px 20px;
+        gap: 20px;
+    }
+
+    .welcome-title {
+        font-size: clamp(2rem, 7vw, 3.5rem);
+        gap: 5px;
+    }
+
+    .welcome-subtitle {
+        font-size: clamp(1rem, 3.5vw, 1.5rem);
+        margin-top: 10px;
+    }
+
+    .welcome-illustration {
+        min-height: 80px;
+        gap: 15px;
+    }
+
+    .floating-emoji {
+        font-size: 2.5rem;
+    }
+
+    .welcome-btn {
+        font-size: 1.5rem;
+        padding: 18px 40px;
+    }
+
+    h1 {
+        font-size: clamp(1.8rem, 5vw, 2.5rem);
+        margin-bottom: 1rem;
+    }
+}
+
+/* Mobile Landscape - Very Small Height */
+@media (max-height: 450px) {
+    .welcome-content {
+        padding: 10px 20px;
+        gap: 10px;
+        justify-content: space-evenly;
+    }
+
+    .welcome-title {
+        font-size: clamp(1.5rem, 5vw, 2.5rem);
+        gap: 2px;
+    }
+
+    .welcome-subtitle {
+        font-size: clamp(0.9rem, 3vw, 1.2rem);
+        margin-top: 5px;
+    }
+
+    .welcome-illustration {
+        min-height: 50px;
+        gap: 10px;
+        flex-shrink: 1;
+    }
+
+    .floating-emoji {
+        font-size: 1.8rem;
+    }
+
+    .welcome-btn {
+        font-size: 1.2rem;
+        padding: 12px 30px;
+    }
+
+    h1 {
+        font-size: clamp(1.5rem, 4vw, 2rem);
+        margin-bottom: 0.5rem;
+    }
+
+    .screen {
+        padding: 10px;
+    }
+}
+
+/* Extra small landscape (iPhone SE landscape) - Most aggressive */
+@media (max-height: 400px) and (orientation: landscape) {
+    .welcome-content {
+        padding: 5px 15px;
+        gap: 5px;
+    }
+
+    .welcome-title {
+        font-size: 1.2rem !important;
+        gap: 0;
+        margin: 5px 0 !important;
+    }
+
+    .welcome-subtitle {
+        font-size: 0.8rem !important;
+        margin-top: 3px !important;
+    }
+
+    .welcome-illustration {
+        display: none !important;
+        /* Hide emojis to save space */
+    }
+
+    .welcome-btn {
+        font-size: 1rem !important;
+        padding: 8px 20px !important;
+    }
+
+    h1 {
+        font-size: 1.3rem !important;
+        margin: 5px 0 !important;
+    }
+
+    .screen {
+        padding: 5px !important;
+    }
+
+    /* Also reduce particle effects */
+    .welcome-particle {
+        display: none;
+    }
+}
+
+/* Mobile Width - Narrow Screens */
+@media (max-width: 480px) {
+    .selection-card {
+        width: 90%;
+        min-height: 200px;
+        padding: 15px;
+    }
+
+    .btn-next {
+        padding: 15px 40px;
+        font-size: 1.5rem;
+    }
+
+    .welcome-btn {
+        font-size: 1.5rem;
+        padding: 20px 45px;
+    }
+}
+
+/* Tablet Portrait */
+@media (min-width: 481px) and (max-width: 768px) {
+    .welcome-title {
+        font-size: clamp(3rem, 7vw, 4rem);
+    }
+
+    .welcome-subtitle {
+        font-size: clamp(1.5rem, 4vw, 1.8rem);
+    }
+}
+
+/* Ensure all screens use flexible spacing */
+.screen {
+    padding: clamp(10px, 3vh, 20px);
+}
+
+/* Responsive button sizing */
+.btn-next,
+.welcome-btn,
+.reveal-btn {
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    padding: clamp(12px, 2vh, 25px) clamp(30px, 8vw, 60px);
+}
+
+/* Ensure math overlay fits on small screens */
+.math-challenge-overlay {
+    padding-top: clamp(5vh, 10vh, 15vh) !important;
+}
+
+.math-question-text {
+    font-size: clamp(2rem, 6vw, 3.4rem) !important;
+    margin: clamp(0.4rem, 1vh, 0.8rem) 0 !important;
+}
+
+.math-answer-btn {
+    font-size: clamp(1.5rem, 4vw, 2rem) !important;
+    padding: clamp(10px, 2vh, 15px) clamp(15px, 4vw, 25px) !important;
+}
+
+/* Responsive enemy containers */
+.dragon-container,
+.robot-container,
+.dessert-enemy-container {
+    height: clamp(25vh, 35vh, 45vh) !important;
+}
+
+/* Responsive selection containers */
+.restaurant-options-container,
+.attraction-options-container,
+.dessert-options-container {
+    gap: clamp(15px, 3vw, 40px);
+}
+
+/* Final celebration responsive fixes */
+.celebration-header h1 {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+}
+
+.team-display {
+    max-height: clamp(200px, 30vh, 400px);
+}
+
+.choices-grid {
+    gap: clamp(15px, 3vw, 30px);
+}
+
+.choice-item {
+    max-width: clamp(120px, 25vw, 200px);
+}
+
+/* Ensure restart button is always visible */
+.restart-btn {
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    padding: clamp(12px, 2vh, 20px) clamp(30px, 6vw, 50px);
+    margin-top: clamp(15px, 3vh, 30px);
 }
