@@ -1386,12 +1386,22 @@ class GameApp {
             card.className = 'selection-card';
             card.dataset.id = option.id;
 
+            // Ensure touch events work on mobile
+            card.style.touchAction = 'manipulation';
+
             // Load Asset
             const asset = await AssetLoader.loadMedia('./characters', option.name);
             card.appendChild(asset);
 
-            // Interaction
-            card.onclick = () => this.handleOrSelection(option.id, card, selectionContainer);
+            // Interaction - use both click and touchend for better mobile support
+            const handleSelection = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.handleOrSelection(option.id, card, selectionContainer);
+            };
+
+            card.addEventListener('click', handleSelection);
+            card.addEventListener('touchend', handleSelection);
 
             selectionContainer.appendChild(card);
         }
