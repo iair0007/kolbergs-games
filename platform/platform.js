@@ -6,6 +6,7 @@ fetch('platform/games.json')
 
     games.forEach(game => {
       const card = document.createElement('a');
+      // Use relative path from current location (works both locally and on GitHub Pages)
       card.href = game.path;
       card.className = 'game-card';
 
