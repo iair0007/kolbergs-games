@@ -1,50 +1,101 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+Purpose
 
-## Core Principles
+The purpose of this project is to create a reusable, child friendly game platform that enables the creation of multiple personalized games using shared infrastructure and assets, while keeping development simple, maintainable, and joyful.
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+The system must allow new games to be added with minimal code changes and maximum reuse of existing logic and resources.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Core Principles
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+Data Driven Games
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+Each game must be defined primarily through data, not custom code.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+Game behavior, assets, and flow should be configurable via structured files such as JSON.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Adding a new game should not require modifying the core engine.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+Shared Engine, Isolated Games
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+A single shared engine must power all games.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+Games must not depend on each other.
 
-## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+The engine must not contain game specific assets or logic.
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+Static First Architecture
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+The system must work entirely on static hosting.
+
+GitHub Pages compatibility is a hard requirement.
+
+No runtime server dependency is allowed by default.
+
+Optional Backend, Never Required
+
+Backend services or databases may be added later.
+
+The core architecture must not assume their existence.
+
+Switching from static data to a backend must not require rewriting the engine.
+
+Asset Reuse and Composition
+
+Assets may be shared across games.
+
+Games must be able to reference shared assets explicitly.
+
+Asset loading must be centralized and consistent.
+
+Simplicity Over Abstraction
+
+Prefer simple, explicit structures over clever abstractions.
+
+Readability and ease of understanding matter more than flexibility.
+
+The project should be approachable by future contributors or by the author returning after time away.
+
+Child Safety and Privacy
+
+No personal data is collected or stored by default.
+
+Games must run without accounts or tracking.
+
+All content is explicitly provided and controlled by the project.
+
+Incremental Growth
+
+The architecture must support small beginnings.
+
+Features should be added only when needed.
+
+The system should scale by composition, not complexity.
+
+Non Goals
+
+Multiplayer functionality
+
+Real time server communication
+
+User authentication or accounts
+
+Monetization or ads
+
+Analytics or tracking by default
+
+Architectural Boundaries
+
+The engine may load game definitions but must not embed them.
+
+Game definitions may reference assets but must not manipulate engine internals.
+
+Rendering, input handling, and asset loading are engine responsibilities.
+
+Story, characters, levels, and visuals are game responsibilities.
+
+Evolution Policy
+
+Any new feature must respect static hosting compatibility unless explicitly marked as optional.
+
+Backend features must be additive and replaceable.
+
+Breaking changes to game definitions should be avoided or versioned.
