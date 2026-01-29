@@ -2,7 +2,15 @@
   {
     "id": "yuval-birthday",
     "title": "Yuval's Birthday Adventure",
-    "description": "A superhero birthday adventure",
-    "path": "games/yuval-birthday/index.html"
+    "description": "הרפתקת יום הולדת של גיבורי על",
+    "path": "games/yuval-birthday/index.html",
+    "image": "platform/images/yuval_birthday.png"
+  },
+  {
+    "id": "math-hero",
+    "title": "גיבור החשבון",
+    "description": "משחק חשבון מהנה וקסום לילדים",
+    "path": "games/math-hero/index.html",
+    "image": "platform/images/math_hero.png"
   }
 ]

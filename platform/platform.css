@@ -1,59 +1,70 @@
 * {
-    box-sizing: border-box;
-  }
-  
-  body {
-    margin: 0;
-    font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
-    background: linear-gradient(180deg, #1e90ff, #00bfff);
-    color: #ffffff;
-  }
-  
-  main {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 24px;
-    text-align: center;
-  }
-  
-  h1 {
-    font-size: 3rem;
-    margin-bottom: 32px;
-  }
-  
-  #games-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 24px;
-  }
-  
-  .game-card {
-    background: #ffcc00;
-    border-radius: 16px;
-    padding: 24px;
-    cursor: pointer;
-    text-decoration: none;
-    color: #000000;
-    font-size: 1.4rem;
-    font-weight: bold;
-    box-shadow: 0 6px 0 #cc9900;
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
-  }
-  
-  .game-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 0 #cc9900;
-  }
-  
-  .game-card:active {
-    transform: translateY(2px);
-    box-shadow: 0 4px 0 #cc9900;
-  }
-  
-  .game-description {
-    display: block;
-    font-size: 1rem;
-    font-weight: normal;
-    margin-top: 12px;
-  }
-  
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+  background: linear-gradient(180deg, #1e90ff, #00bfff);
+  color: #ffffff;
+}
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 32px;
+}
+
+#games-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.game-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: #333333;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  border: 4px solid white;
+}
+
+.game-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  border-color: #ffcc00;
+}
+
+.game-thumbnail {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.game-title {
+  padding: 16px 16px 8px;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.game-description {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: normal;
+  padding: 0 16px 20px;
+  color: #666;
+}
