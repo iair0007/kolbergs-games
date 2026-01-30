@@ -60,7 +60,7 @@ function showHeroSelection() {
                 <button class="magic-btn" style="background: var(--warm-gradient);" onclick="showLeaderboard()">🏆 לוח תוצאות</button>
             </div>
             <div class="back-link" style="margin-top: 30px;">
-                <a href="../../index.html" style="color: #666; text-decoration: none; font-weight: 600;">🏠 חזרה לתפריט הראשי</a>
+                <a href="../../index.html" class="back-home-btn">🏠 חזרה לתפריט הראשי</a>
             </div>
         </div>
     `;

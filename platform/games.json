@@ -12,5 +12,19 @@
     "description": "משחק חשבון מהנה וקסום לילדים",
     "path": "games/math-hero/index.html",
     "image": "platform/images/math_hero.png"
+  },
+  {
+    "id": "super-boy-run",
+    "title": "Super Boy Run",
+    "description": "A fun side-scrolling platformer adventure!",
+    "path": "games/super-boy-run/index.html",
+    "image": "platform/images/super_boy_run.png"
+  },
+  {
+    "id": "tic-tac-toe",
+    "title": "Tic Tac Toe",
+    "description": "Play Tic Tac Toe with your favorite characters!",
+    "path": "games/tic-tac-toe/index.html",
+    "image": "platform/images/tic_tac_toe.png"
   }
 ]

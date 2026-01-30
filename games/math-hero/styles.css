@@ -158,6 +158,26 @@ h1 {
     background: #444;
 }
 
+.back-home-btn {
+    display: inline-block;
+    padding: 10px 24px;
+    border: 3px solid #666;
+    border-radius: 50px;
+    color: #666;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+    background: transparent;
+}
+
+.back-home-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: scale(1.05);
+    border-color: #444;
+    color: #444;
+}
+
 .user-stats {
     display: inline-flex;
     align-items: center;

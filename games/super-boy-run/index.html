@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Super Boy Run - Platform Adventure</title>
+    <link rel="stylesheet" href="../../platform/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Game Canvas -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- UI Overlay -->
+        <div id="ui-overlay">
+            <div id="game-info">
+                <div class="info-item">Lives: <span id="lives">5</span></div>
+                <div class="info-item">Score: <span id="score">0</span></div>
+                <div class="info-item">Level: <span id="level">1</span></div>
+                <button id="btn-quit" class="quit-btn">🏠 Quit</button>
+            </div>
+        </div>
+
+        <!-- Touch Controls (Mobile) -->
+        <div id="touch-controls">
+            <button id="btn-left" class="control-btn">◄</button>
+            <button id="btn-right" class="control-btn">►</button>
+            <button id="btn-jump" class="control-btn jump-btn">↑</button>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <!-- Corner Navigation -->
+            <div class="corner-nav">
+                <a href="../../index.html" class="corner-btn corner-btn-left">🏠</a>
+                <button id="btn-settings" class="corner-btn corner-btn-right desktop-only">⚙️</button>
+            </div>
+
+            <div class="screen-content">
+                <h1>🏃 SUPER BOY RUN</h1>
+                <p>Jump, run, and reach the goal!</p>
+                <div class="action-buttons">
+                    <button id="btn-continue" class="game-btn" style="display:none;">CONTINUE</button>
+                    <button id="btn-start" class="game-btn">NEW GAME</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Screen (Desktop Only) -->
+        <div id="settings-screen" class="screen desktop-only">
+            <div class="screen-content settings-content">
+                <h1>⚙️ GAME SETTINGS</h1>
+
+                <!-- Level Selector -->
+                <div class="settings-section">
+                    <label>Start Level:</label>
+                    <div class="level-buttons">
+                        <button class="level-btn" data-level="0">1</button>
+                        <button class="level-btn" data-level="1">2</button>
+                        <button class="level-btn" data-level="2">3</button>
+                        <button class="level-btn" data-level="3">4</button>
+                        <button class="level-btn" data-level="4">5</button>
+                    </div>
+                </div>
+
+                <!-- Sliders -->
+                <div class="settings-section">
+                    <label>Player Speed: <span id="speed-value">4</span></label>
+                    <input type="range" id="speed-slider" min="2" max="8" step="0.5" value="4">
+                </div>
+
+                <div class="settings-section">
+                    <label>Jump Strength: <span id="jump-value">12</span></label>
+                    <input type="range" id="jump-slider" min="8" max="16" step="0.5" value="12">
+                </div>
+
+                <div class="settings-section">
+                    <label>Max Jump: <span id="maxjump-value">14.5</span></label>
+                    <input type="range" id="maxjump-slider" min="10" max="20" step="0.5" value="14.5">
+                </div>
+
+                <div class="settings-section">
+                    <label>Gravity: <span id="gravity-value">0.5</span></label>
+                    <input type="range" id="gravity-slider" min="0.1" max="1.5" step="0.05" value="0.5">
+                </div>
+
+                <div class="settings-section">
+                    <label>Starting Lives: <span id="lives-value">5</span></label>
+                    <input type="range" id="lives-slider" min="1" max="10" step="1" value="5">
+                </div>
+
+                <div class="settings-section">
+                    <label>Fly Duration: <span id="fly-value">5</span>s</label>
+                    <input type="range" id="fly-slider" min="3" max="15" step="1" value="5">
+                </div>
+
+                <!-- Action Buttons (Horizontal on Desktop) -->
+                <div class="settings-actions">
+                    <button id="btn-reset-settings" class="game-btn secondary">Reset Defaults</button>
+                    <button id="btn-copy-settings" class="game-btn secondary">📋 Copy Settings</button>
+                    <button id="btn-close-settings" class="game-btn">Apply & Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Level Complete Screen -->
+        <div id="level-complete-screen" class="screen">
+            <div class="screen-content">
+                <h1>🎉 LEVEL COMPLETE!</h1>
+                <p id="level-score"></p>
+                <button id="btn-next-level" class="game-btn">NEXT LEVEL</button>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="screen">
+            <div class="screen-content">
+                <h1>💀 GAME OVER</h1>
+                <p id="final-score"></p>
+                <button id="btn-restart" class="game-btn">TRY AGAIN</button>
+                <button id="btn-menu" class="game-btn secondary">MAIN MENU</button>
+            </div>
+        </div>
+
+        <!-- Victory Screen -->
+        <div id="victory-screen" class="screen">
+            <div class="screen-content">
+                <h1>🏆 YOU WIN!</h1>
+                <p>You completed all levels!</p>
+                <p id="total-score"></p>
+                <button id="btn-play-again" class="game-btn">PLAY AGAIN</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="levels/level1.js"></script>
+    <script src="levels/level2.js"></script>
+    <script src="levels/level3.js"></script>
+    <script src="levels/level4.js"></script>
+    <script src="levels/level5.js"></script>
+    <script src="levels/index.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

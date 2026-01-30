@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet" href="../../platform/responsive.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div id="app">
+    <!-- Home Button (Visible on all screens) -->
+    <a href="../../index.html" class="home-btn" aria-label="Return to home">🏠</a>
+
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen active">
+      <div class="screen-content">
+        <h1 class="game-title">🎮 TIC TAC TOE</h1>
+        <p class="subtitle">Choose your game mode!</p>
+        <div class="mode-buttons">
+          <button class="mode-btn" data-mode="computer">
+            <span class="icon">🤖</span>
+            <span class="label">vs Computer</span>
+          </button>
+          <button class="mode-btn" data-mode="player">
+            <span class="icon">👥</span>
+            <span class="label">vs Player</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Character Selection Screen -->
+    <div id="character-screen" class="screen">
+      <div class="screen-content">
+        <h2 class="selection-title">Choose Your Character</h2>
+        <p class="player-indicator"></p>
+        <div class="character-grid"></div>
+        <button class="back-btn">← Back</button>
+      </div>
+    </div>
+
+    <!-- Game Board Screen -->
+    <div id="game-screen" class="screen">
+      <div class="screen-content">
+        <div class="game-header">
+          <div class="player-info player1-info">
+            <img src="" alt="Player 1" class="player-avatar">
+            <span class="player-label">Player 1</span>
+          </div>
+          <div class="turn-indicator">
+            <span class="turn-text">Turn:</span>
+            <div class="current-turn"></div>
+          </div>
+          <div class="player-info player2-info">
+            <img src="" alt="Player 2" class="player-avatar">
+            <span class="player-label">Player 2</span>
+          </div>
+        </div>
+        <div class="board-container">
+          <div class="game-board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+          </div>
+        </div>
+        <button class="back-btn game-back-btn">← Back to Menu</button>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="screen">
+      <div class="screen-content">
+        <h1 class="result-title"></h1>
+        <div class="winner-display">
+          <img src="" alt="Winner" class="winner-avatar">
+        </div>
+        <p class="result-message"></p>
+        <div class="result-buttons">
+          <button class="game-btn play-again-btn">Play Again</button>
+          <button class="game-btn menu-btn">Main Menu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+
+</html>
