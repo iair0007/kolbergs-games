@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>גיבור העברית - Hebrew Hero</title>
+    <meta name="description" content="משחק לימוד קריאה וכתיבה בעברית לילדים">
+    <link rel="stylesheet" href="../../platform/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Home Button (Visible on all screens) -->
+        <a href="../../index.html" class="home-btn" aria-label="חזרה לדף הבית">🏠</a>
+
+        <!-- Settings Button -->
+        <button class="settings-btn" id="settings-toggle" aria-label="הגדרות">⚙️</button>
+
+        <!-- Stars/Coins Display -->
+        <div class="stats-display" id="stats-display">
+            <span class="stars-count">⭐ <span id="stars-amount">0</span></span>
+            <span class="coins-count">🪙 <span id="coins-amount">0</span></span>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <div class="screen-content">
+                <div class="hero-badge">🦸‍♂️</div>
+                <h1 class="game-title">גיבור העברית</h1>
+                <p class="subtitle">בוא נלמד לקרוא ולכתוב!</p>
+
+                <div class="difficulty-selector">
+                    <h3>בחר רמה</h3>
+                    <div class="difficulty-buttons">
+                        <button class="difficulty-btn selected" data-difficulty="easy">
+                            <span class="diff-icon">🌟</span>
+                            <span class="diff-label">קל</span>
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="medium">
+                            <span class="diff-icon">⭐</span>
+                            <span class="diff-label">בינוני</span>
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="hard">
+                            <span class="diff-icon">🌟🌟</span>
+                            <span class="diff-label">קשה</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="start-btn magic-btn" id="start-game">
+                    <span class="btn-icon">🚀</span>
+                    <span>התחל משחק!</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mode Selection Screen -->
+        <div id="mode-screen" class="screen">
+            <div class="screen-content">
+                <h2 class="section-title">בחר משימה</h2>
+                <div class="mode-grid">
+                    <button class="mode-card" data-mode="letter-match">
+                        <div class="mode-icon">🔤</div>
+                        <div class="mode-name">זיהוי אות</div>
+                        <div class="mode-desc">מצא את האות הנכונה</div>
+                    </button>
+                    <button class="mode-card" data-mode="build-word">
+                        <div class="mode-icon">🧩</div>
+                        <div class="mode-name">בנה מילה</div>
+                        <div class="mode-desc">סדר את האותיות</div>
+                    </button>
+                    <button class="mode-card" data-mode="trace-letter">
+                        <div class="mode-icon">✏️</div>
+                        <div class="mode-name">כתיבת אות</div>
+                        <div class="mode-desc">צייר את האות</div>
+                    </button>
+                    <button class="mode-card" data-mode="sound-match">
+                        <div class="mode-icon">🔊</div>
+                        <div class="mode-name">שמע וזהה</div>
+                        <div class="mode-desc">זהה את האות מהשם</div>
+                    </button>
+                </div>
+                <button class="back-btn" id="back-to-welcome">← חזרה</button>
+            </div>
+        </div>
+
+        <!-- Letter Match Game Screen -->
+        <div id="letter-match-screen" class="screen">
+            <div class="screen-content">
+                <div class="game-header">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="match-progress"></div>
+                    </div>
+                    <span class="progress-text" id="match-progress-text">1/5</span>
+                </div>
+
+                <div class="question-container">
+                    <div class="target-letter" id="target-letter">א</div>
+                    <p class="instruction">מצא את האות הזו!</p>
+                </div>
+
+                <div class="options-grid" id="letter-options">
+                    <!-- Options will be injected by JS -->
+                </div>
+
+                <div class="feedback-container" id="match-feedback"></div>
+                <button class="back-btn game-back" id="match-back-to-modes">← חזרה לבחירת משימה</button>
+            </div>
+        </div>
+
+        <!-- Build Word Game Screen -->
+        <div id="build-word-screen" class="screen">
+            <div class="screen-content">
+                <div class="game-header">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="word-progress"></div>
+                    </div>
+                    <span class="progress-text" id="word-progress-text">1/5</span>
+                </div>
+
+                <div class="word-hint-container">
+                    <div class="word-emoji" id="word-emoji">🏠</div>
+                    <div class="word-hint-text" id="word-hint">בית</div>
+                </div>
+
+                <div class="word-slots" id="word-slots">
+                    <!-- Letter slots will be injected by JS -->
+                </div>
+
+                <div class="letter-bank" id="letter-bank">
+                    <!-- Draggable letters will be injected by JS -->
+                </div>
+
+                <div class="word-actions">
+                    <button class="word-action-btn clear-btn" id="clear-word">🗑️ נקה</button>
+                    <button class="word-action-btn check-btn" id="check-word">✓ בדוק</button>
+                </div>
+
+                <div class="feedback-container" id="word-feedback"></div>
+                <button class="back-btn game-back" id="word-back-to-modes">← חזרה לבחירת משימה</button>
+            </div>
+        </div>
+
+        <!-- Trace Letter Game Screen -->
+        <div id="trace-letter-screen" class="screen">
+            <div class="screen-content">
+                <div class="game-header">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="trace-progress"></div>
+                    </div>
+                    <span class="progress-text" id="trace-progress-text">1/5</span>
+                </div>
+
+                <div class="trace-container">
+                    <div class="trace-guide-letter" id="trace-guide-letter">א</div>
+                    <canvas id="trace-canvas" class="trace-canvas"></canvas>
+                </div>
+
+                <div class="trace-controls">
+                    <button class="trace-action-btn" id="toggle-guide">
+                        <span>👁️</span>
+                        <span>הצג מדריך</span>
+                    </button>
+                    <button class="trace-action-btn" id="clear-canvas">
+                        <span>🗑️</span>
+                        <span>נקה</span>
+                    </button>
+                    <button class="trace-action-btn primary" id="submit-trace">
+                        <span>✓</span>
+                        <span>סיימתי</span>
+                    </button>
+                </div>
+
+                <div class="feedback-container" id="trace-feedback"></div>
+                <button class="back-btn game-back" id="trace-back-to-modes">← חזרה לבחירת משימה</button>
+            </div>
+        </div>
+
+        <!-- Sound Match Game Screen -->
+        <div id="sound-match-screen" class="screen">
+            <div class="screen-content">
+                <div class="game-header">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="sound-progress"></div>
+                    </div>
+                    <span class="progress-text" id="sound-progress-text">1/5</span>
+                </div>
+
+                <div class="sound-container">
+                    <div class="letter-name-display" id="letter-name-display">
+                        <div class="letter-name-hebrew">אָלֶף</div>
+                        <button class="reveal-btn" id="reveal-hint">💡 הצג רמז</button>
+                    </div>
+                    <p class="instruction">איזו אות זו?</p>
+                </div>
+
+                <div class="options-grid" id="sound-options">
+                    <!-- Options will be injected by JS -->
+                </div>
+
+                <div class="feedback-container" id="sound-feedback"></div>
+                <button class="back-btn game-back" id="sound-back-to-modes">← חזרה לבחירת משימה</button>
+            </div>
+        </div>
+
+        <!-- Round Complete Screen -->
+        <div id="complete-screen" class="screen">
+            <div class="screen-content">
+                <div class="celebration-container">
+                    <div class="confetti" id="confetti-container"></div>
+                    <div class="trophy">🏆</div>
+                    <h1 class="complete-title">כל הכבוד!</h1>
+                    <div class="score-display">
+                        <div class="score-item">
+                            <span class="score-icon">⭐</span>
+                            <span class="score-value" id="earned-stars">0</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-icon">🪙</span>
+                            <span class="score-value" id="earned-coins">0</span>
+                        </div>
+                    </div>
+                    <div class="accuracy-display">
+                        <span id="accuracy-text">דיוק: 100%</span>
+                    </div>
+                </div>
+
+                <div class="complete-actions">
+                    <button class="magic-btn" id="play-again">🔄 שחק שוב</button>
+                    <button class="magic-btn secondary" id="back-to-modes">📚 משימות אחרות</button>
+                    <button class="magic-btn tertiary" id="back-to-menu">🏠 תפריט ראשי</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Parent Settings Panel -->
+        <div id="settings-panel" class="settings-panel">
+            <div class="settings-content">
+                <h2>הגדרות הורים</h2>
+
+                <div class="setting-group">
+                    <label>רמת קושי</label>
+                    <select id="setting-difficulty">
+                        <option value="easy">קל</option>
+                        <option value="medium">בינוני</option>
+                        <option value="hard">קשה</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="setting-timer">
+                        הפעל טיימר
+                    </label>
+                </div>
+
+                <div class="setting-group">
+                    <label>אותיות פעילות</label>
+                    <div class="letters-toggle" id="letters-toggle">
+                        <!-- Letter toggles will be injected by JS -->
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="setting-sound" checked>
+                        אפקטי קול
+                    </label>
+                </div>
+
+                <div class="settings-actions">
+                    <button class="magic-btn" id="save-settings">שמור</button>
+                    <button class="magic-btn secondary" id="close-settings">סגור</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

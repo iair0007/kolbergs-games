@@ -294,9 +294,18 @@ function updateSettingsUI() {
     document.getElementById('fly-slider').value = GameSettings.flyDuration / 1000;
     document.getElementById('fly-value').textContent = GameSettings.flyDuration / 1000;
 
-    // Update level buttons
-    document.querySelectorAll('.level-btn').forEach(btn => {
-        btn.classList.toggle('selected', parseInt(btn.dataset.level) === GameSettings.startLevel);
+    // Update level dropdown
+    document.getElementById('level-select').value = GameSettings.startLevel;
+}
+
+function initializeLevelSelect() {
+    const levelSelect = document.getElementById('level-select');
+    levelSelect.innerHTML = '';
+    LEVELS.forEach((level, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = level.name;
+        levelSelect.appendChild(option);
     });
 }
 
@@ -517,6 +526,15 @@ function updateCamera() {
 
 function updateEnemies() {
     currentLevelData.enemies.forEach(enemy => {
+        // Initialize enemy state if needed
+        if (enemy.originalY === undefined) {
+            enemy.originalY = enemy.y;
+        }
+        if (enemy.time === undefined) {
+            enemy.time = Math.random() * Math.PI * 2; // Random start phase
+        }
+
+        // Horizontal patrol movement
         enemy.x += enemy.vx;
 
         // Patrol behavior
@@ -524,6 +542,36 @@ function updateEnemies() {
             enemy.vx = -Math.abs(enemy.vx);
         } else if (enemy.x <= enemy.patrol.min) {
             enemy.vx = Math.abs(enemy.vx);
+        }
+
+        // Type-specific movement
+        if (enemy.type === 'flying') {
+            // Flying enemies bob up and down in a sine wave
+            enemy.time += 0.08;
+            const bobAmount = enemy.bobAmount || 40;
+            enemy.y = enemy.originalY + Math.sin(enemy.time) * bobAmount;
+        } else if (enemy.type === 'jumping') {
+            // Jumping enemies jump periodically
+            enemy.time += 0.05;
+            if (enemy.vy === undefined) enemy.vy = 0;
+            if (enemy.grounded === undefined) enemy.grounded = true;
+
+            // Apply gravity
+            enemy.vy += 0.5;
+            enemy.y += enemy.vy;
+
+            // Ground check
+            if (enemy.y >= enemy.originalY) {
+                enemy.y = enemy.originalY;
+                enemy.vy = 0;
+                enemy.grounded = true;
+            }
+
+            // Jump at intervals
+            if (enemy.grounded && Math.sin(enemy.time) > 0.95) {
+                enemy.vy = -(enemy.jumpStrength || 10);
+                enemy.grounded = false;
+            }
         }
     });
 }
@@ -655,11 +703,45 @@ function render() {
     }
 
     // Draw enemies
-    ctx.fillStyle = '#FF0000';
     currentLevelData.enemies.forEach(enemy => {
+        // Choose color based on enemy type
+        if (enemy.type === 'flying') {
+            ctx.fillStyle = '#9B59B6'; // Purple for flying
+        } else if (enemy.type === 'jumping') {
+            ctx.fillStyle = '#E67E22'; // Orange for jumping
+        } else {
+            ctx.fillStyle = '#FF0000'; // Red for ground
+        }
+
+        // Draw main body
         ctx.beginPath();
         ctx.arc(enemy.x, enemy.y, 20, 0, Math.PI * 2);
         ctx.fill();
+
+        // Type-specific decorations
+        if (enemy.type === 'flying') {
+            // Draw wings
+            ctx.fillStyle = '#8E44AD';
+            // Left wing
+            ctx.beginPath();
+            ctx.ellipse(enemy.x - 22, enemy.y, 12, 6, Math.PI / 6, 0, Math.PI * 2);
+            ctx.fill();
+            // Right wing
+            ctx.beginPath();
+            ctx.ellipse(enemy.x + 22, enemy.y, 12, 6, -Math.PI / 6, 0, Math.PI * 2);
+            ctx.fill();
+        } else if (enemy.type === 'jumping') {
+            // Draw spring coil below
+            ctx.strokeStyle = '#D35400';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            const springY = enemy.y + 18;
+            for (let i = 0; i < 3; i++) {
+                ctx.moveTo(enemy.x - 8 + i * 8, springY);
+                ctx.lineTo(enemy.x - 4 + i * 8, springY + 8);
+            }
+            ctx.stroke();
+        }
 
         // Evil eyes
         ctx.fillStyle = '#000';
@@ -824,11 +906,9 @@ document.getElementById('btn-copy-settings').addEventListener('click', () => {
 });
 
 // Level selection buttons
-document.querySelectorAll('.level-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        GameSettings.startLevel = parseInt(btn.dataset.level);
-        updateSettingsUI();
-    });
+// Level selection dropdown
+document.getElementById('level-select').addEventListener('change', (e) => {
+    GameSettings.startLevel = parseInt(e.target.value);
 });
 
 // Slider event listeners
@@ -920,6 +1000,8 @@ async function init() {
 
     // Load settings first
     loadSettings();
+    initializeLevelSelect(); // Populate dropdown
+    updateSettingsUI(); // Set initial value
 
     await loadAssets();
     console.log('Assets loaded!');

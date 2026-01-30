@@ -1323,7 +1323,7 @@ class GameApp {
             card.dataset.id = option.id;
 
             // Load Asset
-            const asset = await AssetLoader.loadMedia('./characters', option.name);
+            const asset = await AssetLoader.loadMedia('../../platform/images/characters', option.name);
             card.appendChild(asset);
 
             // Interaction
@@ -1390,7 +1390,7 @@ class GameApp {
             card.style.touchAction = 'manipulation';
 
             // Load Asset
-            const asset = await AssetLoader.loadMedia('./characters', option.name);
+            const asset = await AssetLoader.loadMedia('../../platform/images/characters', option.name);
             card.appendChild(asset);
 
             // Interaction - use both click and touchend for better mobile support
@@ -1468,7 +1468,7 @@ class GameApp {
             card.dataset.id = option.id;
 
             // Load Asset
-            const asset = await AssetLoader.loadMedia('./characters', option.name);
+            const asset = await AssetLoader.loadMedia('../../platform/images/characters', option.name);
             card.appendChild(asset);
 
             // Interaction
@@ -1539,7 +1539,7 @@ class GameApp {
             card.dataset.id = option.id;
 
             // Load Asset
-            const asset = await AssetLoader.loadMedia('./characters', option.name);
+            const asset = await AssetLoader.loadMedia('../../platform/images/characters', option.name);
             card.appendChild(asset);
 
             // Interaction

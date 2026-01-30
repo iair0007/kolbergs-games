@@ -26,5 +26,12 @@
     "description": "Play Tic Tac Toe with your favorite characters!",
     "path": "games/tic-tac-toe/index.html",
     "image": "platform/images/tic_tac_toe.png"
+  },
+  {
+    "id": "hebrew-hero",
+    "title": "גיבור העברית",
+    "description": "למידת קריאה וכתיבה בעברית לילדים",
+    "path": "games/hebrew-hero/index.html",
+    "image": "platform/images/hebrew_hero.png"
   }
 ]

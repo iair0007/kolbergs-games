@@ -7,6 +7,9 @@ body {
   font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
   background: linear-gradient(180deg, #1e90ff, #00bfff);
   color: #ffffff;
+  /* Override responsive.css constraints for the platform menu */
+  overflow-y: auto !important;
+  overscroll-behavior-y: auto;
 }
 
 main {

@@ -9,14 +9,14 @@ const GameState = {
 };
 
 const HEROES = [
-    { id: 'yuval_batman', name: 'באטמן', img: '../yuval-birthday/characters/yuval_batman.png' },
-    { id: 'yuval_flash', name: 'פלאש', img: '../yuval-birthday/characters/yuval_flash.png' },
-    { id: 'or_superman', name: 'סופרמן', img: '../yuval-birthday/characters/Or_superman.png' },
-    { id: 'or_thor', name: 'תור', img: '../yuval-birthday/characters/Or_thor.png' },
-    { id: 'mama_wonder', name: 'וונדר וומן', img: '../yuval-birthday/characters/mama_wonder.png' },
-    { id: 'mama_bishop', name: 'בישופ', img: '../yuval-birthday/characters/mama_bishop.png' },
-    { id: 'papa_capitan', name: 'קפטן אמריקה', img: '../yuval-birthday/characters/papa_capitan.png' },
-    { id: 'papa_hulk', name: 'האלק', img: '../yuval-birthday/characters/papa_hulk.png' }
+    { id: 'yuval_batman', name: 'באטמן', img: '../../platform/images/characters/yuval_batman.png' },
+    { id: 'yuval_flash', name: 'פלאש', img: '../../platform/images/characters/yuval_flash.png' },
+    { id: 'or_superman', name: 'סופרמן', img: '../../platform/images/characters/Or_superman.png' },
+    { id: 'or_thor', name: 'תור', img: '../../platform/images/characters/Or_thor.png' },
+    { id: 'mama_wonder', name: 'וונדר וומן', img: '../../platform/images/characters/mama_wonder.png' },
+    { id: 'mama_bishop', name: 'בישופ', img: '../../platform/images/characters/mama_bishop.png' },
+    { id: 'papa_capitan', name: 'קפטן אמריקה', img: '../../platform/images/characters/papa_capitan.png' },
+    { id: 'papa_hulk', name: 'האלק', img: '../../platform/images/characters/papa_hulk.png' }
 ];
 
 function init() {
