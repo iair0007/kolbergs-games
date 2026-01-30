@@ -462,3 +462,19 @@ input[type="range"]::-moz-range-thumb {
         padding: 10px 25px;
     }
 }
+
+/* Mobile Level Selector */
+.mobile-level-select-container {
+    width: 80%;
+    max-width: 300px;
+    margin: 15px auto;
+    text-align: left;
+}
+
+.mobile-level-select-container label {
+    display: block;
+    color: white;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}

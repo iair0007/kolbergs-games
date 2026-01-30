@@ -17,7 +17,8 @@ const DEFAULT_SETTINGS = {
     minJumpStrength: 8,
     gravity: 0.5,
     startingLives: 5,
-    flyDuration: 5000  // milliseconds
+    flyDuration: 5000,  // milliseconds
+    difficultyMultiplier: 1.0 // Scaling factor per level
 };
 
 // Current game settings (loaded from localStorage or defaults)
@@ -30,6 +31,7 @@ let MAX_JUMP_STRENGTH = -GameSettings.maxJumpStrength;
 let MIN_JUMP_STRENGTH = -GameSettings.minJumpStrength;
 let PLAYER_SPEED = GameSettings.playerSpeed;
 let FLY_DURATION = GameSettings.flyDuration;
+let DIFFICULTY = 1.0;
 
 // ===========================
 // GAME STATE
@@ -339,8 +341,10 @@ function updateSettingsUI() {
 }
 
 function initializeLevelSelect() {
-    const levelSelect = document.getElementById('level-select');
-    levelSelect.innerHTML = '';
+    const levelSelects = [
+        document.getElementById('level-select'),       // Settings one
+        document.getElementById('start-level-select')  // Start screen one
+    ];
 
     // Create an array of objects with { originalIndex, levelData }
     const sortedLevels = LEVELS.map((level, index) => ({
@@ -348,16 +352,32 @@ function initializeLevelSelect() {
         name: level.name
     })).sort((a, b) => {
         // Extract level number from name "Level X - ..."
-        const numA = parseInt(a.name.match(/Level (\d+)/)[1]);
-        const numB = parseInt(b.name.match(/Level (\d+)/)[1]);
+        const matchA = a.name.match(/Level (\d+)/);
+        const matchB = b.name.match(/Level (\d+)/);
+        const numA = matchA ? parseInt(matchA[1]) : 0;
+        const numB = matchB ? parseInt(matchB[1]) : 0;
         return numA - numB;
     });
 
-    sortedLevels.forEach((levelObj) => {
-        const option = document.createElement('option');
-        option.value = levelObj.index;
-        option.textContent = levelObj.name;
-        levelSelect.appendChild(option);
+    levelSelects.forEach(select => {
+        if (!select) return;
+        select.innerHTML = '';
+        sortedLevels.forEach((levelObj) => {
+            const option = document.createElement('option');
+            option.value = levelObj.index;
+            option.textContent = levelObj.name;
+            select.appendChild(option);
+        });
+        // Set default value
+        select.value = GameSettings.startLevel;
+
+        // Add listener to sync changes
+        select.addEventListener('change', (e) => {
+            GameSettings.startLevel = parseInt(e.target.value);
+            // Sync other selectors
+            levelSelects.forEach(s => s && (s.value = GameSettings.startLevel));
+            saveSettings();
+        });
     });
 }
 
@@ -432,6 +452,32 @@ function loadLevel(levelIndex) {
     GameState.powerUp = { type: null, timeLeft: 0 };
 
     updateUI();
+
+    // Apply difficulty scaling
+    // Level 0 = 0% increase, Level 10 = 100% increase (example)
+    // Formula: 1 + (LevelIndex * 0.1)
+    DIFFICULTY = 1 + (levelIndex * 0.1);
+
+    // Increase player speed slightly
+    PLAYER_SPEED = GameSettings.playerSpeed * (1 + (levelIndex * 0.05));
+
+    // Increase enemy speed
+    currentLevelData.enemies.forEach(e => {
+        if (e.vx) e.vx *= DIFFICULTY;
+        if (e.patrol) {
+            // Ensure patrol range is respected, but speed is higher
+        }
+
+        // Chance to add flying behavior to some enemies in higher levels
+        if (levelIndex > 3 && Math.random() < (levelIndex * 0.1)) {
+            // 10% chance per level above 3 to become a flyer if it wasn't
+            if (e.type !== 'flying' && e.type !== 'jumping') {
+                // Convert some ground enemies to jumpers/flyers
+                // e.type = 'jumping'; // Let's not mutate type blindly as it needs assets
+            }
+        }
+    });
+
     saveProgress();
 }
 
@@ -1004,83 +1050,26 @@ document.getElementById('fly-slider').addEventListener('input', (e) => {
 // Remove old test mode keyboard shortcut
 // (replaced by settings screen)
 
-function startGame(continue_from_save) {
-    if (continue_from_save) {
-        const progress = loadProgress();
-        GameState.currentLevel = progress.lastLevel || 0;
-    } else {
-        GameState.lives = GameSettings.startingLives;  // Use settings
-        GameState.score = 0;
-        GameState.currentLevel = GameSettings.startLevel;  // Use settings
-    }
-
-    loadLevel(GameState.currentLevel);
-    hideAllScreens();
-    GameState.gameRunning = true;
-}
-
 function nextLevel() {
     loadLevel(GameState.currentLevel + 1);
     hideAllScreens();
     GameState.gameRunning = true;
 }
 
-function restartGame() {
-    GameState.lives = GameSettings.startingLives;  // Use settings
+function hideAllScreens() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('touch-controls').style.display = 'flex';
+}
+
+function startGame() {
+    // Start game from selected level
+    // If startGame() is called with no args, it relies on GameSettings
+    GameState.lives = GameSettings.startingLives;
     GameState.score = 0;
+    GameState.currentLevel = GameSettings.startLevel;
     loadLevel(GameState.currentLevel);
     hideAllScreens();
     GameState.gameRunning = true;
+    lastLoopTime = Date.now();
+    requestAnimationFrame(gameLoop);
 }
-
-function showMainMenu() {
-    GameState.gameRunning = false;
-
-    // Check if there's saved progress
-    const progress = loadProgress();
-    const continueBtn = document.getElementById('btn-continue');
-    if (progress.lastLevel !== null && progress.lastLevel < LEVELS.length - 1) {
-        continueBtn.style.display = 'block';
-        const levelName = LEVELS[progress.lastLevel].name;
-        const match = levelName.match(/Level (\d+)/);
-        const levelNum = match ? match[1] : (progress.lastLevel + 1);
-        continueBtn.textContent = `CONTINUE (Level ${levelNum})`;
-    } else {
-        continueBtn.style.display = 'none';
-    }
-
-    showScreen('start-screen');
-}
-
-// Remove old showLevelSelect function (replaced by settings screen)
-
-// ===========================
-// INITIALIZATION
-// ===========================
-async function init() {
-    console.log('Super Boy Run - Loading...');
-
-    // Load settings first
-    loadSettings();
-    initializeLevelSelect(); // Populate dropdown
-    updateSettingsUI(); // Set initial value
-
-    await loadAssets();
-    console.log('Assets loaded!');
-    loadLevel(0);
-
-    // Check for saved progress
-    const progress = loadProgress();
-    const continueBtn = document.getElementById('btn-continue');
-    if (progress.lastLevel !== null && progress.lastLevel < LEVELS.length - 1) {
-        continueBtn.style.display = 'block';
-        const levelName = LEVELS[progress.lastLevel].name;
-        const match = levelName.match(/Level (\d+)/);
-        const levelNum = match ? match[1] : (progress.lastLevel + 1);
-        continueBtn.textContent = `CONTINUE (Level ${levelNum})`;
-    }
-
-    gameLoop();
-}
-
-window.onload = init;
