@@ -87,25 +87,26 @@ body {
 #touch-controls {
     position: absolute;
     bottom: 20px;
-    left: 0;
-    right: 0;
+    left: 20px;
+    right: auto;
     display: none;
-    justify-content: space-between;
-    padding: 0 20px;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 0;
     pointer-events: none;
     z-index: 15;
 }
 
 .control-btn {
     pointer-events: all;
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     border: 3px solid rgba(255, 255, 255, 0.8);
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
     color: white;
-    font-size: 28px;
+    font-size: 32px;
     font-weight: bold;
     cursor: pointer;
     user-select: none;
@@ -119,19 +120,6 @@ body {
 .control-btn:active {
     transform: scale(0.9);
     background: rgba(255, 255, 255, 0.3);
-}
-
-.jump-btn {
-    position: absolute;
-    right: 20px;
-    width: 80px;
-    height: 80px;
-    background: rgba(255, 215, 0, 0.6);
-    border-color: #FFD700;
-}
-
-.jump-btn:active {
-    background: rgba(255, 215, 0, 0.8);
 }
 
 /* Show touch controls on mobile */
@@ -377,6 +365,7 @@ input[type="range"] {
     background: rgba(255, 255, 255, 0.2);
     outline: none;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 input[type="range"]::-webkit-slider-thumb {

@@ -31,20 +31,28 @@
         <div id="touch-controls">
             <button id="btn-left" class="control-btn">◄</button>
             <button id="btn-right" class="control-btn">►</button>
-            <button id="btn-jump" class="control-btn jump-btn">↑</button>
         </div>
 
         <!-- Start Screen -->
         <div id="start-screen" class="screen active">
             <!-- Corner Navigation -->
             <div class="corner-nav">
-                <a href="../../index.html" class="corner-btn corner-btn-left">🏠</a>
+                <button id="btn-home" class="corner-btn corner-btn-left">🏠</button>
                 <button id="btn-settings" class="corner-btn corner-btn-right desktop-only">⚙️</button>
             </div>
 
             <div class="screen-content">
                 <h1>🏃 SUPER BOY RUN</h1>
                 <p>Jump, run, and reach the goal!</p>
+
+                <!-- Mobile Level Selector -->
+                <div class="mobile-level-select-container">
+                    <label for="start-level-select">Start Level:</label>
+                    <select id="start-level-select" class="level-select">
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+
                 <div class="action-buttons">
                     <button id="btn-continue" class="game-btn" style="display:none;">CONTINUE</button>
                     <button id="btn-start" class="game-btn">NEW GAME</button>

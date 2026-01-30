@@ -41,7 +41,7 @@ const HEBREW_LETTERS = [
 
 // Simple Hebrew words for kids with emojis as hints
 const HEBREW_WORDS = [
-    // Easy words (2-3 letters, common objects)
+    // Easy words (2-3 letters, distinct sounds)
     { word: 'אב', emoji: '👨', hint: 'אָבָא', difficulty: 'easy', category: 'family' },
     { word: 'אם', emoji: '👩', hint: 'אִמָא', difficulty: 'easy', category: 'family' },
     { word: 'יד', emoji: '✋', hint: 'יָד', difficulty: 'easy', category: 'body' },
@@ -50,8 +50,16 @@ const HEBREW_WORDS = [
     { word: 'גב', emoji: '🔙', hint: 'גָב', difficulty: 'easy', category: 'body' },
     { word: 'כד', emoji: '🏺', hint: 'כַד', difficulty: 'easy', category: 'objects' },
     { word: 'חם', emoji: '🔥', hint: 'חָם', difficulty: 'easy', category: 'weather' },
+    { word: 'קר', emoji: '❄️', hint: 'קַר', difficulty: 'easy', category: 'weather' },
+    { word: 'גן', emoji: '🏡', hint: 'גַן', difficulty: 'easy', category: 'places' },
+    { word: 'הר', emoji: '⛰️', hint: 'הַר', difficulty: 'easy', category: 'nature' },
+    { word: 'נר', emoji: '🕯️', hint: 'נֵר', difficulty: 'easy', category: 'objects' },
+    { word: 'סל', emoji: '🧺', hint: 'סַל', difficulty: 'easy', category: 'objects' },
+    { word: 'כף', emoji: '🥄', hint: 'כַּף', difficulty: 'easy', category: 'objects' },
+    { word: 'גמל', emoji: '🐫', hint: 'גָמָל', difficulty: 'easy', category: 'animals' },
+    { word: 'זאב', emoji: '🐺', hint: 'זְאֵב', difficulty: 'easy', category: 'animals' },
 
-    // Medium words (3-4 letters)
+    // Medium words (3-4 letters, common words)
     { word: 'בית', emoji: '🏠', hint: 'בַּיִת', difficulty: 'medium', category: 'places' },
     { word: 'ילד', emoji: '👦', hint: 'יֶלֶד', difficulty: 'medium', category: 'people' },
     { word: 'ילדה', emoji: '👧', hint: 'יַלְדָה', difficulty: 'medium', category: 'people' },
@@ -71,8 +79,17 @@ const HEBREW_WORDS = [
     { word: 'דלת', emoji: '🚪', hint: 'דֶּלֶת', difficulty: 'medium', category: 'objects' },
     { word: 'שולחן', emoji: '🪑', hint: 'שֻׁלְחָן', difficulty: 'medium', category: 'furniture' },
     { word: 'כיסא', emoji: '💺', hint: 'כִּסֵּא', difficulty: 'medium', category: 'furniture' },
+    { word: 'רכבת', emoji: '🚂', hint: 'רַכֶּבֶת', difficulty: 'medium', category: 'vehicles' },
+    { word: 'בובה', emoji: '🎎', hint: 'בֻּבָּה', difficulty: 'medium', category: 'toys' },
+    { word: 'בלון', emoji: '🎈', hint: 'בָּלוֹן', difficulty: 'medium', category: 'toys' },
+    { word: 'תפוז', emoji: '🍊', hint: 'תַּפּוּז', difficulty: 'medium', category: 'food' },
+    { word: 'לימון', emoji: '🍋', hint: 'לִימוֹן', difficulty: 'medium', category: 'food' },
+    { word: 'גזר', emoji: '🥕', hint: 'גֶזֶר', difficulty: 'medium', category: 'food' },
+    { word: 'אריה', emoji: '🦁', hint: 'אַרְיֵה', difficulty: 'medium', category: 'animals' },
+    { word: 'נמר', emoji: '🐅', hint: 'נָמֵר', difficulty: 'medium', category: 'animals' },
+    { word: 'פיל', emoji: '🐘', hint: 'פִּיל', difficulty: 'medium', category: 'animals' },
 
-    // Hard words (longer words, less common)
+    // Hard words (longer words, specific spelling rules)
     { word: 'פרפר', emoji: '🦋', hint: 'פַּרְפַּר', difficulty: 'hard', category: 'animals' },
     { word: 'גלידה', emoji: '🍦', hint: 'גְּלִידָה', difficulty: 'hard', category: 'food' },
     { word: 'מחשב', emoji: '💻', hint: 'מַחְשֵׁב', difficulty: 'hard', category: 'objects' },
@@ -84,7 +101,20 @@ const HEBREW_WORDS = [
     { word: 'מכנסיים', emoji: '👖', hint: 'מִכְנָסַיִם', difficulty: 'hard', category: 'clothes' },
     { word: 'חולצה', emoji: '👕', hint: 'חֻלְצָה', difficulty: 'hard', category: 'clothes' },
     { word: 'ארנב', emoji: '🐰', hint: 'אַרְנָב', difficulty: 'hard', category: 'animals' },
-    { word: 'דובדבן', emoji: '🍒', hint: 'דֻּבְדְּבָן', difficulty: 'hard', category: 'food' }
+    { word: 'דובדבן', emoji: '🍒', hint: 'דֻּבְדְּבָן', difficulty: 'hard', category: 'food' },
+    { word: 'צב', emoji: '🐢', hint: 'צָב', difficulty: 'hard', category: 'animals' },
+    { word: 'תרנגול', emoji: '🐓', hint: 'תַּרְנְגוֹל', difficulty: 'hard', category: 'animals' },
+    { word: 'טלוויזיה', emoji: '📺', hint: 'טֶלֶוִיזְיָה', difficulty: 'hard', category: 'objects' },
+    { word: 'מכונית', emoji: '🚗', hint: 'מְכוֹנִית', difficulty: 'hard', category: 'vehicles' },
+    { word: 'אוטובוס', emoji: '🚌', hint: 'אוֹטוֹבּוּס', difficulty: 'hard', category: 'vehicles' },
+    { word: 'מטוס', emoji: '✈️', hint: 'מָטוֹס', difficulty: 'hard', category: 'vehicles' },
+    { word: 'ספינה', emoji: '🚢', hint: 'סְפִינָה', difficulty: 'hard', category: 'vehicles' },
+    { word: 'מסוק', emoji: '🚁', hint: 'מַסּוֹק', difficulty: 'hard', category: 'vehicles' },
+    { word: 'גיטרה', emoji: '🎸', hint: 'גִּיטָרָה', difficulty: 'hard', category: 'music' },
+    { word: 'פסנתר', emoji: '🎹', hint: 'פְּסַנְתֵּר', difficulty: 'hard', category: 'music' },
+    { word: 'תוף', emoji: '🥁', hint: 'תֹּף', difficulty: 'hard', category: 'music' },
+    { word: 'כדורגל', emoji: '⚽', hint: 'כַּדּוּרֶגֶל', difficulty: 'hard', category: 'sports' },
+    { word: 'כדורסל', emoji: '🏀', hint: 'כַּדּוּרְסַל', difficulty: 'hard', category: 'sports' }
 ];
 
 // Encouragement messages for correct answers

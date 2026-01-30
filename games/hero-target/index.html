@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Hero Target Practice | Kolberg's Games</title>
+    <link rel="stylesheet" href="../../platform/responsive.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <a href="../../index.html" class="home-button" aria-label="Go Home">🏠</a>
+
+        <div id="game-container">
+            <!-- Hero Selection Screen -->
+            <div id="selection-screen" class="screen active">
+                <h1 class="game-title">CHOOSE YOUR HERO!</h1>
+                <div class="heroes-grid" id="heroes-grid">
+                    <!-- Heroes injected via JS -->
+                </div>
+            </div>
+
+            <!-- Game HUD -->
+            <div id="hud" class="hidden">
+                <div class="score-board">
+                    <span id="score">0</span>
+                    <span id="multiplier" class="hidden">x1</span>
+                </div>
+                <div class="lives" id="lives">
+                    ❤️❤️❤️
+                </div>
+            </div>
+
+            <!-- Game Area -->
+            <div id="game-area" class="hidden">
+                <div id="background-layer"></div>
+                <div id="targets-layer"></div>
+                <div id="projectiles-layer"></div>
+                <div id="hero-container"></div>
+            </div>
+
+            <!-- Game Over Screen -->
+            <div id="game-over-screen" class="screen hidden">
+                <h2>MISSION COMPLETE!</h2>
+                <div id="final-stats">
+                    <div class="stars" id="final-stars">⭐⭐⭐</div>
+                    <div class="final-score">Score: <span id="final-score-val">0</span></div>
+                    <div class="high-score">High Score: <span id="high-score-val">0</span></div>
+                </div>
+                <div class="buttons">
+                    <button id="retry-btn" class="action-btn">PLAY AGAIN</button>
+                    <button id="menu-btn" class="action-btn">CHANGE HERO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="main.js" type="module"></script>
+</body>
+
+</html>

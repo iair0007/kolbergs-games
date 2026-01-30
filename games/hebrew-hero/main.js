@@ -1,8 +1,3 @@
-/**
- * Hebrew Hero - Main Game Logic
- * An educational Hebrew reading and writing game for kids ages 6-8
- */
-
 // ==========================================
 // GAME STATE
 // ==========================================
@@ -16,14 +11,12 @@ const GameState = {
     coins: 0,
     totalStars: 0,
     totalCoins: 0,
-    timerEnabled: false,
     soundEnabled: true,
     activeLetters: null, // null means all letters active
     currentTarget: null,
     currentWord: null,
     selectedLetters: [],
-    isTracing: false,
-    traceGuideVisible: true
+    levelCompletionCount: 0 // Track wins for progression
 };
 
 // ==========================================
@@ -32,7 +25,6 @@ const GameState = {
 function init() {
     loadProgress();
     setupEventListeners();
-    setupSettingsPanel();
     updateStatsDisplay();
 }
 
@@ -42,9 +34,8 @@ function loadProgress() {
         const data = JSON.parse(saved);
         GameState.totalStars = data.totalStars || 0;
         GameState.totalCoins = data.totalCoins || 0;
-        GameState.difficulty = data.difficulty || 'easy';
-        GameState.activeLetters = data.activeLetters || null;
-        GameState.timerEnabled = data.timerEnabled || false;
+        // GameState.difficulty = data.difficulty || 'easy'; // Don't auto-load difficulty, let user choose
+        GameState.levelCompletionCount = data.levelCompletionCount || 0;
         GameState.soundEnabled = data.soundEnabled !== false;
     }
 }
@@ -53,9 +44,7 @@ function saveProgress() {
     localStorage.setItem('hebrewHeroProgress', JSON.stringify({
         totalStars: GameState.totalStars,
         totalCoins: GameState.totalCoins,
-        difficulty: GameState.difficulty,
-        activeLetters: GameState.activeLetters,
-        timerEnabled: GameState.timerEnabled,
+        levelCompletionCount: GameState.levelCompletionCount,
         soundEnabled: GameState.soundEnabled
     }));
 }
@@ -79,7 +68,7 @@ function showScreen(screenId) {
 // EVENT LISTENERS
 // ==========================================
 function setupEventListeners() {
-    // Difficulty buttons on welcome screen
+    // Difficulty buttons on mode screen
     document.querySelectorAll('.difficulty-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('selected'));
@@ -88,7 +77,7 @@ function setupEventListeners() {
         });
     });
 
-    // Start game button
+    // Start game button (Welcome -> Mode)
     document.getElementById('start-game').addEventListener('click', () => {
         showScreen('mode-screen');
     });
@@ -109,24 +98,23 @@ function setupEventListeners() {
     // Word game controls
     document.getElementById('clear-word')?.addEventListener('click', clearWordSlots);
     document.getElementById('check-word')?.addEventListener('click', checkWord);
-
-    // Trace game controls
-    document.getElementById('toggle-guide')?.addEventListener('click', toggleTraceGuide);
-    document.getElementById('clear-canvas')?.addEventListener('click', clearCanvas);
-    document.getElementById('submit-trace')?.addEventListener('click', submitTrace);
-
-    // Sound match reveal hint
-    document.getElementById('reveal-hint')?.addEventListener('click', revealLetterHint);
+    document.getElementById('word-hint-btn')?.addEventListener('click', revealWordHint);
 
     // Complete screen buttons
     document.getElementById('play-again')?.addEventListener('click', () => {
         startGame(GameState.currentMode);
     });
-    document.getElementById('back-to-modes')?.addEventListener('click', () => {
-        showScreen('mode-screen');
+    document.getElementById('next-level-btn')?.addEventListener('click', () => {
+        advanceDifficulty();
+        startGame(GameState.currentMode);
     });
+
     document.getElementById('back-to-menu')?.addEventListener('click', () => {
         showScreen('welcome-screen');
+    });
+
+    document.getElementById('back-to-modes')?.addEventListener('click', () => {
+        showScreen('mode-screen');
     });
 
     // Game screen back buttons - go back to mode selection
@@ -135,71 +123,6 @@ function setupEventListeners() {
     });
     document.getElementById('word-back-to-modes')?.addEventListener('click', () => {
         showScreen('mode-screen');
-    });
-    document.getElementById('trace-back-to-modes')?.addEventListener('click', () => {
-        showScreen('mode-screen');
-    });
-    document.getElementById('sound-back-to-modes')?.addEventListener('click', () => {
-        showScreen('mode-screen');
-    });
-
-    // Settings toggle
-    document.getElementById('settings-toggle').addEventListener('click', () => {
-        document.getElementById('settings-panel').classList.toggle('visible');
-    });
-}
-
-// ==========================================
-// SETTINGS PANEL
-// ==========================================
-function setupSettingsPanel() {
-    // Populate letter toggles
-    const container = document.getElementById('letters-toggle');
-    HEBREW_LETTERS.forEach(letterData => {
-        const label = document.createElement('label');
-        label.className = 'letter-toggle';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = letterData.letter;
-        checkbox.checked = !GameState.activeLetters || GameState.activeLetters.includes(letterData.letter);
-
-        const span = document.createElement('span');
-        span.textContent = letterData.letter;
-
-        label.appendChild(checkbox);
-        label.appendChild(span);
-        container.appendChild(label);
-    });
-
-    // Set initial values
-    document.getElementById('setting-difficulty').value = GameState.difficulty;
-    document.getElementById('setting-timer').checked = GameState.timerEnabled;
-    document.getElementById('setting-sound').checked = GameState.soundEnabled;
-
-    // Save settings
-    document.getElementById('save-settings').addEventListener('click', () => {
-        GameState.difficulty = document.getElementById('setting-difficulty').value;
-        GameState.timerEnabled = document.getElementById('setting-timer').checked;
-        GameState.soundEnabled = document.getElementById('setting-sound').checked;
-
-        // Get active letters
-        const checkedLetters = Array.from(document.querySelectorAll('#letters-toggle input:checked'))
-            .map(input => input.value);
-        GameState.activeLetters = checkedLetters.length === HEBREW_LETTERS.length ? null : checkedLetters;
-
-        // Update difficulty buttons
-        document.querySelectorAll('.difficulty-btn').forEach(btn => {
-            btn.classList.toggle('selected', btn.dataset.difficulty === GameState.difficulty);
-        });
-
-        saveProgress();
-        document.getElementById('settings-panel').classList.remove('visible');
-    });
-
-    // Close settings
-    document.getElementById('close-settings').addEventListener('click', () => {
-        document.getElementById('settings-panel').classList.remove('visible');
     });
 }
 
@@ -224,15 +147,6 @@ function startGame(mode) {
         case 'build-word':
             showScreen('build-word-screen');
             nextBuildWord();
-            break;
-        case 'trace-letter':
-            showScreen('trace-letter-screen');
-            setupTraceCanvas();
-            nextTraceLetter();
-            break;
-        case 'sound-match':
-            showScreen('sound-match-screen');
-            nextSoundMatch();
             break;
     }
 }
@@ -327,25 +241,24 @@ function nextBuildWord() {
     updateProgress('word');
 
     const config = DIFFICULTY_CONFIG[GameState.difficulty];
-    const wordPool = config.wordPool.filter(w => {
-        if (!GameState.activeLetters) return true;
-        return w.word.split('').every(char => GameState.activeLetters.includes(char));
+    // Filter words by difficulty (allow easier words in hard mode too)
+    const wordPool = HEBREW_WORDS.filter(w => {
+        if (GameState.difficulty === 'hard') return true;
+        if (GameState.difficulty === 'medium') return w.difficulty !== 'hard';
+        return w.difficulty === 'easy';
     });
 
-    if (wordPool.length === 0) {
-        // Fallback to all words if none match active letters
-        const fallbackPool = HEBREW_WORDS.filter(w => w.difficulty === GameState.difficulty || w.difficulty === 'easy');
-        GameState.currentWord = fallbackPool[Math.floor(Math.random() * fallbackPool.length)];
-    } else {
-        GameState.currentWord = wordPool[Math.floor(Math.random() * wordPool.length)];
-    }
-
+    GameState.currentWord = wordPool[Math.floor(Math.random() * wordPool.length)];
     const word = GameState.currentWord;
     GameState.selectedLetters = [];
 
-    // Display hint
+    // Display hint (emoji only, text hidden)
     document.getElementById('word-emoji').textContent = word.emoji;
-    document.getElementById('word-hint').textContent = word.hint;
+    const hintText = document.getElementById('word-hint');
+    hintText.textContent = word.hint;
+    hintText.classList.remove('hidden'); // Ensure class doesn't hide it
+    hintText.style.visibility = 'hidden';
+    document.getElementById('word-hint-btn').style.display = ''; // Use CSS default
 
     // Create slots
     const slotsContainer = document.getElementById('word-slots');
@@ -359,8 +272,19 @@ function nextBuildWord() {
         slotsContainer.appendChild(slot);
     }
 
-    // Create letter bank (scrambled)
-    const letters = word.word.split('');
+    // Create letter bank (Target letters + Distractors)
+    let letters = word.word.split('');
+
+    // Add distractors for Medium/Hard
+    if (GameState.difficulty !== 'easy') {
+        const numDistractors = GameState.difficulty === 'medium' ? 2 : 4;
+        const allLetters = HEBREW_LETTERS.map(l => l.letter);
+        for (let i = 0; i < numDistractors; i++) {
+            const randomLetter = allLetters[Math.floor(Math.random() * allLetters.length)];
+            letters.push(randomLetter);
+        }
+    }
+
     shuffleArray(letters);
 
     const bankContainer = document.getElementById('letter-bank');
@@ -377,6 +301,15 @@ function nextBuildWord() {
     });
 
     clearFeedback('word');
+}
+
+function revealWordHint() {
+    const hintText = document.getElementById('word-hint');
+    hintText.style.visibility = 'visible';
+    // Optionally hide it again after a few seconds
+    setTimeout(() => {
+        hintText.style.visibility = 'hidden';
+    }, 3000);
 }
 
 function selectBankLetter(letter, button) {
@@ -478,278 +411,65 @@ function checkWord() {
 }
 
 // ==========================================
-// TRACE LETTER GAME
-// ==========================================
-let traceCanvas, traceCtx;
-
-function setupTraceCanvas() {
-    traceCanvas = document.getElementById('trace-canvas');
-    traceCtx = traceCanvas.getContext('2d');
-
-    // Set canvas size
-    const container = traceCanvas.parentElement;
-    const size = Math.min(container.clientWidth - 40, 300);
-    traceCanvas.width = size;
-    traceCanvas.height = size;
-
-    // Drawing events
-    let isDrawing = false;
-    let lastX = 0;
-    let lastY = 0;
-
-    function startDrawing(e) {
-        isDrawing = true;
-        const coords = getCoords(e);
-        lastX = coords.x;
-        lastY = coords.y;
-    }
-
-    function draw(e) {
-        if (!isDrawing) return;
-        e.preventDefault();
-
-        const coords = getCoords(e);
-
-        traceCtx.strokeStyle = '#4a90d9';
-        traceCtx.lineWidth = 12;
-        traceCtx.lineCap = 'round';
-        traceCtx.lineJoin = 'round';
-
-        traceCtx.beginPath();
-        traceCtx.moveTo(lastX, lastY);
-        traceCtx.lineTo(coords.x, coords.y);
-        traceCtx.stroke();
-
-        lastX = coords.x;
-        lastY = coords.y;
-    }
-
-    function stopDrawing() {
-        isDrawing = false;
-    }
-
-    function getCoords(e) {
-        const rect = traceCanvas.getBoundingClientRect();
-        const scaleX = traceCanvas.width / rect.width;
-        const scaleY = traceCanvas.height / rect.height;
-
-        if (e.touches) {
-            return {
-                x: (e.touches[0].clientX - rect.left) * scaleX,
-                y: (e.touches[0].clientY - rect.top) * scaleY
-            };
-        }
-        return {
-            x: (e.clientX - rect.left) * scaleX,
-            y: (e.clientY - rect.top) * scaleY
-        };
-    }
-
-    // Mouse events
-    traceCanvas.addEventListener('mousedown', startDrawing);
-    traceCanvas.addEventListener('mousemove', draw);
-    traceCanvas.addEventListener('mouseup', stopDrawing);
-    traceCanvas.addEventListener('mouseout', stopDrawing);
-
-    // Touch events
-    traceCanvas.addEventListener('touchstart', startDrawing, { passive: false });
-    traceCanvas.addEventListener('touchmove', draw, { passive: false });
-    traceCanvas.addEventListener('touchend', stopDrawing);
-}
-
-function nextTraceLetter() {
-    if (GameState.currentQuestion >= GameState.totalQuestions) {
-        showCompleteScreen();
-        return;
-    }
-
-    GameState.currentQuestion++;
-    updateProgress('trace');
-
-    const letterPool = getAvailableLetters();
-    const targetLetter = letterPool[Math.floor(Math.random() * letterPool.length)];
-    GameState.currentTarget = targetLetter;
-
-    // Display guide letter
-    const guideEl = document.getElementById('trace-guide-letter');
-    guideEl.textContent = targetLetter.letter;
-    guideEl.style.opacity = GameState.traceGuideVisible ? '0.4' : '0';
-
-    // Clear canvas
-    clearCanvas();
-    clearFeedback('trace');
-}
-
-function toggleTraceGuide() {
-    GameState.traceGuideVisible = !GameState.traceGuideVisible;
-    const guideEl = document.getElementById('trace-guide-letter');
-    guideEl.style.opacity = GameState.traceGuideVisible ? '0.4' : '0';
-
-    const btn = document.getElementById('toggle-guide');
-    btn.querySelector('span:first-child').textContent = GameState.traceGuideVisible ? '👁️' : '👁️‍🗨️';
-}
-
-function clearCanvas() {
-    if (traceCtx) {
-        traceCtx.clearRect(0, 0, traceCanvas.width, traceCanvas.height);
-    }
-}
-
-function submitTrace() {
-    const config = DIFFICULTY_CONFIG[GameState.difficulty];
-
-    // Calculate "coverage" - how much of the canvas has been drawn on
-    const imageData = traceCtx.getImageData(0, 0, traceCanvas.width, traceCanvas.height);
-    const pixels = imageData.data;
-    let drawnPixels = 0;
-
-    for (let i = 3; i < pixels.length; i += 4) {
-        if (pixels[i] > 0) drawnPixels++;
-    }
-
-    const coverage = drawnPixels / (traceCanvas.width * traceCanvas.height);
-
-    // Simple scoring: if they drew something (at least 3% coverage), it's a "nice try"
-    // For a real app, you'd use more sophisticated recognition
-    const minCoverage = 0.03;
-    const isGoodAttempt = coverage >= minCoverage;
-
-    if (isGoodAttempt) {
-        GameState.correctAnswers++;
-        // Give partial or full points based on coverage
-        const coverageBonus = Math.min(1, coverage / 0.15); // Max bonus at 15% coverage
-        GameState.stars += Math.floor(config.starsPerCorrect * coverageBonus);
-        GameState.coins += Math.floor(config.coinsPerCorrect * coverageBonus);
-
-        showFeedback('trace', true, 'יפה מאוד! ✏️');
-        playSound('correct');
-
-        setTimeout(() => {
-            nextTraceLetter();
-        }, 1500);
-    } else {
-        showFeedback('trace', false, 'נסה לצייר את האות');
-        playSound('wrong');
-    }
-}
-
-// ==========================================
-// SOUND MATCH GAME
-// ==========================================
-function nextSoundMatch() {
-    if (GameState.currentQuestion >= GameState.totalQuestions) {
-        showCompleteScreen();
-        return;
-    }
-
-    GameState.currentQuestion++;
-    updateProgress('sound');
-
-    const config = DIFFICULTY_CONFIG[GameState.difficulty];
-    const letterPool = getAvailableLetters();
-
-    // Pick random target letter
-    const targetIndex = Math.floor(Math.random() * letterPool.length);
-    const targetLetter = letterPool[targetIndex];
-    GameState.currentTarget = targetLetter;
-
-    // Display letter name (audio would go here)
-    const nameDisplay = document.getElementById('letter-name-display');
-    const hebrewName = nameDisplay.querySelector('.letter-name-hebrew');
-    hebrewName.textContent = targetLetter.name;
-
-    // Reset hint button
-    const hintBtn = document.getElementById('reveal-hint');
-    hintBtn.style.display = config.hintsEnabled ? 'inline-block' : 'none';
-    hintBtn.dataset.revealed = 'false';
-    hintBtn.textContent = '💡 הצג רמז';
-
-    // Generate options
-    const options = [targetLetter];
-    const otherLetters = letterPool.filter(l => l.letter !== targetLetter.letter);
-
-    while (options.length < config.optionsCount && otherLetters.length > 0) {
-        const randomIndex = Math.floor(Math.random() * otherLetters.length);
-        options.push(otherLetters.splice(randomIndex, 1)[0]);
-    }
-
-    shuffleArray(options);
-
-    // Render options
-    const optionsContainer = document.getElementById('sound-options');
-    optionsContainer.innerHTML = '';
-
-    options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn letter-option';
-        btn.textContent = opt.letter;
-        btn.addEventListener('click', () => checkSoundMatch(opt.letter, btn));
-        optionsContainer.appendChild(btn);
-    });
-
-    clearFeedback('sound');
-}
-
-function revealLetterHint() {
-    const btn = document.getElementById('reveal-hint');
-    if (btn.dataset.revealed === 'true') return;
-
-    btn.dataset.revealed = 'true';
-    btn.textContent = `רמז: ${GameState.currentTarget.transliteration}`;
-}
-
-function checkSoundMatch(selectedLetter, button) {
-    const config = DIFFICULTY_CONFIG[GameState.difficulty];
-    const isCorrect = selectedLetter === GameState.currentTarget.letter;
-
-    if (isCorrect) {
-        button.classList.add('correct');
-        GameState.correctAnswers++;
-        GameState.stars += config.starsPerCorrect;
-        GameState.coins += config.coinsPerCorrect;
-        showFeedback('sound', true);
-        playSound('correct');
-
-        setTimeout(() => {
-            nextSoundMatch();
-        }, 1200);
-    } else {
-        button.classList.add('wrong');
-        showFeedback('sound', false);
-        playSound('wrong');
-        button.disabled = true;
-    }
-}
-
-// ==========================================
-// COMPLETE SCREEN
+// COMPLETE SCREEN & PROGRESSION
 // ==========================================
 function showCompleteScreen() {
     // Update totals
     GameState.totalStars += GameState.stars;
     GameState.totalCoins += GameState.coins;
+
+    // Check for level progression (simplified: 3 valid rounds of any score to advance)
+    // Or stricter: require high accuracy? Let's use simple completion for kids.
+    const accuracy = Math.round((GameState.correctAnswers / GameState.totalQuestions) * 100);
+
+    if (accuracy >= 60) { // Require reasonable effort
+        GameState.levelCompletionCount++;
+    }
+
     saveProgress();
     updateStatsDisplay();
 
     // Show earned rewards
     document.getElementById('earned-stars').textContent = GameState.stars;
     document.getElementById('earned-coins').textContent = GameState.coins;
-
-    // Calculate accuracy
-    const accuracy = Math.round((GameState.correctAnswers / GameState.totalQuestions) * 100);
     document.getElementById('accuracy-text').textContent = `דיוק: ${accuracy}%`;
 
     showScreen('complete-screen');
+
+    // Setup progression button
+    const actionBtn = document.getElementById('play-again');
+    const nextLevelBtn = document.getElementById('next-level-btn');
+
+    if (GameState.levelCompletionCount >= 3 && GameState.difficulty !== 'hard') {
+        actionBtn.style.display = 'none';
+        nextLevelBtn.style.display = 'inline-flex';
+        nextLevelBtn.querySelector('span:last-child').textContent = 'עבור לשלב הבא! 🚀';
+    } else {
+        actionBtn.style.display = 'inline-flex';
+        nextLevelBtn.style.display = 'none';
+        actionBtn.querySelector('span:last-child').textContent = 'המשך לשחק (סיבוב נוסף)';
+    }
 
     // Trigger celebration
     createConfetti();
     playSound('complete');
 }
 
+function advanceDifficulty() {
+    if (GameState.difficulty === 'easy') GameState.difficulty = 'medium';
+    else if (GameState.difficulty === 'medium') GameState.difficulty = 'hard';
+
+    GameState.levelCompletionCount = 0; // Reset counter for new level
+
+    // Update UI toggle
+    document.querySelectorAll('.difficulty-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.difficulty === GameState.difficulty);
+    });
+}
+
 function createConfetti() {
     const container = document.getElementById('confetti-container');
     container.innerHTML = '';
-
     const colors = ['#FFD700', '#FF6B6B', '#4ECB71', '#45B7D1', '#FF69B4', '#9B59B6'];
 
     for (let i = 0; i < 50; i++) {
@@ -768,18 +488,11 @@ function createConfetti() {
 // ==========================================
 function getAvailableLetters() {
     const config = DIFFICULTY_CONFIG[GameState.difficulty];
-    let pool = config.letterPool;
-
-    if (GameState.activeLetters && GameState.activeLetters.length > 0) {
-        pool = pool.filter(l => GameState.activeLetters.includes(l.letter));
-    }
-
-    // Fallback if pool is too small
-    if (pool.length < 3) {
-        pool = HEBREW_LETTERS.filter(l => l.difficulty === 'easy');
-    }
-
-    return pool;
+    // Always include easy letters + some hard/medium based on config
+    // Actually simplicity: just filter by difficulty level + lower levels
+    if (GameState.difficulty === 'hard') return HEBREW_LETTERS;
+    if (GameState.difficulty === 'medium') return HEBREW_LETTERS.filter(l => l.difficulty !== 'hard');
+    return HEBREW_LETTERS.filter(l => l.difficulty === 'easy');
 }
 
 function shuffleArray(array) {
@@ -801,7 +514,6 @@ function updateProgress(gameType) {
 
 function showFeedback(gameType, isCorrect, customMessage) {
     const container = document.getElementById(`${gameType}-feedback`);
-
     let message;
     if (customMessage) {
         message = customMessage;
@@ -810,7 +522,6 @@ function showFeedback(gameType, isCorrect, customMessage) {
     } else {
         message = TRY_AGAIN[Math.floor(Math.random() * TRY_AGAIN.length)];
     }
-
     container.textContent = message;
     container.className = `feedback-container ${isCorrect ? 'correct' : 'wrong'}`;
 }
@@ -823,14 +534,10 @@ function clearFeedback(gameType) {
 
 function playSound(type) {
     if (!GameState.soundEnabled) return;
-
-    // Simple audio feedback using Web Audio API or Audio elements
-    // For now, using a simple beep pattern
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
 
@@ -857,7 +564,6 @@ function playSound(type) {
                 setTimeout(() => oscillator.stop(), 50);
                 break;
             case 'complete':
-                // Play a happy tune
                 oscillator.frequency.value = 523;
                 gainNode.gain.value = 0.1;
                 oscillator.start();
@@ -870,9 +576,7 @@ function playSound(type) {
                 }, 150);
                 break;
         }
-    } catch (e) {
-        // Audio not supported, fail silently
-    }
+    } catch (e) { }
 }
 
 // ==========================================

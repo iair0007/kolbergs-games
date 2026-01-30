@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Super Memory Match</title>
+    <link rel="stylesheet" href="../../platform/responsive.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <a href="../../index.html" class="home-button" aria-label="Home">🏠</a>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <h1 class="game-title">
+                <span class="icon">🛡️</span>
+                Super Memory
+                <span class="icon">⚡</span>
+            </h1>
+
+            <div class="difficulty-selector">
+                <h2>Choose Difficulty</h2>
+                <div class="difficulty-buttons">
+                    <button class="btn-difficulty" data-difficulty="super-easy" data-grid="2">
+                        <span class="diff-icon">🍼</span>
+                        Super Easy
+                        <span class="diff-size">2x2</span>
+                    </button>
+                    <button class="btn-difficulty" data-difficulty="easy" data-grid="4">
+                        <span class="diff-icon">🌟</span>
+                        Easy
+                        <span class="diff-size">4x4</span>
+                    </button>
+                    <button class="btn-difficulty" data-difficulty="medium" data-grid="6">
+                        <span class="diff-icon">🔥</span>
+                        Medium
+                        <span class="diff-size">6x6</span>
+                    </button>
+                    <button class="btn-difficulty" data-difficulty="hard" data-grid="8">
+                        <span class="diff-icon">⚡</span>
+                        Hard
+                        <span class="diff-size">8x8</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen hidden">
+            <div class="game-header">
+                <div class="stat-box">
+                    <span class="stat-label">Moves</span>
+                    <span id="move-count" class="stat-value">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Time</span>
+                    <span id="timer" class="stat-value">00:00</span>
+                </div>
+                <button id="restart-btn" class="btn-small">🔄</button>
+            </div>
+
+            <div id="game-grid" class="grid-container">
+                <!-- Cards will be generated here -->
+            </div>
+        </div>
+
+        <!-- Victory Screen -->
+        <div id="victory-screen" class="screen hidden">
+            <div class="victory-content">
+                <h1>SUPER! 🎉</h1>
+                <div class="stars-container">
+                    ⭐⭐⭐
+                </div>
+                <div class="final-stats">
+                    <p>Time: <span id="final-time">00:00</span></p>
+                    <p>Moves: <span id="final-moves">0</span></p>
+                </div>
+                <div class="action-buttons">
+                    <button id="play-again-btn" class="btn-primary">Play Again 🚀</button>
+                    <a href="../../index.html" class="btn-secondary">Back to Menu 🏠</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+
+</html>

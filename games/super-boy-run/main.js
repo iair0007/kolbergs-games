@@ -100,26 +100,66 @@ document.addEventListener('keyup', (e) => {
 });
 
 // Touch controls
+// Touch controls
 const btnLeft = document.getElementById('btn-left');
 const btnRight = document.getElementById('btn-right');
-const btnJump = document.getElementById('btn-jump');
+// btnJump removed - jumping is now tap-anywhere
 
+// Directional buttons
 btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); Keys.left = true; });
 btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); Keys.left = false; });
 btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); Keys.right = true; });
 btnRight.addEventListener('touchend', (e) => { e.preventDefault(); Keys.right = false; });
 
-btnJump.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    Player.jumpPressTime = Date.now();
-    Player.jumpHeld = true;
-    Keys.jump = true;
-});
+// Global touch handler for Jumping (Tap Anywhere)
+let jumpTouchId = null;
 
-btnJump.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    Keys.jump = false;
-    Player.jumpHeld = false;
+document.addEventListener('touchstart', (e) => {
+    // Also ignore if game not running or paused
+    if (!GameState.gameRunning || GameState.paused) return;
+
+    // Find a touch that is NOT on controls
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        const touch = e.changedTouches[i];
+        const target = touch.target;
+
+        // If this touch is NOT control button
+        if (!target.closest('.control-btn') && !target.closest('button')) {
+            jumpTouchId = touch.identifier;
+            Player.jumpPressTime = Date.now();
+            Player.jumpHeld = true;
+            Keys.jump = true;
+            break; // Only need one jump touch
+        }
+    }
+}, { passive: false });
+
+document.addEventListener('touchend', (e) => {
+    // Check if the jump touch ended
+    if (jumpTouchId !== null) {
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            if (e.changedTouches[i].identifier === jumpTouchId) {
+                Keys.jump = false;
+                Player.jumpHeld = false;
+                jumpTouchId = null;
+                break;
+            }
+        }
+    }
+}, { passive: false });
+
+// Loop to clear jump if lost (unlikely but safe)
+document.addEventListener('touchcancel', (e) => {
+    if (jumpTouchId !== null) {
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            if (e.changedTouches[i].identifier === jumpTouchId) {
+                Keys.jump = false;
+                Player.jumpHeld = false;
+                jumpTouchId = null;
+                break;
+            }
+        }
+    }
 });
 
 // ===========================
@@ -301,10 +341,22 @@ function updateSettingsUI() {
 function initializeLevelSelect() {
     const levelSelect = document.getElementById('level-select');
     levelSelect.innerHTML = '';
-    LEVELS.forEach((level, index) => {
+
+    // Create an array of objects with { originalIndex, levelData }
+    const sortedLevels = LEVELS.map((level, index) => ({
+        index: index,
+        name: level.name
+    })).sort((a, b) => {
+        // Extract level number from name "Level X - ..."
+        const numA = parseInt(a.name.match(/Level (\d+)/)[1]);
+        const numB = parseInt(b.name.match(/Level (\d+)/)[1]);
+        return numA - numB;
+    });
+
+    sortedLevels.forEach((levelObj) => {
         const option = document.createElement('option');
-        option.value = index;
-        option.textContent = level.name;
+        option.value = levelObj.index;
+        option.textContent = levelObj.name;
         levelSelect.appendChild(option);
     });
 }
@@ -386,7 +438,14 @@ function loadLevel(levelIndex) {
 function updateUI() {
     document.getElementById('lives').textContent = GameState.lives;
     document.getElementById('score').textContent = GameState.score;
-    document.getElementById('level').textContent = GameState.currentLevel + 1;
+
+    // Extract level number from name "Level X - ..."
+    if (currentLevelData && currentLevelData.name) {
+        const match = currentLevelData.name.match(/Level (\d+)/);
+        document.getElementById('level').textContent = match ? match[1] : (GameState.currentLevel + 1);
+    } else {
+        document.getElementById('level').textContent = GameState.currentLevel + 1;
+    }
 }
 
 function updatePlayer() {
@@ -982,7 +1041,10 @@ function showMainMenu() {
     const continueBtn = document.getElementById('btn-continue');
     if (progress.lastLevel !== null && progress.lastLevel < LEVELS.length - 1) {
         continueBtn.style.display = 'block';
-        continueBtn.textContent = `CONTINUE (Level ${progress.lastLevel + 1})`;
+        const levelName = LEVELS[progress.lastLevel].name;
+        const match = levelName.match(/Level (\d+)/);
+        const levelNum = match ? match[1] : (progress.lastLevel + 1);
+        continueBtn.textContent = `CONTINUE (Level ${levelNum})`;
     } else {
         continueBtn.style.display = 'none';
     }
@@ -1012,7 +1074,10 @@ async function init() {
     const continueBtn = document.getElementById('btn-continue');
     if (progress.lastLevel !== null && progress.lastLevel < LEVELS.length - 1) {
         continueBtn.style.display = 'block';
-        continueBtn.textContent = `CONTINUE (Level ${progress.lastLevel + 1})`;
+        const levelName = LEVELS[progress.lastLevel].name;
+        const match = levelName.match(/Level (\d+)/);
+        const levelNum = match ? match[1] : (progress.lastLevel + 1);
+        continueBtn.textContent = `CONTINUE (Level ${levelNum})`;
     }
 
     gameLoop();
