@@ -14,13 +14,13 @@ const level3 = {
     platforms: [
         { x: 0, y: 500, width: 300, height: 100 },
 
-        // Moving platform (vertical) - bounces up and down
-        { x: 450, y: 450, width: 120, height: 20, moving: true, vy: 2, moveRange: { min: 350, max: 500 } },
+        // Moving platform (vertical) - bounces up and down (slower for kids)
+        { x: 450, y: 450, width: 120, height: 20, moving: true, vy: 1.5, moveRange: { min: 350, max: 500 } },
 
         { x: 700, y: 500, width: 150, height: 100 },
 
-        // Moving platform (horizontal) - slides left and right
-        { x: 1000, y: 400, width: 120, height: 20, moving: true, vx: 3, moveRange: { min: 900, max: 1150 } },
+        // Moving platform (horizontal) - slides left and right (slower for kids)
+        { x: 1000, y: 400, width: 120, height: 20, moving: true, vx: 2, moveRange: { min: 900, max: 1150 } },
 
         { x: 1400, y: 500, width: 200, height: 100 },
         { x: 1700, y: 450, width: 150, height: 150 },
@@ -28,10 +28,10 @@ const level3 = {
     ],
 
     // ENEMIES
-    // vx: 3 means faster enemy (speed 3)
+    // Slower enemies for 4-year-olds
     enemies: [
-        { x: 750, y: 450, vx: 2, patrol: { min: 700, max: 850 } },
-        { x: 1500, y: 450, vx: 3, patrol: { min: 1400, max: 1600 } }  // Faster enemy!
+        { x: 750, y: 450, vx: 1, patrol: { min: 700, max: 900 } },        // Slower, wider patrol
+        { x: 1500, y: 450, vx: 1.5, patrol: { min: 1400, max: 1650 } }   // Slightly faster but wider range
     ],
 
     // COLLECTIBLES

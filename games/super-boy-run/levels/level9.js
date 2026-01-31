@@ -17,19 +17,19 @@ const level9 = {
         { x: 2250, y: 500, width: 500, height: 100 }
     ],
 
-    // ENEMIES: Jumping enemies that hop up and down
+    // ENEMIES: Jumping enemies that hop up and down (slower for 4-year-olds)
     enemies: [
         // Jumping enemy on second platform
-        { x: 600, y: 450, vx: 2, patrol: { min: 470, max: 730 }, type: 'jumping', jumpStrength: 8 },
+        { x: 600, y: 450, vx: 1, patrol: { min: 450, max: 750 }, type: 'jumping', jumpStrength: 6 },
 
-        // Jumping enemy with higher jumps
-        { x: 950, y: 450, vx: 1.5, patrol: { min: 870, max: 1080 }, type: 'jumping', jumpStrength: 12 },
+        // Jumping enemy with lower jumps
+        { x: 950, y: 450, vx: 1, patrol: { min: 850, max: 1100 }, type: 'jumping', jumpStrength: 8 },
 
         // Jumping enemy on wide platform near end
-        { x: 1600, y: 450, vx: 2, patrol: { min: 1520, max: 1780 }, type: 'jumping', jumpStrength: 10 },
+        { x: 1600, y: 450, vx: 1, patrol: { min: 1500, max: 1800 }, type: 'jumping', jumpStrength: 7 },
 
-        // Fast jumping enemy at the end
-        { x: 2000, y: 450, vx: 2.5, patrol: { min: 1920, max: 2130 }, type: 'jumping', jumpStrength: 9 }
+        // Jumping enemy at the end (slower)
+        { x: 2000, y: 450, vx: 1.5, patrol: { min: 1900, max: 2150 }, type: 'jumping', jumpStrength: 7 }
     ],
 
     // COLLECTIBLES

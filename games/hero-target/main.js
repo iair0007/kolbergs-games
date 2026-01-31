@@ -15,15 +15,17 @@ const App = {
         multiplier: 1,
         gameActive: false,
         lastSpawnTime: 0,
-        difficulty: 1, // 1 to 10
+        difficulty: 1, // Current difficulty level
+        levelProgress: 0, // Points towards next level
     },
 
     // Config
     heroes: [
-        { id: 'batman', name: 'Batman', color: '#333', projectile: 'batarang', image: 'assets/batman.png' },
-        { id: 'flash', name: 'The Flash', color: '#d1121d', projectile: 'lightning', image: 'assets/flash.png' },
-        { id: 'superman', name: 'Superman', color: '#0059b3', projectile: 'laser', image: 'assets/superman.png' },
-        { id: 'captain', name: 'Captain', color: '#003366', projectile: 'shield', image: 'assets/captain.png' },
+        { id: 'batman', name: 'Batman', color: '#333', projectile: 'batarang', image: '../../platform/images/characters/yuval_batman.png', background: 'assets/background-clean.png' },
+        { id: 'flash', name: 'The Flash', color: '#d1121d', projectile: 'lightning', image: '../../platform/images/characters/yuval_flash.png', background: 'assets/background-clean.png' },
+        { id: 'superman', name: 'Superman', color: '#0059b3', projectile: 'laser', image: '../../platform/images/characters/Or_superman.png', background: 'assets/background-clean.png' },
+        { id: 'captain', name: 'Captain', color: '#003366', projectile: 'shield', image: '../../platform/images/characters/papa_capitan.png', background: 'assets/background-clean.png' },
+        { id: 'hulk', name: 'Hulk', color: '#5cb85c', projectile: 'gamma', image: '../../platform/images/characters/papa_hulk.png', background: 'assets/background-clean.png' },
     ],
 
     elements: {
@@ -42,11 +44,13 @@ const App = {
         scoreDisplay: document.getElementById('score'),
         multiplierDisplay: document.getElementById('multiplier'),
         livesDisplay: document.getElementById('lives'),
+        levelDisplay: document.getElementById('current-level'),
         finalScore: document.getElementById('final-score-val'),
         highScore: document.getElementById('high-score-val'),
         finalStars: document.getElementById('final-stars'),
         retryBtn: document.getElementById('retry-btn'),
         menuBtn: document.getElementById('menu-btn'),
+        homeBtn: document.getElementById('home-btn'),
     },
 
     // Runtime variables
@@ -92,11 +96,26 @@ const App = {
     },
 
     startGame() {
+        // Stop any existing game loop
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+
+        // Reset state
         this.state.score = 0;
         this.state.lives = 3;
         this.state.multiplier = 1;
         this.state.gameActive = true;
+        this.state.lastSpawnTime = 0;
+
+        // Always start at level 1 - progressive difficulty based on score
         this.state.difficulty = 1;
+        this.state.levelProgress = 0;
+
+        // Clear existing targets and projectiles from DOM
+        this.targets.forEach(t => t.el && t.el.remove());
+        this.projectiles.forEach(p => p.el && p.el.remove());
         this.targets = [];
         this.projectiles = [];
 
@@ -104,6 +123,9 @@ const App = {
         this.showScreen('game');
         this.elements.hud.classList.remove('hidden');
         this.elements.gameArea.classList.remove('hidden');
+
+        // Set hero-specific background
+        this.elements.backgroundLayer.style.backgroundImage = `url('${this.state.selectedHero.background}')`;
 
         // Setup Hero
         this.elements.heroContainer.innerHTML = '';
@@ -138,12 +160,20 @@ const App = {
         if (typeRoll > 0.8) type = 'civilian'; // Don't hit!
         if (typeRoll > 0.95) type = 'star'; // Bonus
 
+        // Determine if this enemy should move in zig-zag pattern
+        // At level 3+, some enemies start zig-zagging
+        // Percentage increases with difficulty
+        const zigzagChance = Math.max(0, (this.state.difficulty - 2) * 0.15); // 15% at level 3, 30% at level 4, etc.
+        const movementPattern = (this.state.difficulty >= 3 && Math.random() < zigzagChance) ? 'zigzag' : 'straight';
+
         const target = {
             id: Date.now() + Math.random(),
             type: type,
             x: Math.random() < 0.5 ? -50 : window.innerWidth + 50, // Start left or right
             y: 50 + Math.random() * (window.innerHeight - 250),
             speed: (Math.random() < 0.5 ? 2 : -2) * (1 + this.state.difficulty * 0.1),
+            movementPattern: movementPattern,
+            zigzagTime: 0, // For sine wave calculation
             el: null
         };
 
@@ -157,7 +187,7 @@ const App = {
         el.style.top = `${target.y}px`;
 
         const img = document.createElement('img');
-        img.src = type === 'villain' ? 'assets/villain.png' : type === 'civilian' ? 'assets/civilian.png' : 'assets/star.png';
+        img.src = type === 'villain' ? '../../platform/images/enemies/enemyRobot.png' : type === 'civilian' ? '../../platform/images/others/dog.png' : '../../platform/images/others/star.png';
         el.appendChild(img);
 
         this.elements.targetsLayer.appendChild(el);
@@ -168,6 +198,15 @@ const App = {
     updateTargets() {
         this.targets.forEach((t, index) => {
             t.x += t.speed;
+
+            // Apply zig-zag movement if applicable
+            if (t.movementPattern === 'zigzag') {
+                t.zigzagTime += 0.1;
+                // Add vertical sine wave movement
+                const zigzagOffset = Math.sin(t.zigzagTime) * 30;
+                t.el.style.top = `${t.y + zigzagOffset}px`;
+            }
+
             t.el.style.left = `${t.x}px`;
 
             // Remove if off screen
@@ -271,6 +310,18 @@ const App = {
             this.state.score += points;
             popup.textContent = `+${points}`;
             this.state.multiplier = Math.min(this.state.multiplier + 0.1, 5); // Max 5x multiplier/combo logic can be refined
+
+            // Level Up Logic
+            // Every 1000 points, track progress
+            this.state.levelProgress += points;
+            const pointsForNextLevel = 1000 * this.state.difficulty;
+
+            if (this.state.levelProgress >= pointsForNextLevel) {
+                this.state.difficulty++;
+                this.state.levelProgress = 0;
+                this.showLevelUp();
+            }
+
         } else if (target.type === 'civilian') {
             this.state.lives--;
             popup.textContent = 'Oops! -❤️';
@@ -291,6 +342,19 @@ const App = {
         this.updateHUD();
     },
 
+    showLevelUp() {
+        const popup = document.createElement('div');
+        popup.className = 'popup-score';
+        popup.textContent = `LEVEL UP! ${this.state.difficulty}`;
+        popup.style.color = '#fff';
+        popup.style.fontSize = '3rem';
+        popup.style.left = '50%';
+        popup.style.top = '50%';
+        popup.style.transform = 'translate(-50%, -50%)';
+        this.elements.gameArea.appendChild(popup);
+        setTimeout(() => popup.remove(), 2000);
+    },
+
     heal() {
         if (this.state.lives < 5) this.state.lives++;
     },
@@ -299,6 +363,7 @@ const App = {
         this.elements.scoreDisplay.textContent = Math.floor(this.state.score);
         this.elements.multiplierDisplay.textContent = `x${this.state.multiplier.toFixed(1)}`;
         this.elements.livesDisplay.textContent = '❤️'.repeat(this.state.lives);
+        this.elements.levelDisplay.textContent = this.state.difficulty;
     },
 
     gameOver() {
@@ -318,20 +383,49 @@ const App = {
     },
 
     showScreen(screenName) {
+        // Stop game loop if going back to menu
+        if (screenName === 'selection' && this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+            this.state.gameActive = false;
+        }
+
         // Hide all screens
         Object.values(this.elements.screens).forEach(s => s.classList.add('hidden'));
         this.elements.hud.classList.add('hidden');
         this.elements.gameArea.classList.add('hidden');
 
+        // Clear targets and projectiles when going back to selection
+        if (screenName === 'selection') {
+            this.targets.forEach(t => t.el && t.el.remove());
+            this.projectiles.forEach(p => p.el && p.el.remove());
+            this.targets = [];
+            this.projectiles = [];
+        }
+
         // Show requested
         if (screenName === 'selection') {
             this.elements.screens.selection.classList.remove('hidden');
             this.elements.screens.selection.classList.add('active');
+
+            // Home button configuration for Selection Screen
+            this.elements.homeBtn.textContent = '🏠';
+            this.elements.homeBtn.onclick = () => window.location.href = '../../index.html';
+
         } else if (screenName === 'game') {
             // No full screen overlay for game, just layers
+
+            // Home button configuration for Game Screen (Back button)
+            this.elements.homeBtn.textContent = '⬅️';
+            this.elements.homeBtn.onclick = () => this.showScreen('selection');
+
         } else if (screenName === 'gameover') {
             this.elements.screens.gameover.classList.remove('hidden');
             this.elements.screens.gameover.classList.add('active');
+
+            // Home button configuration for Game Over Screen
+            this.elements.homeBtn.textContent = '⬅️';
+            this.elements.homeBtn.onclick = () => this.showScreen('selection');
         }
 
         this.state.currentScreen = screenName;
@@ -341,12 +435,15 @@ const App = {
         // Selection
         this.elements.retryBtn.onclick = () => this.startGame();
         this.elements.menuBtn.onclick = () => this.showScreen('selection');
+        // homeBtn listener is set dynamically in showScreen
 
         // Shooting
         this.elements.app.addEventListener('mousedown', (e) => this.inputStart(e.clientX, e.clientY));
         this.elements.app.addEventListener('touchstart', (e) => {
-            // Prevent scrolling
-            // e.preventDefault(); 
+            // Check if touching UI
+            if (e.target.closest('button') || e.target.closest('select')) return;
+
+            e.preventDefault(); // Prevent scrolling during gameplay touch
             const touch = e.touches[0];
             this.inputStart(touch.clientX, touch.clientY);
         }, { passive: false });

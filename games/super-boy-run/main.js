@@ -11,12 +11,12 @@ const FLY_SPEED = 3;
 // DEFAULT SETTINGS (can be overridden by user)
 const DEFAULT_SETTINGS = {
     startLevel: 0,
-    playerSpeed: 4,
-    jumpStrength: 12,
-    maxJumpStrength: 14.5,
+    playerSpeed: 1.5,         // Slower for 4-year-old (was 2.5)
+    jumpStrength: 14,         // Gentler jumps for young kids (was 17)
+    maxJumpStrength: 16,      // Max jump adjusted accordingly (was 20)
     minJumpStrength: 8,
-    gravity: 0.5,
-    startingLives: 5,
+    gravity: 0.4,             // Reduced for floatier feel (was 0.5)
+    startingLives: 8,         // More forgiving for young players (was 5)
     flyDuration: 5000,  // milliseconds
     difficultyMultiplier: 1.0 // Scaling factor per level
 };
@@ -190,7 +190,11 @@ const Sprites = {
     boyJumpDown: null,      // Falling frame
     boyWin: null,           // Victory pose
     boyLose: null,          // Defeat pose
-    boyFly: null            // Flying with star power-up
+    boyFly: null,            // Flying with star power-up
+    enemyGround: null,
+    enemyFlying: null,
+    coin: null,
+    star: null
 };
 
 let assetsLoaded = false;
@@ -198,7 +202,7 @@ let assetsLoaded = false;
 function loadAssets() {
     return new Promise((resolve) => {
         let loaded = 0;
-        const total = 8;  // Updated from 6 to 8 (added 2 new sprites)
+        const total = 12;  // Updated: 8 char sprites + 4 new platform sprites
 
         function checkComplete() {
             loaded++;
@@ -209,6 +213,7 @@ function loadAssets() {
         }
 
         const assetPath = '../../shared/assets/';
+        const platformPath = '../../platform/images/';
 
         // Running animation frames (alternate between these)
         Sprites.boyRunning = new Image();
@@ -243,6 +248,23 @@ function loadAssets() {
         Sprites.boyFly = new Image();
         Sprites.boyFly.onload = checkComplete;
         Sprites.boyFly.src = assetPath + 'boy_fly.png';
+
+        // Platform Images - Enemies & Collectibles
+        Sprites.enemyGround = new Image();
+        Sprites.enemyGround.onload = checkComplete;
+        Sprites.enemyGround.src = platformPath + 'enemies/enemyRobot.png';
+
+        Sprites.enemyFlying = new Image();
+        Sprites.enemyFlying.onload = checkComplete;
+        Sprites.enemyFlying.src = platformPath + 'enemies/flaying.png';
+
+        Sprites.coin = new Image();
+        Sprites.coin.onload = checkComplete;
+        Sprites.coin.src = platformPath + 'others/coin.png';
+
+        Sprites.star = new Image();
+        Sprites.star.onload = checkComplete;
+        Sprites.star.src = platformPath + 'others/star.png';
     });
 }
 
@@ -454,12 +476,12 @@ function loadLevel(levelIndex) {
     updateUI();
 
     // Apply difficulty scaling
-    // Level 0 = 0% increase, Level 10 = 100% increase (example)
-    // Formula: 1 + (LevelIndex * 0.1)
-    DIFFICULTY = 1 + (levelIndex * 0.1);
+    // Level 0 = 0% increase, Level 10 = 50% increase (gentler for young players)
+    // Formula: 1 + (LevelIndex * 0.05) - reduced from 0.1 for 4-year-olds
+    DIFFICULTY = 1 + (levelIndex * 0.05);
 
-    // Increase player speed slightly
-    PLAYER_SPEED = GameSettings.playerSpeed * (1 + (levelIndex * 0.05));
+    // Increase player speed slightly (2% per level, down from 5%)
+    PLAYER_SPEED = GameSettings.playerSpeed * (1 + (levelIndex * 0.02));
 
     // Increase enemy speed
     currentLevelData.enemies.forEach(e => {
@@ -777,13 +799,8 @@ function render() {
     // Draw collectibles
     currentLevelData.collectibles.forEach(coin => {
         if (!coin.collected) {
-            ctx.fillStyle = '#FFD700';
-            ctx.beginPath();
-            ctx.arc(coin.x, coin.y, 12, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#FFA500';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            // Draw coin image
+            ctx.drawImage(Sprites.coin, coin.x - 12, coin.y - 12, 24, 24);
         }
     });
 
@@ -791,70 +808,35 @@ function render() {
     if (currentLevelData.powerUps) {
         currentLevelData.powerUps.forEach(powerUp => {
             if (!powerUp.collected && powerUp.type === 'star') {
-                // Draw star
-                ctx.fillStyle = '#FFD700';
-                ctx.strokeStyle = '#FFA500';
-                ctx.lineWidth = 2;
-                drawStar(ctx, powerUp.x, powerUp.y, 5, 20, 10);
+                // Draw star image
+                ctx.drawImage(Sprites.star, powerUp.x - 15, powerUp.y - 15, 30, 30);
 
-                // Sparkle effect
+                // Sparkle effect (overlay)
                 const sparkle = Math.sin(Date.now() / 200) * 0.3 + 0.7;
                 ctx.globalAlpha = sparkle;
-                ctx.fillStyle = '#FFFFFF';
-                drawStar(ctx, powerUp.x, powerUp.y, 5, 15, 7);
+                // Add a glow effect
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = "white";
                 ctx.globalAlpha = 1;
+                ctx.shadowBlur = 0;
             }
         });
     }
 
     // Draw enemies
     currentLevelData.enemies.forEach(enemy => {
-        // Choose color based on enemy type
+        let sprite = Sprites.enemyGround;
+
         if (enemy.type === 'flying') {
-            ctx.fillStyle = '#9B59B6'; // Purple for flying
-        } else if (enemy.type === 'jumping') {
-            ctx.fillStyle = '#E67E22'; // Orange for jumping
-        } else {
-            ctx.fillStyle = '#FF0000'; // Red for ground
+            sprite = Sprites.enemyFlying;
         }
 
-        // Draw main body
-        ctx.beginPath();
-        ctx.arc(enemy.x, enemy.y, 20, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Type-specific decorations
-        if (enemy.type === 'flying') {
-            // Draw wings
-            ctx.fillStyle = '#8E44AD';
-            // Left wing
-            ctx.beginPath();
-            ctx.ellipse(enemy.x - 22, enemy.y, 12, 6, Math.PI / 6, 0, Math.PI * 2);
-            ctx.fill();
-            // Right wing
-            ctx.beginPath();
-            ctx.ellipse(enemy.x + 22, enemy.y, 12, 6, -Math.PI / 6, 0, Math.PI * 2);
-            ctx.fill();
-        } else if (enemy.type === 'jumping') {
-            // Draw spring coil below
-            ctx.strokeStyle = '#D35400';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            const springY = enemy.y + 18;
-            for (let i = 0; i < 3; i++) {
-                ctx.moveTo(enemy.x - 8 + i * 8, springY);
-                ctx.lineTo(enemy.x - 4 + i * 8, springY + 8);
-            }
-            ctx.stroke();
-        }
-
-        // Evil eyes
-        ctx.fillStyle = '#000';
-        ctx.beginPath();
-        ctx.arc(enemy.x - 7, enemy.y - 5, 4, 0, Math.PI * 2);
-        ctx.arc(enemy.x + 7, enemy.y - 5, 4, 0, Math.PI * 2);
-        ctx.fill();
+        // Draw enemy image
+        // Assuming 40x40 size for enemies (matching previous 20px radius)
+        ctx.drawImage(sprite, enemy.x - 20, enemy.y - 20, 40, 40);
     });
+
+
 
     // Draw goal
     const goal = currentLevelData.goal;
@@ -882,30 +864,7 @@ function render() {
     }
 }
 
-function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
-    let rot = Math.PI / 2 * 3;
-    let x = cx;
-    let y = cy;
-    const step = Math.PI / spikes;
 
-    ctx.beginPath();
-    ctx.moveTo(cx, cy - outerRadius);
-    for (let i = 0; i < spikes; i++) {
-        x = cx + Math.cos(rot) * outerRadius;
-        y = cy + Math.sin(rot) * outerRadius;
-        ctx.lineTo(x, y);
-        rot += step;
-
-        x = cx + Math.cos(rot) * innerRadius;
-        y = cy + Math.sin(rot) * innerRadius;
-        ctx.lineTo(x, y);
-        rot += step;
-    }
-    ctx.lineTo(cx, cy - outerRadius);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-}
 
 function drawPlayer() {
     let sprite = Sprites.boyRunning;
@@ -1010,12 +969,6 @@ document.getElementById('btn-copy-settings').addEventListener('click', () => {
     copySettingsToClipboard();
 });
 
-// Level selection buttons
-// Level selection dropdown
-document.getElementById('level-select').addEventListener('change', (e) => {
-    GameSettings.startLevel = parseInt(e.target.value);
-});
-
 // Slider event listeners
 document.getElementById('speed-slider').addEventListener('input', (e) => {
     GameSettings.playerSpeed = parseFloat(e.target.value);
@@ -1058,7 +1011,8 @@ function nextLevel() {
 
 function hideAllScreens() {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('touch-controls').style.display = 'flex';
+    // Touch controls visibility is handled by CSS (media queries) or toggled elsewhere
+    document.getElementById('touch-controls').style.removeProperty('display');
 }
 
 function startGame() {
@@ -1070,6 +1024,71 @@ function startGame() {
     loadLevel(GameState.currentLevel);
     hideAllScreens();
     GameState.gameRunning = true;
-    lastLoopTime = Date.now();
     requestAnimationFrame(gameLoop);
 }
+
+function restartGame() {
+    // Reset game state and restart from the beginning
+    GameState.lives = GameSettings.startingLives;
+    GameState.score = 0;
+    GameState.currentLevel = GameSettings.startLevel;
+    loadLevel(GameState.currentLevel);
+    hideAllScreens();
+    GameState.gameRunning = true;
+}
+
+function showMainMenu() {
+    GameState.gameRunning = false;
+
+    // Check if there's saved progress
+    const progress = loadProgress();
+    const continueBtn = document.getElementById('btn-continue');
+
+    // Robust check for progress and LEVELS array availability
+    if (progress && progress.lastLevel !== null && typeof LEVELS !== 'undefined' && progress.lastLevel < LEVELS.length - 1) {
+        continueBtn.style.display = 'block';
+        // Robust level number extraction
+        let levelNum = progress.lastLevel + 1;
+        if (LEVELS[progress.lastLevel]) {
+            const levelName = LEVELS[progress.lastLevel].name;
+            const match = levelName.match(/Level (\d+)/);
+            if (match) levelNum = match[1];
+        }
+        continueBtn.textContent = `CONTINUE (Level ${levelNum})`;
+    } else {
+        continueBtn.style.display = 'none';
+    }
+
+    showScreen('start-screen');
+}
+
+// ===========================
+// INITIALIZATION
+// ===========================
+async function init() {
+    console.log('Super Boy Run - Loading...');
+
+    // Load settings first
+    loadSettings();
+    initializeLevelSelect(); // Populate dropdown
+    updateSettingsUI(); // Set initial value
+
+    try {
+        await loadAssets();
+        console.log('Assets loaded!');
+    } catch (e) {
+        console.error('Error loading assets:', e);
+    }
+
+    // Initialize first level data using setting
+    loadLevel(GameSettings.startLevel || 0);
+
+    // Show menu
+    showMainMenu();
+
+    // Start loop
+    gameLoop();
+}
+
+// Call init() directly - script is at end of body, DOM is ready
+init();

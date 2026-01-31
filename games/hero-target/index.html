@@ -12,12 +12,13 @@
 
 <body>
     <div id="app">
-        <a href="../../index.html" class="home-button" aria-label="Go Home">🏠</a>
+        <button id="home-btn" class="home-button" aria-label="Go Home">🏠</button>
 
         <div id="game-container">
             <!-- Hero Selection Screen -->
             <div id="selection-screen" class="screen active">
                 <h1 class="game-title">CHOOSE YOUR HERO!</h1>
+
                 <div class="heroes-grid" id="heroes-grid">
                     <!-- Heroes injected via JS -->
                 </div>
@@ -29,6 +30,7 @@
                     <span id="score">0</span>
                     <span id="multiplier" class="hidden">x1</span>
                 </div>
+                <div class="level-display">Level: <span id="current-level">1</span></div>
                 <div class="lives" id="lives">
                     ❤️❤️❤️
                 </div>
@@ -56,8 +58,7 @@
                 </div>
             </div>
         </div>
-    </div>
-    <script src="main.js" type="module"></script>
+        <script src="main.js" type="module"></script>
 </body>
 
 </html>

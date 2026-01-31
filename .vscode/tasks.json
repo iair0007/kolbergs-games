@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start HTTP Server",
+            "type": "shell",
+            "command": "python3 -m http.server 8000",
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^Serving HTTP on (\\d+\\.\\d+\\.\\d+\\.\\d+) port (\\d+) \\(http://\\1:\\2/\\) \\.\\.\\.$",
+                    "file": 1,
+                    "location": 2,
+                    "message": 0
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^Serving HTTP on",
+                    "endsPattern": "\\.\\.\\.$"
+                }
+            },
+            "presentation": {
+                "reveal": "never"
+            }
+        }
+    ]
+}

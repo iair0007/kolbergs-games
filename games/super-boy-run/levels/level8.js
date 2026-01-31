@@ -17,16 +17,16 @@ const level8 = {
         { x: 2250, y: 500, width: 500, height: 100 }
     ],
 
-    // ENEMIES: Flying enemies that bob up and down
+    // ENEMIES: Flying enemies that bob up and down (slower for 4-year-olds)
     enemies: [
         // Flying enemy over second platform - slow and predictable
-        { x: 650, y: 400, vx: 1.5, patrol: { min: 520, max: 780 }, type: 'flying', bobAmount: 30 },
+        { x: 650, y: 400, vx: 1, patrol: { min: 500, max: 800 }, type: 'flying', bobAmount: 30 },
 
         // Flying enemy with wider patrol
-        { x: 1350, y: 380, vx: 2, patrol: { min: 1220, max: 1480 }, type: 'flying', bobAmount: 40 },
+        { x: 1350, y: 380, vx: 1.5, patrol: { min: 1200, max: 1500 }, type: 'flying', bobAmount: 40 },
 
         // Flying enemy near the end
-        { x: 2050, y: 360, vx: 1.5, patrol: { min: 1970, max: 2130 }, type: 'flying', bobAmount: 35 }
+        { x: 2050, y: 360, vx: 1, patrol: { min: 1950, max: 2150 }, type: 'flying', bobAmount: 35 }
     ],
 
     // COLLECTIBLES

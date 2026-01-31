@@ -10,18 +10,18 @@ const level7 = {
     platforms: [
         { x: 0, y: 500, width: 400, height: 100 },
 
-        // Slow horizontal moving platform
-        { x: 550, y: 480, width: 150, height: 20, moving: true, vx: 1.5, moveRange: { min: 500, max: 700 } },
+        // Slow horizontal moving platform (slower for kids)
+        { x: 550, y: 480, width: 150, height: 20, moving: true, vx: 1, moveRange: { min: 500, max: 700 } },
 
         { x: 850, y: 500, width: 200, height: 100 },
 
-        // Slow vertical moving platform
-        { x: 1150, y: 450, width: 150, height: 20, moving: true, vy: 1.5, moveRange: { min: 400, max: 500 } },
+        // Slow vertical moving platform (slower for kids)
+        { x: 1150, y: 450, width: 150, height: 20, moving: true, vy: 1, moveRange: { min: 400, max: 500 } },
 
         { x: 1400, y: 500, width: 300, height: 100 },
 
-        // Another horizontal moving platform
-        { x: 1800, y: 480, width: 150, height: 20, moving: true, vx: 2, moveRange: { min: 1750, max: 1950 } },
+        // Another horizontal moving platform (slower for kids)
+        { x: 1800, y: 480, width: 150, height: 20, moving: true, vx: 1.5, moveRange: { min: 1750, max: 1950 } },
 
         { x: 2100, y: 500, width: 500, height: 100 }
     ],

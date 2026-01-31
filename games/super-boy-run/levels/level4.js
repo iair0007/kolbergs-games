@@ -14,8 +14,8 @@ const level4 = {
         { x: 800, y: 420, width: 100, height: 20 },
         { x: 1000, y: 500, width: 200, height: 100 },
 
-        // Moving platform (vertical) - harder to land on!
-        { x: 1350, y: 400, width: 120, height: 20, moving: true, vy: 2, moveRange: { min: 300, max: 450 } },
+        // Moving platform (vertical) - slower for kids
+        { x: 1350, y: 400, width: 120, height: 20, moving: true, vy: 1.5, moveRange: { min: 300, max: 450 } },
 
         { x: 1600, y: 500, width: 150, height: 100 },
         { x: 1850, y: 450, width: 100, height: 20 },
@@ -24,12 +24,12 @@ const level4 = {
         { x: 2700, y: 500, width: 400, height: 100 }
     ],
 
-    // ENEMIES: More enemies!
+    // ENEMIES: Slower for 4-year-olds
     enemies: [
-        { x: 450, y: 430, vx: 2, patrol: { min: 400, max: 500 } },   // Guards narrow platforms
-        { x: 1100, y: 450, vx: 2, patrol: { min: 1000, max: 1200 } },
-        { x: 1700, y: 450, vx: 3, patrol: { min: 1600, max: 1750 } },  // Fast enemy
-        { x: 2150, y: 450, vx: 2, patrol: { min: 2050, max: 2250 } }
+        { x: 450, y: 430, vx: 1, patrol: { min: 400, max: 550 } },        // Slower, wider patrol
+        { x: 1100, y: 450, vx: 1, patrol: { min: 1000, max: 1250 } },     // Wider patrol
+        { x: 1700, y: 450, vx: 1.5, patrol: { min: 1600, max: 1800 } },   // Slightly faster, wider
+        { x: 2150, y: 450, vx: 1, patrol: { min: 2050, max: 2300 } }      // Wider patrol
     ],
 
     // COLLECTIBLES

@@ -478,3 +478,10 @@ input[type="range"]::-moz-range-thumb {
     font-size: 1.1rem;
     font-weight: 600;
 }
+
+/* Hide mobile selector on desktop */
+@media (min-width: 769px) {
+    .mobile-level-select-container {
+        display: none;
+    }
+}

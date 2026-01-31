@@ -17,10 +17,10 @@ const level2 = {
     ],
 
     // ENEMIES: First introduction to enemies
-    // vx: 2 means enemy moves at speed 2 (moderate speed)
+    // vx: 1 means enemy moves at slower speed (reduced from 2 for 4-year-olds)
     enemies: [
-        { x: 600, y: 450, vx: 2, patrol: { min: 550, max: 800 } },    // Patrols the second platform
-        { x: 1800, y: 450, vx: 2, patrol: { min: 1700, max: 2000 } }  // Patrols final platform
+        { x: 600, y: 450, vx: 1, patrol: { min: 520, max: 750 } },    // Patrols the second platform (shifted left)
+        { x: 1800, y: 450, vx: 1, patrol: { min: 1700, max: 2100 } }  // Patrols final platform (wider range)
     ],
 
     // COLLECTIBLES

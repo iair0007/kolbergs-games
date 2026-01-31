@@ -26,6 +26,8 @@ function init() {
     loadProgress();
     setupEventListeners();
     updateStatsDisplay();
+    // Skip welcome screen and go directly to mode selection
+    showScreen('mode-screen');
 }
 
 function loadProgress() {
@@ -256,9 +258,9 @@ function nextBuildWord() {
     document.getElementById('word-emoji').textContent = word.emoji;
     const hintText = document.getElementById('word-hint');
     hintText.textContent = word.hint;
-    hintText.classList.remove('hidden'); // Ensure class doesn't hide it
-    hintText.style.visibility = 'hidden';
-    document.getElementById('word-hint-btn').style.display = ''; // Use CSS default
+    hintText.classList.remove('hidden'); // Remove the hidden class (display:none) so visibility can work
+    hintText.style.visibility = 'hidden'; // Start hidden, can be revealed with button
+    document.getElementById('word-hint-btn').style.display = 'inline-flex';
 
     // Create slots
     const slotsContainer = document.getElementById('word-slots');
@@ -303,13 +305,31 @@ function nextBuildWord() {
     clearFeedback('word');
 }
 
+// Store timeout reference at module level to clear it if needed
+let hintHideTimeout = null;
+
 function revealWordHint() {
     const hintText = document.getElementById('word-hint');
     hintText.style.visibility = 'visible';
-    // Optionally hide it again after a few seconds
-    setTimeout(() => {
+
+    // Clear any existing timeout
+    if (hintHideTimeout) {
+        clearTimeout(hintHideTimeout);
+    }
+
+    // Set auto-hide duration based on difficulty
+    const hideDurations = {
+        'easy': 10000,   // 10 seconds
+        'medium': 5000,  // 5 seconds
+        'hard': 2000     // 2 seconds
+    };
+
+    const duration = hideDurations[GameState.difficulty] || 5000;
+
+    // Auto-hide after duration
+    hintHideTimeout = setTimeout(() => {
         hintText.style.visibility = 'hidden';
-    }, 3000);
+    }, duration);
 }
 
 function selectBankLetter(letter, button) {
