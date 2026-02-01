@@ -26,6 +26,7 @@ const App = {
         { id: 'superman', name: 'Superman', color: '#0059b3', projectile: 'laser', image: '../../platform/images/characters/Or_superman.png', background: 'assets/background-clean.png' },
         { id: 'captain', name: 'Captain', color: '#003366', projectile: 'shield', image: '../../platform/images/characters/papa_capitan.png', background: 'assets/background-clean.png' },
         { id: 'hulk', name: 'Hulk', color: '#5cb85c', projectile: 'gamma', image: '../../platform/images/characters/papa_hulk.png', background: 'assets/background-clean.png' },
+        { id: 'thor', name: 'Thor', color: '#1e90ff', projectile: 'lightning', image: '../../platform/images/characters/Or_thor.png', background: 'assets/background-clean.png' },
     ],
 
     elements: {
@@ -70,7 +71,17 @@ const App = {
         this.heroes.forEach(hero => {
             const card = document.createElement('div');
             card.className = 'hero-card';
-            card.onclick = () => this.selectHero(hero);
+            // Use both click and touchend for reliable mobile/desktop support
+            const selectHandler = (e) => {
+                e.stopPropagation();
+                this.selectHero(hero);
+            };
+            card.onclick = selectHandler;
+            card.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.selectHero(hero);
+            }, { passive: false });
 
             // Placeholder for image - in real version these would be actual assets
             // Check if we can find a local image or use a generic one
@@ -382,6 +393,25 @@ const App = {
         this.showScreen('gameover');
     },
 
+    // Helper to set click/touch handlers on home button for mobile reliability
+    setHomeButtonAction(action) {
+        // Clear previous listeners by cloning the button
+        const newBtn = this.elements.homeBtn.cloneNode(true);
+        this.elements.homeBtn.parentNode.replaceChild(newBtn, this.elements.homeBtn);
+        this.elements.homeBtn = newBtn;
+
+        // Set both click and touch handlers
+        this.elements.homeBtn.onclick = (e) => {
+            e.stopPropagation();
+            action();
+        };
+        this.elements.homeBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            action();
+        }, { passive: false });
+    },
+
     showScreen(screenName) {
         // Stop game loop if going back to menu
         if (screenName === 'selection' && this.animationFrameId) {
@@ -410,14 +440,14 @@ const App = {
 
             // Home button configuration for Selection Screen
             this.elements.homeBtn.textContent = '🏠';
-            this.elements.homeBtn.onclick = () => window.location.href = '../../index.html';
+            this.setHomeButtonAction(() => window.location.href = '../../index.html');
 
         } else if (screenName === 'game') {
             // No full screen overlay for game, just layers
 
             // Home button configuration for Game Screen (Back button)
             this.elements.homeBtn.textContent = '⬅️';
-            this.elements.homeBtn.onclick = () => this.showScreen('selection');
+            this.setHomeButtonAction(() => this.showScreen('selection'));
 
         } else if (screenName === 'gameover') {
             this.elements.screens.gameover.classList.remove('hidden');
@@ -425,7 +455,7 @@ const App = {
 
             // Home button configuration for Game Over Screen
             this.elements.homeBtn.textContent = '⬅️';
-            this.elements.homeBtn.onclick = () => this.showScreen('selection');
+            this.setHomeButtonAction(() => this.showScreen('selection'));
         }
 
         this.state.currentScreen = screenName;
@@ -437,15 +467,22 @@ const App = {
         this.elements.menuBtn.onclick = () => this.showScreen('selection');
         // homeBtn listener is set dynamically in showScreen
 
-        // Shooting
-        this.elements.app.addEventListener('mousedown', (e) => this.inputStart(e.clientX, e.clientY));
+        // Shooting - only handle touches during gameplay, not on selection screen
+        this.elements.app.addEventListener('mousedown', (e) => {
+            // Don't handle clicks on buttons or hero cards
+            if (e.target.closest('button') || e.target.closest('.hero-card') || e.target.closest('.home-button')) return;
+            this.inputStart(e.clientX, e.clientY);
+        });
         this.elements.app.addEventListener('touchstart', (e) => {
-            // Check if touching UI
-            if (e.target.closest('button') || e.target.closest('select')) return;
+            // Check if touching UI elements - let them handle their own events
+            if (e.target.closest('button') || e.target.closest('.hero-card') || e.target.closest('.home-button') || e.target.closest('select')) return;
 
-            e.preventDefault(); // Prevent scrolling during gameplay touch
-            const touch = e.touches[0];
-            this.inputStart(touch.clientX, touch.clientY);
+            // Only prevent default and shoot during active gameplay
+            if (this.state.currentScreen === 'game' && this.state.gameActive) {
+                e.preventDefault(); // Prevent scrolling during gameplay touch
+                const touch = e.touches[0];
+                this.inputStart(touch.clientX, touch.clientY);
+            }
         }, { passive: false });
     },
 

@@ -89,10 +89,10 @@ body {
 .heroes-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    padding: 20px;
-    max-width: 800px;
-    width: 90%;
+    gap: 15px;
+    padding: 15px;
+    max-width: 1000px;
+    width: 95%;
 }
 
 .level-display {
@@ -106,9 +106,19 @@ body {
     color: var(--primary-color);
 }
 
-@media (min-width: 768px) {
+/* Tablet: 3 columns */
+@media (min-width: 600px) {
     .heroes-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        padding: 20px;
+    }
+}
+
+/* Desktop: 6 columns */
+@media (min-width: 1024px) {
+    .heroes-grid {
+        grid-template-columns: repeat(6, 1fr);
     }
 }
 
