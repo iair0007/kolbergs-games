@@ -21,12 +21,12 @@ const App = {
 
     // Config
     heroes: [
-        { id: 'batman', name: 'Batman', color: '#333', projectile: 'batarang', image: '../../platform/images/characters/yuval_batman.png', background: 'assets/background-clean.png' },
-        { id: 'flash', name: 'The Flash', color: '#d1121d', projectile: 'lightning', image: '../../platform/images/characters/yuval_flash.png', background: 'assets/background-clean.png' },
-        { id: 'superman', name: 'Superman', color: '#0059b3', projectile: 'laser', image: '../../platform/images/characters/Or_superman.png', background: 'assets/background-clean.png' },
-        { id: 'captain', name: 'Captain', color: '#003366', projectile: 'shield', image: '../../platform/images/characters/papa_capitan.png', background: 'assets/background-clean.png' },
-        { id: 'hulk', name: 'Hulk', color: '#5cb85c', projectile: 'gamma', image: '../../platform/images/characters/papa_hulk.png', background: 'assets/background-clean.png' },
-        { id: 'thor', name: 'Thor', color: '#1e90ff', projectile: 'lightning', image: '../../platform/images/characters/Or_thor.png', background: 'assets/background-clean.png' },
+        { id: 'batman', name: 'Batman', color: '#333', projectile: 'batarang', image: '../../platform/images/characters/yuval_batman.png', background: 'assets/background-batman.png' },
+        { id: 'flash', name: 'The Flash', color: '#d1121d', projectile: 'lightning', image: '../../platform/images/characters/yuval_flash.png', background: 'assets/background-flash.png' },
+        { id: 'superman', name: 'Superman', color: '#0059b3', projectile: 'laser', image: '../../platform/images/characters/Or_superman.png', background: 'assets/background-superman.png' },
+        { id: 'captain', name: 'Captain', color: '#003366', projectile: 'shield', image: '../../platform/images/characters/papa_capitan.png', background: 'assets/background-captain.png' },
+        { id: 'hulk', name: 'Hulk', color: '#5cb85c', projectile: 'gamma', image: '../../platform/images/characters/papa_hulk.png', background: 'assets/background-hulk.png' },
+        { id: 'thor', name: 'Thor', color: '#1e90ff', projectile: 'lightning', image: '../../platform/images/characters/Or_thor.png', background: 'assets/background-thor.png' },
     ],
 
     elements: {

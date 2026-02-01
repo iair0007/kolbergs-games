@@ -47,5 +47,12 @@
     "description": "משחק זיכרון גיבורי על",
     "path": "games/super-memory/index.html",
     "image": "platform/images/characters/yuval_batman.png"
+  },
+  {
+    "id": "hebrew-writer",
+    "title": "כותב בעברית",
+    "description": "למד לכתוב מילים בעברית עם תמונות וקול",
+    "path": "games/hebrew-writer/index.html",
+    "image": "platform/images/hebrew_writer.png"
   }
 ]

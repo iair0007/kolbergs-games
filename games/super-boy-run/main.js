@@ -17,7 +17,7 @@ const DEFAULT_SETTINGS = {
     minJumpStrength: 8,
     gravity: 0.4,             // Reduced for floatier feel (was 0.5)
     startingLives: 8,         // More forgiving for young players (was 5)
-    flyDuration: 5000,  // milliseconds
+    flyDuration: 7000,  // milliseconds
     difficultyMultiplier: 1.0 // Scaling factor per level
 };
 
@@ -744,6 +744,12 @@ function loseLife() {
     } else {
         resetPlayer();
         GameState.powerUp = { type: null, timeLeft: 0 };
+
+        // Reset all collectibles and power-ups so they reappear
+        currentLevelData.collectibles.forEach(c => c.collected = false);
+        if (currentLevelData.powerUps) {
+            currentLevelData.powerUps.forEach(p => p.collected = false);
+        }
     }
 }
 
@@ -947,6 +953,11 @@ document.getElementById('btn-play-again').addEventListener('click', restartGame)
 document.getElementById('btn-quit').addEventListener('click', () => {
     GameState.gameRunning = false;
     showMainMenu();
+});
+
+// Home button (top-left corner) - navigates to platform homepage
+document.getElementById('btn-home').addEventListener('click', () => {
+    window.location.href = '../../index.html';
 });
 
 // Settings panel handlers
