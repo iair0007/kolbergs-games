@@ -4,6 +4,69 @@
  */
 
 // ==========================================
+// AUDIO CONTEXT (Shared for mobile compatibility)
+// ==========================================
+let audioContext = null;
+let audioUnlocked = false;
+
+// Initialize AudioContext (must be called from user gesture on mobile)
+function initAudioContext() {
+    if (audioContext) return audioContext;
+
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        console.log('AudioContext created, state:', audioContext.state);
+    } catch (e) {
+        console.warn('Could not create AudioContext:', e);
+    }
+    return audioContext;
+}
+
+// Unlock audio for mobile browsers - must be called from user gesture
+function unlockAudio() {
+    if (audioUnlocked) return Promise.resolve();
+
+    // Initialize AudioContext if not already done
+    initAudioContext();
+
+    return new Promise((resolve) => {
+        if (!audioContext) {
+            resolve();
+            return;
+        }
+
+        // Resume AudioContext if suspended (required on iOS/Android)
+        if (audioContext.state === 'suspended') {
+            audioContext.resume().then(() => {
+                console.log('AudioContext resumed successfully');
+                audioUnlocked = true;
+                resolve();
+            }).catch((e) => {
+                console.warn('Could not resume AudioContext:', e);
+                resolve();
+            });
+        } else {
+            audioUnlocked = true;
+            resolve();
+        }
+
+        // Also unlock Speech Synthesis by speaking an empty utterance
+        if ('speechSynthesis' in window) {
+            // Cancel any existing speech
+            speechSynthesis.cancel();
+
+            // Create a silent "warm-up" utterance to unlock speech on mobile
+            const warmUp = new SpeechSynthesisUtterance('');
+            warmUp.volume = 0;
+            warmUp.lang = 'he-IL';
+            speechSynthesis.speak(warmUp);
+
+            console.log('Speech synthesis warmed up');
+        }
+    });
+}
+
+// ==========================================
 // GAME STATE
 // ==========================================
 const GameState = {
@@ -238,22 +301,25 @@ function hideWordHint() {
 // GAME START
 // ==========================================
 function startGame() {
-    const config = GAME_CONFIG[GameState.difficulty];
+    // Unlock audio on user interaction (critical for mobile)
+    unlockAudio().then(() => {
+        const config = GAME_CONFIG[GameState.difficulty];
 
-    GameState.currentQuestion = 0;
-    GameState.totalQuestions = config.questionsPerRound;
-    GameState.correctAnswers = 0;
-    GameState.points = 0;
-    GameState.wrongAttempts = 0;
-    GameState.firstTryCorrect = 0;
-    GameState.currentQuestionHadWrongAttempt = false;
-    GameState.usedWords = [];
-    GameState.selectedLetters = [];
-    GameState.isFirstQuestion = true;
+        GameState.currentQuestion = 0;
+        GameState.totalQuestions = config.questionsPerRound;
+        GameState.correctAnswers = 0;
+        GameState.points = 0;
+        GameState.wrongAttempts = 0;
+        GameState.firstTryCorrect = 0;
+        GameState.currentQuestionHadWrongAttempt = false;
+        GameState.usedWords = [];
+        GameState.selectedLetters = [];
+        GameState.isFirstQuestion = true;
 
-    showScreen('game-screen');
-    updateInstruction();
-    nextQuestion();
+        showScreen('game-screen');
+        updateInstruction();
+        nextQuestion();
+    });
 }
 
 function updateInstruction() {
@@ -673,9 +739,18 @@ function shuffleArray(array) {
 }
 
 function playSound(type) {
-    // Simple audio feedback using Web Audio API
+    // Use the shared audio context (must be unlocked first via user interaction)
+    if (!audioContext || !audioUnlocked) {
+        console.log('Audio not available or not unlocked yet');
+        return;
+    }
+
     try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // Resume context if it got suspended (can happen on mobile when tab loses focus)
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
 
@@ -715,7 +790,7 @@ function playSound(type) {
                 break;
         }
     } catch (e) {
-        // Audio not supported, fail silently
+        console.warn('Could not play sound:', e);
     }
 }
 
