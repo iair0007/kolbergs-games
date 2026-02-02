@@ -8,6 +8,8 @@
 // ==========================================
 let audioContext = null;
 let audioUnlocked = false;
+let speechReady = false;
+let hebrewVoice = null;
 
 // Initialize AudioContext (must be called from user gesture on mobile)
 function initAudioContext() {
@@ -22,47 +24,129 @@ function initAudioContext() {
     return audioContext;
 }
 
+// Find Hebrew voice
+function findHebrewVoice() {
+    if (!('speechSynthesis' in window)) return null;
+
+    const voices = speechSynthesis.getVoices();
+    console.log('Available voices:', voices.length);
+
+    // Try to find a Hebrew voice
+    let voice = voices.find(v => v.lang.startsWith('he'));
+
+    // Fallback to any available voice
+    if (!voice && voices.length > 0) {
+        voice = voices[0];
+        console.log('Hebrew voice not found, using:', voice.name);
+    }
+
+    return voice;
+}
+
+// Wait for voices to be loaded (needed on some mobile browsers)
+function waitForVoices() {
+    return new Promise((resolve) => {
+        if (!('speechSynthesis' in window)) {
+            resolve();
+            return;
+        }
+
+        // Check if voices are already available
+        let voices = speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            hebrewVoice = findHebrewVoice();
+            resolve();
+            return;
+        }
+
+        // Wait for voices to load (Chrome on Android needs this)
+        let attempts = 0;
+        const checkVoices = () => {
+            voices = speechSynthesis.getVoices();
+            attempts++;
+            if (voices.length > 0) {
+                hebrewVoice = findHebrewVoice();
+                resolve();
+            } else if (attempts < 20) {
+                setTimeout(checkVoices, 100);
+            } else {
+                console.warn('Could not load speech voices');
+                resolve();
+            }
+        };
+
+        // Use the event if available
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = () => {
+                hebrewVoice = findHebrewVoice();
+                resolve();
+            };
+        }
+
+        // Also poll as a fallback
+        checkVoices();
+    });
+}
+
 // Unlock audio for mobile browsers - must be called from user gesture
 function unlockAudio() {
-    if (audioUnlocked) return Promise.resolve();
+    if (audioUnlocked && speechReady) return Promise.resolve();
 
     // Initialize AudioContext if not already done
     initAudioContext();
 
     return new Promise((resolve) => {
-        if (!audioContext) {
-            resolve();
-            return;
-        }
+        const promises = [];
 
         // Resume AudioContext if suspended (required on iOS/Android)
-        if (audioContext.state === 'suspended') {
-            audioContext.resume().then(() => {
-                console.log('AudioContext resumed successfully');
-                audioUnlocked = true;
-                resolve();
-            }).catch((e) => {
-                console.warn('Could not resume AudioContext:', e);
-                resolve();
-            });
-        } else {
+        if (audioContext && audioContext.state === 'suspended') {
+            promises.push(
+                audioContext.resume().then(() => {
+                    console.log('AudioContext resumed successfully');
+                    audioUnlocked = true;
+                }).catch((e) => {
+                    console.warn('Could not resume AudioContext:', e);
+                })
+            );
+        } else if (audioContext) {
             audioUnlocked = true;
-            resolve();
         }
 
-        // Also unlock Speech Synthesis by speaking an empty utterance
+        // Wait for speech voices and unlock speech synthesis
         if ('speechSynthesis' in window) {
-            // Cancel any existing speech
-            speechSynthesis.cancel();
+            promises.push(
+                waitForVoices().then(() => {
+                    // Cancel any existing speech
+                    speechSynthesis.cancel();
 
-            // Create a silent "warm-up" utterance to unlock speech on mobile
-            const warmUp = new SpeechSynthesisUtterance('');
-            warmUp.volume = 0;
-            warmUp.lang = 'he-IL';
-            speechSynthesis.speak(warmUp);
+                    // On iOS Safari, we need to speak something short to unlock
+                    // Using a very short Hebrew word that sounds like a breath
+                    const warmUp = new SpeechSynthesisUtterance(' ');
+                    warmUp.volume = 0.01; // Nearly silent but not zero
+                    warmUp.rate = 2; // Fast
+                    warmUp.lang = 'he-IL';
+                    if (hebrewVoice) {
+                        warmUp.voice = hebrewVoice;
+                    }
 
-            console.log('Speech synthesis warmed up');
+                    warmUp.onend = () => {
+                        console.log('Speech synthesis unlocked');
+                        speechReady = true;
+                    };
+                    warmUp.onerror = () => {
+                        console.warn('Speech warmup error, but continuing');
+                        speechReady = true;
+                    };
+
+                    speechSynthesis.speak(warmUp);
+                })
+            );
         }
+
+        Promise.all(promises).then(() => {
+            // Give a small delay for speech to initialize
+            setTimeout(resolve, 200);
+        });
     });
 }
 
@@ -142,26 +226,37 @@ function speakWord(word, onEndCallback) {
     // Cancel any ongoing speech
     speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = 'he-IL';
-    utterance.rate = 0.8; // Slightly slower for learning
-    utterance.pitch = 1.0;
+    // Small delay to ensure cancel is processed (iOS quirk)
+    setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = 'he-IL';
+        utterance.rate = 0.8; // Slightly slower for learning
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
 
-    // Add visual feedback
-    const speakerBtn = document.getElementById('speaker-btn');
-    if (speakerBtn) {
-        speakerBtn.classList.add('speaking');
-        utterance.onend = () => {
-            speakerBtn.classList.remove('speaking');
-            if (onEndCallback) onEndCallback();
-        };
-        utterance.onerror = () => {
-            speakerBtn.classList.remove('speaking');
-            if (onEndCallback) onEndCallback();
-        };
-    }
+        // Use the Hebrew voice we found, if available
+        if (hebrewVoice) {
+            utterance.voice = hebrewVoice;
+        }
 
-    speechSynthesis.speak(utterance);
+        // Add visual feedback
+        const speakerBtn = document.getElementById('speaker-btn');
+        if (speakerBtn) {
+            speakerBtn.classList.add('speaking');
+            utterance.onend = () => {
+                speakerBtn.classList.remove('speaking');
+                if (onEndCallback) onEndCallback();
+            };
+            utterance.onerror = (e) => {
+                console.warn('Speech error:', e);
+                speakerBtn.classList.remove('speaking');
+                if (onEndCallback) onEndCallback();
+            };
+        }
+
+        console.log('Speaking word:', word);
+        speechSynthesis.speak(utterance);
+    }, 50);
 }
 
 // Speak general instruction text
@@ -172,14 +267,23 @@ function speakInstruction(text) {
 
     speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'he-IL';
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
+    // Small delay to ensure cancel is processed (iOS quirk)
+    setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'he-IL';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
 
-    speechSynthesis.speak(utterance);
+        // Use the Hebrew voice we found, if available
+        if (hebrewVoice) {
+            utterance.voice = hebrewVoice;
+        }
+
+        console.log('Speaking instruction:', text);
+        speechSynthesis.speak(utterance);
+    }, 50);
 }
-
 // ==========================================
 // SCREEN NAVIGATION
 // ==========================================
@@ -203,8 +307,15 @@ function setupEventListeners() {
         });
     });
 
-    // Start game button
-    document.getElementById('start-game').addEventListener('click', startGame);
+    // Start game button - add both click and touchstart for mobile compatibility
+    const startBtn = document.getElementById('start-game');
+    startBtn.addEventListener('click', startGame);
+    // Touch event for iOS Safari which sometimes needs touch specifically to unlock audio
+    startBtn.addEventListener('touchstart', (e) => {
+        // Prevent double-firing with click
+        e.preventDefault();
+        startGame();
+    }, { passive: false });
 
     // Speaker button
     document.getElementById('speaker-btn').addEventListener('click', () => {
@@ -385,19 +496,19 @@ function nextQuestion() {
         GameState.isFirstQuestion = false;
         const instructionText = document.getElementById('instruction').textContent;
 
-        // Speak instruction, then word
+        // Speak instruction, then word - longer delay for mobile to initialize
         setTimeout(() => {
             speakInstruction(instructionText);
             // After instruction ends, speak the word
             setTimeout(() => {
                 speakWord(wordData.word);
-            }, 2000); // Give time for instruction to finish
-        }, 500);
+            }, 3000); // Give time for instruction to finish (longer for mobile)
+        }, 1000); // Longer initial delay for mobile speech synthesis
     } else {
         // Auto-speak the word after a short delay
         setTimeout(() => {
             speakWord(wordData.word);
-        }, 500);
+        }, 800);
     }
 }
 
