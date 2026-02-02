@@ -24,20 +24,30 @@ function initAudioContext() {
     return audioContext;
 }
 
-// Find Hebrew voice
+// Track if Hebrew speech is actually available
+let hebrewSpeechAvailable = false;
+
+// Find Hebrew voice - only returns a voice if it's actually Hebrew
 function findHebrewVoice() {
     if (!('speechSynthesis' in window)) return null;
 
     const voices = speechSynthesis.getVoices();
     console.log('Available voices:', voices.length);
 
-    // Try to find a Hebrew voice
+    // Log all available voices for debugging
+    voices.forEach(v => {
+        console.log(`Voice: ${v.name}, Lang: ${v.lang}, Local: ${v.localService}`);
+    });
+
+    // Try to find a Hebrew voice (must start with 'he')
     let voice = voices.find(v => v.lang.startsWith('he'));
 
-    // Fallback to any available voice
-    if (!voice && voices.length > 0) {
-        voice = voices[0];
-        console.log('Hebrew voice not found, using:', voice.name);
+    if (voice) {
+        console.log('Hebrew voice found:', voice.name, voice.lang);
+        hebrewSpeechAvailable = true;
+    } else {
+        console.warn('No Hebrew voice available on this device');
+        hebrewSpeechAvailable = false;
     }
 
     return voice;
@@ -119,26 +129,29 @@ function unlockAudio() {
                     // Cancel any existing speech
                     speechSynthesis.cancel();
 
-                    // On iOS Safari, we need to speak something short to unlock
-                    // Using a very short Hebrew word that sounds like a breath
-                    const warmUp = new SpeechSynthesisUtterance(' ');
-                    warmUp.volume = 0.01; // Nearly silent but not zero
-                    warmUp.rate = 2; // Fast
-                    warmUp.lang = 'he-IL';
-                    if (hebrewVoice) {
+                    // Only do warmup if we have a Hebrew voice
+                    if (hebrewVoice && hebrewSpeechAvailable) {
+                        // On iOS Safari, we need to speak something short to unlock
+                        const warmUp = new SpeechSynthesisUtterance('.');
+                        warmUp.volume = 0.01; // Nearly silent but not zero
+                        warmUp.rate = 2; // Fast
+                        warmUp.lang = 'he-IL';
                         warmUp.voice = hebrewVoice;
+
+                        warmUp.onend = () => {
+                            console.log('Speech synthesis unlocked');
+                            speechReady = true;
+                        };
+                        warmUp.onerror = () => {
+                            console.warn('Speech warmup error, but continuing');
+                            speechReady = true;
+                        };
+
+                        speechSynthesis.speak(warmUp);
+                    } else {
+                        console.log('No Hebrew voice available, skipping speech warmup');
+                        speechReady = true; // Mark as ready but speech won't work
                     }
-
-                    warmUp.onend = () => {
-                        console.log('Speech synthesis unlocked');
-                        speechReady = true;
-                    };
-                    warmUp.onerror = () => {
-                        console.warn('Speech warmup error, but continuing');
-                        speechReady = true;
-                    };
-
-                    speechSynthesis.speak(warmUp);
                 })
             );
         }
@@ -223,21 +236,27 @@ function speakWord(word, onEndCallback) {
         return;
     }
 
+    // Only speak if Hebrew voice is available - otherwise don't speak at all
+    if (!hebrewSpeechAvailable || !hebrewVoice) {
+        console.log('Hebrew speech not available, skipping speech for:', word);
+        if (onEndCallback) onEndCallback();
+        return;
+    }
+
     // Cancel any ongoing speech
     speechSynthesis.cancel();
 
     // Small delay to ensure cancel is processed (iOS quirk)
     setTimeout(() => {
-        const utterance = new SpeechSynthesisUtterance(word);
+        // Clean the word - remove any punctuation that might be read aloud
+        const cleanWord = word.replace(/[?!.,;:]/g, '');
+
+        const utterance = new SpeechSynthesisUtterance(cleanWord);
         utterance.lang = 'he-IL';
         utterance.rate = 0.8; // Slightly slower for learning
         utterance.pitch = 1.0;
         utterance.volume = 1.0;
-
-        // Use the Hebrew voice we found, if available
-        if (hebrewVoice) {
-            utterance.voice = hebrewVoice;
-        }
+        utterance.voice = hebrewVoice;
 
         // Add visual feedback
         const speakerBtn = document.getElementById('speaker-btn');
@@ -254,7 +273,7 @@ function speakWord(word, onEndCallback) {
             };
         }
 
-        console.log('Speaking word:', word);
+        console.log('Speaking word:', cleanWord);
         speechSynthesis.speak(utterance);
     }, 50);
 }
@@ -265,22 +284,27 @@ function speakInstruction(text) {
         return;
     }
 
+    // Only speak if Hebrew voice is available
+    if (!hebrewSpeechAvailable || !hebrewVoice) {
+        console.log('Hebrew speech not available, skipping instruction:', text);
+        return;
+    }
+
     speechSynthesis.cancel();
 
     // Small delay to ensure cancel is processed (iOS quirk)
     setTimeout(() => {
-        const utterance = new SpeechSynthesisUtterance(text);
+        // Clean the text - remove any punctuation that might be read aloud
+        const cleanText = text.replace(/[?!.,;:]/g, '');
+
+        const utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.lang = 'he-IL';
         utterance.rate = 0.9;
         utterance.pitch = 1.0;
         utterance.volume = 1.0;
+        utterance.voice = hebrewVoice;
 
-        // Use the Hebrew voice we found, if available
-        if (hebrewVoice) {
-            utterance.voice = hebrewVoice;
-        }
-
-        console.log('Speaking instruction:', text);
+        console.log('Speaking instruction:', cleanText);
         speechSynthesis.speak(utterance);
     }, 50);
 }
