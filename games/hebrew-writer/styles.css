@@ -528,8 +528,6 @@ body {
     gap: 10px;
     margin-bottom: 20px;
     flex-wrap: wrap;
-    flex-direction: row-reverse;
-    /* RTL for Hebrew */
 }
 
 .word-slot {

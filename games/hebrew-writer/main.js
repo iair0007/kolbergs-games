@@ -690,7 +690,7 @@ function selectBankLetter(letter, button) {
 
     if (emptySlotIndex >= slots.length) return;
 
-    // Add letter to slot
+    // Add letter to slot (CSS direction:rtl ensures index 0 appears on the right)
     GameState.selectedLetters.push({ letter, buttonIndex: button.dataset.index });
     slots[emptySlotIndex].textContent = letter;
     slots[emptySlotIndex].classList.add('filled');
