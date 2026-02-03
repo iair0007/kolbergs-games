@@ -92,10 +92,7 @@ function setupEventListeners() {
         });
     });
 
-    // Back buttons
-    document.getElementById('back-to-welcome').addEventListener('click', () => {
-        showScreen('welcome-screen');
-    });
+
 
     // Word game controls
     document.getElementById('clear-word')?.addEventListener('click', clearWordSlots);

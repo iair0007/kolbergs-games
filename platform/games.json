@@ -1,17 +1,31 @@
 [
   {
-    "id": "yuval-birthday",
-    "title": "Yuval's Birthday Adventure",
-    "description": "הרפתקת יום הולדת של גיבורי על",
-    "path": "games/yuval-birthday/index.html",
-    "image": "platform/images/yuval_birthday.png"
-  },
-  {
     "id": "math-hero",
     "title": "גיבור החשבון",
     "description": "משחק חשבון מהנה וקסום לילדים",
     "path": "games/math-hero/index.html",
     "image": "platform/images/math_hero.png"
+  },
+  {
+    "id": "hebrew-hero",
+    "title": "גיבור העברית",
+    "description": "למידת קריאה וכתיבה בעברית לילדים",
+    "path": "games/hebrew-hero/index.html",
+    "image": "platform/images/hebrew_hero.png"
+  },
+  {
+    "id": "super-memory",
+    "title": "Super Memory Match",
+    "description": "משחק זיכרון גיבורי על",
+    "path": "games/super-memory/index.html",
+    "image": "platform/images/super_memory.png"
+  },
+  {
+    "id": "hebrew-writer",
+    "title": "כותב בעברית",
+    "description": "למד לכתוב מילים בעברית עם תמונות וקול",
+    "path": "games/hebrew-writer/index.html",
+    "image": "platform/images/hebrew_writer.png"
   },
   {
     "id": "super-boy-run",
@@ -28,13 +42,6 @@
     "image": "platform/images/tic_tac_toe.png"
   },
   {
-    "id": "hebrew-hero",
-    "title": "גיבור העברית",
-    "description": "למידת קריאה וכתיבה בעברית לילדים",
-    "path": "games/hebrew-hero/index.html",
-    "image": "platform/images/hebrew_hero.png"
-  },
-  {
     "id": "hero-target",
     "title": "Hero Target Practice",
     "description": "Train your superhero skills!",
@@ -42,17 +49,10 @@
     "image": "platform/images/hero_target.png"
   },
   {
-    "id": "super-memory",
-    "title": "Super Memory Match",
-    "description": "משחק זיכרון גיבורי על",
-    "path": "games/super-memory/index.html",
-    "image": "platform/images/characters/yuval_batman.png"
-  },
-  {
-    "id": "hebrew-writer",
-    "title": "כותב בעברית",
-    "description": "למד לכתוב מילים בעברית עם תמונות וקול",
-    "path": "games/hebrew-writer/index.html",
-    "image": "platform/images/hebrew_writer.png"
+    "id": "yuval-birthday",
+    "title": "Yuval's Birthday Adventure",
+    "description": "הרפתקת יום הולדת של גיבורי על",
+    "path": "games/yuval-birthday/index.html",
+    "image": "platform/images/yuval_birthday.png"
   }
 ]
