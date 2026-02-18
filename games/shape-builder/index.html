@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>בונה הצורות - Shape Builder - Kolberg's Games</title>
+    <meta name="description"
+        content="צור צורות ודפוסים מדהימים! גרור ושחרר חלקים גיאומטריים כדי לבנות תמונות ולפתור חידות.">
+
+    <!-- Platform responsive CSS (REQUIRED) -->
+    <link rel="stylesheet" href="../../platform/responsive.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Game styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Home Button (MANDATORY) - positioned right for RTL -->
+        <a href="../../index.html" class="home-btn" aria-label="חזרה לדף הבית">🏠</a>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <div class="screen-content">
+                <div class="hero-badge">🎨</div>
+                <h1 class="game-title">בונה הצורות</h1>
+                <p class="subtitle">צור צורות ודפוסים מדהימים!</p>
+
+                <div class="mode-selector">
+                    <button class="mode-btn" data-mode="freeform">
+                        <div class="mode-icon">✨</div>
+                        <div class="mode-name">יצירה חופשית</div>
+                        <div class="mode-desc">צור מה שאתה רוצה!</div>
+                    </button>
+
+                    <button class="mode-btn" data-mode="pattern">
+                        <div class="mode-icon">🧩</div>
+                        <div class="mode-name">התאמת דפוס</div>
+                        <div class="mode-desc">השלם את התמונה!</div>
+                    </button>
+
+                    <button class="mode-btn" data-mode="timed">
+                        <div class="mode-icon">⏱️</div>
+                        <div class="mode-name">אתגר זמן</div>
+                        <div class="mode-desc">בנה מהר!</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-container">
+                <!-- Top Bar -->
+                <div class="top-bar">
+                    <div class="mode-indicator" id="mode-indicator">יצירה חופשית</div>
+                    <div class="timer-display" id="timer-display" style="display: none;">
+                        <span class="timer-icon">⏱️</span>
+                        <span id="timer-value">60</span>
+                    </div>
+                </div>
+
+                <!-- Canvas Area -->
+                <div class="canvas-container">
+                    <svg id="canvas" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
+                        <!-- Grid pattern -->
+                        <defs>
+                            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,0,0,0.05)" stroke-width="0.5" />
+                            </pattern>
+                        </defs>
+                        <rect width="400" height="400" fill="url(#grid)" />
+                    </svg>
+
+                    <!-- Pattern Preview (for Pattern Match mode) -->
+                    <div class="pattern-preview" id="pattern-preview" style="display: none;">
+                        <div class="pattern-title">דפוס יעד:</div>
+                        <svg id="pattern-canvas" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
+                            <rect width="400" height="400" fill="url(#grid)" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Shape Palette -->
+                <div class="shape-palette">
+                    <div class="palette-title">בחר צורה:</div>
+                    <div class="palette-shapes" id="palette-shapes">
+                        <!-- Shapes will be added dynamically -->
+                    </div>
+                </div>
+
+                <!-- Tools Panel -->
+                <div class="tools-panel">
+                    <button class="tool-btn" id="rotate-btn" title="סובב">
+                        <span class="tool-icon">🔄</span>
+                        <span class="tool-label">סובב</span>
+                    </button>
+
+                    <button class="tool-btn" id="color-btn" title="שנה צבע">
+                        <span class="tool-icon">🎨</span>
+                        <span class="tool-label">צבע</span>
+                    </button>
+
+                    <button class="tool-btn" id="delete-btn" title="מחק">
+                        <span class="tool-icon">🗑️</span>
+                        <span class="tool-label">מחק</span>
+                    </button>
+
+                    <button class="tool-btn danger" id="clear-btn" title="נקה הכל">
+                        <span class="tool-icon">🧹</span>
+                        <span class="tool-label">נקה הכל</span>
+                    </button>
+                </div>
+
+                <!-- Color Picker (hidden by default) -->
+                <div class="color-picker" id="color-picker" style="display: none;">
+                    <div class="color-picker-title">בחר צבע:</div>
+                    <div class="color-grid" id="color-grid">
+                        <!-- Colors will be added dynamically -->
+                    </div>
+                </div>
+
+                <!-- Pattern Selector (for Pattern Match mode) -->
+                <div class="pattern-selector" id="pattern-selector" style="display: none;">
+                    <div class="pattern-selector-title">בחר דפוס:</div>
+                    <div class="pattern-grid" id="pattern-grid">
+                        <!-- Patterns will be added dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complete Screen -->
+        <div id="complete-screen" class="screen">
+            <div class="screen-content">
+                <div class="trophy">🏆</div>
+                <h1 class="complete-title">מעולה!</h1>
+                <div class="complete-stats" id="complete-stats"></div>
+
+                <div class="complete-actions">
+                    <button class="magic-btn" id="play-again">
+                        <span class="btn-icon">🔄</span>
+                        <span>שחק שוב</span>
+                    </button>
+                    <button class="magic-btn secondary" id="back-to-menu">
+                        <span class="btn-icon">🏠</span>
+                        <span>תפריט ראשי</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="shapes.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

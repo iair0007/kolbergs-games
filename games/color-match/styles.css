@@ -1,0 +1,662 @@
+/* Color Match Challenge - Styles */
+
+/* ==========================================
+   CSS VARIABLES (REQUIRED)
+   ========================================== */
+:root {
+    /* Gradients */
+    --primary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --warning-gradient: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+    --bg-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff9a9e 100%);
+
+    /* Colors */
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.9);
+    --shadow-color: rgba(0, 0, 0, 0.3);
+
+    /* Timer colors */
+    --timer-green: #38ef7d;
+    --timer-yellow: #f2c94c;
+    --timer-red: #f5576c;
+
+    /* Layout */
+    --border-radius: 16px;
+    --transition: all 0.3s ease;
+}
+
+/* ==========================================
+   BASE STYLES (REQUIRED)
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Rubik', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    min-height: 100vh;
+    min-height: 100svh;
+}
+
+#app {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* ==========================================
+   SCREENS (REQUIRED)
+   ========================================== */
+.screen {
+    display: none;
+    flex: 1;
+    padding: 20px;
+    padding-top: 70px;
+    overflow-y: auto;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.screen-content {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* ==========================================
+   HOME BUTTON (MANDATORY)
+   ========================================== */
+.home-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    text-decoration: none;
+    z-index: 100;
+    transition: var(--transition);
+}
+
+.home-btn:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ==========================================
+   BUTTONS (REQUIRED)
+   ========================================== */
+.magic-btn {
+    background: var(--primary-gradient);
+    border: none;
+    border-radius: 30px;
+    padding: 15px 40px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: var(--transition);
+    box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+    font-family: inherit;
+}
+
+.magic-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
+}
+
+.magic-btn:active {
+    transform: translateY(-1px);
+}
+
+.magic-btn.secondary {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================
+   TITLES & TEXT
+   ========================================== */
+.game-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    text-align: center;
+    font-weight: 600;
+}
+
+.description {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* ==========================================
+   LANGUAGE SELECTOR
+   ========================================== */
+.language-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.lang-btn {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.lang-btn:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.lang-btn.active {
+    background: var(--primary-gradient);
+    border-color: transparent;
+    box-shadow: 0 5px 20px rgba(240, 147, 251, 0.4);
+}
+
+/* ==========================================
+   BACK BUTTON
+   ========================================== */
+.back-btn {
+    background: transparent;
+    border: 2px solid var(--text-secondary);
+    color: var(--text-secondary);
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: block;
+    margin: 20px auto 0;
+}
+
+.back-btn:hover {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+}
+
+/* ==========================================
+   DIFFICULTY SELECTOR
+   ========================================== */
+
+/* ==========================================
+   DIFFICULTY SELECTOR
+   ========================================== */
+.difficulty-selector {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.difficulty-selector h3 {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.difficulty-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.difficulty-btn {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+    color: var(--text-primary);
+    min-width: 140px;
+}
+
+.difficulty-btn:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.difficulty-btn.active {
+    border-color: #f5576c;
+    background: rgba(245, 87, 108, 0.2);
+    box-shadow: 0 0 20px rgba(245, 87, 108, 0.4);
+}
+
+.diff-icon {
+    font-size: 2rem;
+}
+
+.diff-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.diff-info {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* ==========================================
+   GAME SCREEN
+   ========================================== */
+.game-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.score-display,
+.round-display,
+.streak-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.score-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.score-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: var(--success-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.round-display {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.streak-display {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+/* ==========================================
+   TIMER
+   ========================================== */
+.timer-container {
+    width: 100%;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.timer-bar {
+    height: 100%;
+    background: var(--timer-green);
+    width: 100%;
+    transition: width 0.1s linear, background-color 0.3s ease;
+    border-radius: 8px;
+}
+
+.timer-bar.warning {
+    background: var(--timer-yellow);
+}
+
+.timer-bar.danger {
+    background: var(--timer-red);
+}
+
+/* ==========================================
+   COLOR DISPLAY
+   ========================================== */
+.color-display {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.color-box {
+    width: 200px;
+    height: 200px;
+    border-radius: 20px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.question-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--text-primary);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================
+   OPTIONS
+   ========================================== */
+.options-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 10px;
+}
+
+.option-btn {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+}
+
+.option-btn .audio-speaker {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.option-btn .audio-speaker:hover {
+    transform: scale(1.2);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.option-btn:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.option-btn:active {
+    transform: scale(0.95);
+}
+
+.option-btn.correct {
+    background: var(--success-gradient);
+    border-color: #38ef7d;
+    animation: correctPulse 0.5s ease;
+}
+
+.option-btn.wrong {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    border-color: #ff6b6b;
+    animation: shake 0.5s ease;
+}
+
+@keyframes correctPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    75% {
+        transform: translateX(10px);
+    }
+}
+
+/* ==========================================
+   COMPLETE SCREEN
+   ========================================== */
+.stats-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.complete-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.complete-title {
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--success-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+}
+
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.hero-badge {
+    font-size: 80px;
+    animation: bounce 2s infinite;
+}
+
+.trophy {
+    font-size: 100px;
+    animation: bounce 1s ease infinite;
+}
+
+/* ==========================================
+   RESPONSIVE (REQUIRED)
+   ========================================== */
+@media (max-width: 480px) {
+    .game-title {
+        font-size: 2rem;
+    }
+
+    .hero-badge {
+        font-size: 60px;
+    }
+
+    .magic-btn {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+    }
+
+    .difficulty-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .difficulty-btn {
+        width: 100%;
+    }
+
+    .color-box {
+        width: 150px;
+        height: 150px;
+    }
+
+    .game-header {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .options-container {
+        grid-template-columns: 1fr;
+    }
+
+    .option-btn {
+        font-size: 1.1rem;
+        padding: 18px;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .options-container.six-options {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ספארי החיות - Animal Safari - Kolberg's Games</title>
+    <meta name="description" content="חקור את ממלכת החיות! התאם חיות, למד את הקולות שלהן וגלה עובדות מדהימות">
+
+    <!-- Platform responsive CSS (REQUIRED) -->
+    <link rel="stylesheet" href="../../platform/responsive.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Game styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Home Button (MANDATORY) -->
+        <a href="../../index.html" class="home-btn" aria-label="חזרה לדף הבית">🏠</a>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <div class="screen-content">
+                <div class="hero-badge">🦁</div>
+                <h1 class="game-title">ספארי החיות</h1>
+                <p class="subtitle">התאם חיות, למד את הקולות שלהן וגלה עובדות מדהימות!</p>
+
+                <!-- Mode Selector -->
+                <div class="mode-selector">
+                    <h2 class="section-title">בחר מצב משחק:</h2>
+                    <div class="mode-buttons">
+                        <button class="mode-btn active" data-mode="classic">
+                            <span class="mode-icon">🃏</span>
+                            <span class="mode-text">התאמה קלאסית</span>
+                        </button>
+                        <button class="mode-btn" data-mode="sound">
+                            <span class="mode-icon">🔊</span>
+                            <span class="mode-text">התאמת קולות</span>
+                        </button>
+                        <button class="mode-btn" data-mode="facts">
+                            <span class="mode-icon">📚</span>
+                            <span class="mode-text">עובדות על חיות</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Difficulty Selector -->
+                <div class="difficulty-selector">
+                    <h2 class="section-title">בחר רמת קושי:</h2>
+                    <div class="difficulty-buttons">
+                        <button class="difficulty-btn active" data-difficulty="easy">
+                            <span class="difficulty-icon">🌟</span>
+                            <span class="difficulty-text">קל</span>
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="medium">
+                            <span class="difficulty-icon">⭐⭐</span>
+                            <span class="difficulty-text">בינוני</span>
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="hard">
+                            <span class="difficulty-icon">🌟🌟🌟</span>
+                            <span class="difficulty-text">קשה</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="start-btn magic-btn" id="start-game">
+                    <span class="btn-icon">🚀</span>
+                    <span>התחל לשחק!</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="stat-item">
+                    <span class="stat-label">נקודות:</span>
+                    <span class="stat-value" id="score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">מהלכים:</span>
+                    <span class="stat-value" id="moves">0</span>
+                </div>
+                <div class="stat-item" id="timer-container" style="display: none;">
+                    <span class="stat-label">זמן:</span>
+                    <span class="stat-value" id="timer">0:00</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">כוכבים:</span>
+                    <span class="stat-value" id="stars">⭐⭐⭐</span>
+                </div>
+            </div>
+
+            <div class="game-container">
+                <div id="card-grid" class="card-grid"></div>
+            </div>
+        </div>
+
+        <!-- Complete Screen -->
+        <div id="complete-screen" class="screen">
+            <div class="screen-content">
+                <div class="trophy">🏆</div>
+                <h1 class="complete-title">מעולה!</h1>
+
+                <div class="complete-stats">
+                    <div class="stat-row">
+                        <span class="stat-label">סה״כ מהלכים:</span>
+                        <span class="stat-value" id="final-moves">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">זמן שחלף:</span>
+                        <span class="stat-value" id="final-time">0:00</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">כוכבים שהרווחת:</span>
+                        <span class="stat-value" id="final-stars">⭐⭐⭐</span>
+                    </div>
+                </div>
+
+                <div class="animal-fact" id="animal-fact">
+                    <h3>💡 עובדה מעניינת:</h3>
+                    <p id="fact-text"></p>
+                </div>
+
+                <div class="complete-actions">
+                    <button class="magic-btn" id="play-again">
+                        <span class="btn-icon">🔄</span>
+                        <span>שחק שוב</span>
+                    </button>
+                    <button class="magic-btn secondary" id="back-to-menu">🏠 תפריט ראשי</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

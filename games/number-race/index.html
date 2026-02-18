@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>מרוץ המספרים - Number Race - Kolberg's Games</title>
+    <meta name="description" content="פתור תרגילי חשבון כדי לרוץ מהר יותר! התחרה בזמן והשג את הניקוד הגבוה ביותר.">
+
+    <!-- Platform responsive CSS (REQUIRED) -->
+    <link rel="stylesheet" href="../../platform/responsive.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Game styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Home Button (MANDATORY) -->
+        <a href="../../index.html" class="home-btn" aria-label="חזרה לדף הבית">🏠</a>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <div class="screen-content">
+                <div class="hero-badge">🏃</div>
+                <h1 class="game-title">מרוץ המספרים</h1>
+                <p class="subtitle">פתור תרגילי חשבון כדי לרוץ מהר יותר!</p>
+
+                <!-- Difficulty Selector - Visual Only -->
+                <div class="selector-group">
+                    <div class="button-group">
+                        <button class="option-btn difficulty-btn active" data-difficulty="easy" title="קל">
+                            <span class="btn-emoji">🌟</span>
+                            <span class="btn-label">1-10</span>
+                        </button>
+                        <button class="option-btn difficulty-btn" data-difficulty="medium" title="בינוני">
+                            <span class="btn-emoji">⭐⭐</span>
+                            <span class="btn-label">1-20</span>
+                        </button>
+                        <button class="option-btn difficulty-btn" data-difficulty="hard" title="קשה">
+                            <span class="btn-emoji">🌟🌟🌟</span>
+                            <span class="btn-label">1-100</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Operation Selector - Visual Only -->
+                <div class="selector-group">
+                    <div class="button-group">
+                        <button class="option-btn operation-btn active" data-operation="addition" title="חיבור">
+                            <span class="btn-emoji">➕</span>
+                        </button>
+                        <button class="option-btn operation-btn" data-operation="subtraction" title="חיסור">
+                            <span class="btn-emoji">➖</span>
+                        </button>
+                        <button class="option-btn operation-btn" data-operation="multiplication" title="כפל">
+                            <span class="btn-emoji">✖️</span>
+                        </button>
+                        <button class="option-btn operation-btn" data-operation="mixed" title="מעורב">
+                            <span class="btn-emoji">🔀</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Character Selector - Visual Only -->
+                <div class="selector-group">
+                    <div class="character-grid">
+                        <div class="character-card active" data-character="batman">
+                            <img src="../../platform/images/characters/yuval_batman.png" alt="Batman">
+                        </div>
+                        <div class="character-card" data-character="flash">
+                            <img src="../../platform/images/characters/yuval_flash.png" alt="Flash">
+                        </div>
+                        <div class="character-card" data-character="superman">
+                            <img src="../../platform/images/characters/Or_superman.png" alt="Superman">
+                        </div>
+                        <div class="character-card" data-character="captain">
+                            <img src="../../platform/images/characters/Or_thor.png" alt="Captain">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="start-btn magic-btn" id="start-game">
+                    <span class="btn-icon">🚀</span>
+                    <span>התחל!</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-container">
+                <!-- HUD - Visual Only -->
+                <div class="hud">
+                    <div class="hud-item">
+                        <span class="hud-emoji">⭐</span>
+                        <span class="hud-value" id="score">0</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-emoji">🔥</span>
+                        <span class="hud-value" id="streak">0</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-emoji">📝</span>
+                        <span class="hud-value" id="current-question">1</span>
+                    </div>
+                </div>
+
+                <!-- Race Track -->
+                <div class="race-track">
+                    <div class="finish-line">🏁</div>
+
+                    <!-- Player Lane -->
+                    <div class="race-lane player-lane">
+                        <div class="runner player-runner" id="player-runner">
+                            <img id="player-img" src="../../platform/images/characters/yuval_batman.png" alt="Player">
+                        </div>
+                    </div>
+
+                    <!-- Opponent Lane -->
+                    <div class="race-lane opponent-lane">
+                        <div class="runner opponent-runner" id="opponent-runner">
+                            <img src="../../platform/images/enemies/enemyRobot.png" alt="Opponent">
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-container">
+                        <div class="progress-bar" id="player-progress"></div>
+                        <div class="progress-bar opponent" id="opponent-progress"></div>
+                    </div>
+                </div>
+
+                <!-- Question Display -->
+                <div class="question-container">
+                    <div class="question-text" id="question-text">5 + 3 = ?</div>
+                </div>
+
+                <!-- Answer Buttons -->
+                <div class="answers-grid" id="answers-grid">
+                    <button class="answer-btn" data-answer="6">6</button>
+                    <button class="answer-btn" data-answer="7">7</button>
+                    <button class="answer-btn" data-answer="8">8</button>
+                    <button class="answer-btn" data-answer="9">9</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complete Screen -->
+        <div id="complete-screen" class="screen">
+            <div class="screen-content">
+                <div class="trophy" id="result-emoji">🏆</div>
+                <h1 class="complete-title" id="result-title">ניצחת!</h1>
+
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-label">נקודות סופיות:</span>
+                        <span class="stat-value" id="final-score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">זמן:</span>
+                        <span class="stat-value" id="final-time">0:00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">דיוק:</span>
+                        <span class="stat-value" id="accuracy">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">שאלות נכונות:</span>
+                        <span class="stat-value" id="correct-answers">0</span>
+                    </div>
+                </div>
+
+                <div class="complete-actions">
+                    <button class="magic-btn" id="play-again">
+                        <span class="btn-icon">🔄</span>
+                        <span>שחק שוב</span>
+                    </button>
+                    <button class="magic-btn secondary" id="back-to-menu">🏠 תפריט ראשי</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

@@ -54,5 +54,40 @@
     "description": "הרפתקת יום הולדת של גיבורי על",
     "path": "games/yuval-birthday/index.html",
     "image": "platform/images/yuval_birthday.png"
+  },
+  {
+    "id": "color-match",
+    "title": "Color Match Challenge",
+    "description": "אתגר התאמת הצבעים - התאם צבעים לפני שנגמר הזמן!",
+    "path": "games/color-match/index.html",
+    "image": "platform/images/color_match.png"
+  },
+  {
+    "id": "number-race",
+    "title": "מרוץ המספרים",
+    "description": "פתור תרגילי חשבון כדי לרוץ מהר יותר!",
+    "path": "games/number-race/index.html",
+    "image": "platform/images/number_race.png"
+  },
+  {
+    "id": "space-adventure",
+    "title": "הרפתקה בחלל",
+    "description": "טוס בחללית, אסוף כוכבים והימנע ממכשולים! 🚀",
+    "path": "games/space-adventure/index.html",
+    "image": "platform/images/space_adventure.png"
+  },
+  {
+    "id": "shape-builder",
+    "title": "בונה הצורות",
+    "description": "צור צורות ודפוסים מדהימים! 🎨",
+    "path": "games/shape-builder/index.html",
+    "image": "platform/images/shape_builder.png"
+  },
+  {
+    "id": "animal-safari",
+    "title": "ספארי החיות",
+    "description": "חקור את ממלכת החיות! התאם חיות, למד את הקולות שלהן וגלה עובדות מדהימות 🦁",
+    "path": "games/animal-safari/index.html",
+    "image": "platform/images/animal_safari.png"
   }
 ]

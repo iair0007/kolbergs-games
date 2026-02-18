@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>הרפתקה בחלל - Space Adventure - Kolberg's Games</title>
+    <meta name="description" content="משחק יריות בחלל - טוס בחללית, אסוף כוכבים והימנע ממכשולים!">
+
+    <!-- Platform responsive CSS (REQUIRED) -->
+    <link rel="stylesheet" href="../../platform/responsive.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Game styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Home Button (MANDATORY) -->
+        <a href="../../index.html" class="home-btn" aria-label="חזרה לדף הבית">🏠</a>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <div class="screen-content">
+                <div class="hero-badge">🚀</div>
+                <h1 class="game-title">הרפתקה בחלל</h1>
+                <p class="subtitle">טוס בחללית, אסוף כוכבים והימנע ממכשולים!</p>
+
+                <!-- Difficulty Selector (Emoji-based for non-readers) -->
+                <div class="difficulty-selector">
+                    <h2 class="difficulty-title">בחר רמת קושי:</h2>
+                    <div class="difficulty-buttons">
+                        <button class="difficulty-btn" data-difficulty="easy">
+                            <div class="difficulty-emoji">🌟</div>
+                            <div class="difficulty-label">קל</div>
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="medium">
+                            <div class="difficulty-emoji">⭐⭐</div>
+                            <div class="difficulty-label">בינוני</div>
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="hard">
+                            <div class="difficulty-emoji">🌟🌟🌟</div>
+                            <div class="difficulty-label">קשה</div>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="start-btn magic-btn" id="start-game">
+                    <span class="btn-icon">🚀</span>
+                    <span>התחל משחק!</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-container">
+                <!-- HUD -->
+                <div class="hud">
+                    <div class="hud-item score-display">
+                        <span class="hud-label">נקודות:</span>
+                        <span class="hud-value" id="score">0</span>
+                    </div>
+                    <div class="hud-item lives-display">
+                        <span class="hud-label">חיים:</span>
+                        <span class="hud-value" id="lives">❤️❤️❤️</span>
+                    </div>
+                </div>
+
+                <!-- Game Canvas -->
+                <canvas id="game-canvas" width="800" height="600"></canvas>
+
+                <!-- Touch Controls Overlay (invisible, for mobile) -->
+                <!-- Mobile Controls Overlay -->
+                <div class="mobile-controls">
+                    <div class="control-group left">
+                        <div class="control-row">
+                            <div class="control-btn touch-zone" id="btn-left" data-action="left">⬅️</div>
+                            <div class="control-btn-column">
+                                <div class="control-btn touch-zone" id="btn-up" data-action="up">⬆️</div>
+                                <div class="control-btn touch-zone" id="btn-down" data-action="down">⬇️</div>
+                            </div>
+                            <div class="control-btn touch-zone" id="btn-right" data-action="right">➡️</div>
+                        </div>
+                    </div>
+                    <div class="control-group right">
+                        <div class="control-btn fire-btn touch-zone" id="btn-fire" data-action="fire">🔫</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complete Screen -->
+        <div id="complete-screen" class="screen">
+            <div class="screen-content">
+                <div class="trophy">🏆</div>
+                <h1 class="complete-title">כל הכבוד!</h1>
+
+                <div class="score-summary">
+                    <div class="final-score">
+                        <span class="score-label">הניקוד שלך:</span>
+                        <span class="score-value" id="final-score">0</span>
+                    </div>
+                    <div class="high-score">
+                        <span class="score-label">שיא אישי:</span>
+                        <span class="score-value" id="high-score">0</span>
+                    </div>
+                </div>
+
+                <div class="complete-actions">
+                    <button class="magic-btn" id="play-again">
+                        <span class="btn-icon">🔄</span>
+                        <span>שחק שוב</span>
+                    </button>
+                    <button class="magic-btn secondary" id="back-to-menu">🏠 תפריט ראשי</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>

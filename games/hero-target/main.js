@@ -51,7 +51,6 @@ const App = {
         finalStars: document.getElementById('final-stars'),
         retryBtn: document.getElementById('retry-btn'),
         menuBtn: document.getElementById('menu-btn'),
-        homeBtn: document.getElementById('home-btn'),
     },
 
     // Runtime variables
@@ -393,25 +392,6 @@ const App = {
         this.showScreen('gameover');
     },
 
-    // Helper to set click/touch handlers on home button for mobile reliability
-    setHomeButtonAction(action) {
-        // Clear previous listeners by cloning the button
-        const newBtn = this.elements.homeBtn.cloneNode(true);
-        this.elements.homeBtn.parentNode.replaceChild(newBtn, this.elements.homeBtn);
-        this.elements.homeBtn = newBtn;
-
-        // Set both click and touch handlers
-        this.elements.homeBtn.onclick = (e) => {
-            e.stopPropagation();
-            action();
-        };
-        this.elements.homeBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            action();
-        }, { passive: false });
-    },
-
     showScreen(screenName) {
         // Stop game loop if going back to menu
         if (screenName === 'selection' && this.animationFrameId) {
@@ -433,29 +413,13 @@ const App = {
             this.projectiles = [];
         }
 
-        // Show requested
+        // Show requested screen
         if (screenName === 'selection') {
             this.elements.screens.selection.classList.remove('hidden');
             this.elements.screens.selection.classList.add('active');
-
-            // Home button configuration for Selection Screen
-            this.elements.homeBtn.textContent = '🏠';
-            this.setHomeButtonAction(() => window.location.href = '../../index.html');
-
-        } else if (screenName === 'game') {
-            // No full screen overlay for game, just layers
-
-            // Home button configuration for Game Screen (Back button)
-            this.elements.homeBtn.textContent = '⬅️';
-            this.setHomeButtonAction(() => this.showScreen('selection'));
-
         } else if (screenName === 'gameover') {
             this.elements.screens.gameover.classList.remove('hidden');
             this.elements.screens.gameover.classList.add('active');
-
-            // Home button configuration for Game Over Screen
-            this.elements.homeBtn.textContent = '⬅️';
-            this.setHomeButtonAction(() => this.showScreen('selection'));
         }
 
         this.state.currentScreen = screenName;
@@ -465,17 +429,16 @@ const App = {
         // Selection
         this.elements.retryBtn.onclick = () => this.startGame();
         this.elements.menuBtn.onclick = () => this.showScreen('selection');
-        // homeBtn listener is set dynamically in showScreen
 
         // Shooting - only handle touches during gameplay, not on selection screen
         this.elements.app.addEventListener('mousedown', (e) => {
             // Don't handle clicks on buttons or hero cards
-            if (e.target.closest('button') || e.target.closest('.hero-card') || e.target.closest('.home-button')) return;
+            if (e.target.closest('button') || e.target.closest('.hero-card') || e.target.closest('.home-btn')) return;
             this.inputStart(e.clientX, e.clientY);
         });
         this.elements.app.addEventListener('touchstart', (e) => {
             // Check if touching UI elements - let them handle their own events
-            if (e.target.closest('button') || e.target.closest('.hero-card') || e.target.closest('.home-button') || e.target.closest('select')) return;
+            if (e.target.closest('button') || e.target.closest('.hero-card') || e.target.closest('.home-btn') || e.target.closest('select')) return;
 
             // Only prevent default and shoot during active gameplay
             if (this.state.currentScreen === 'game' && this.state.gameActive) {

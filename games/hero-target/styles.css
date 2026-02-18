@@ -1,4 +1,18 @@
 :root {
+    /* Design System Standard Variables */
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --warning-gradient: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+    --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --border-radius: 16px;
+    --transition: all 0.3s ease;
+
+    /* Game-specific */
     --primary-color: #FFD700;
     --secondary-color: #d1121d;
     --bg-dark: #1a1a2e;
@@ -27,26 +41,32 @@ body {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
-.home-button {
+/* Home Button - Design System Standard */
+.home-btn {
     position: absolute;
-    top: max(10px, env(safe-area-inset-top));
-    left: max(10px, env(safe-area-inset-left));
-    font-size: 2rem;
-    text-decoration: none;
-    z-index: 1000;
-    background: rgba(255, 255, 255, 0.2);
+    top: 15px;
+    left: 15px;
     width: 50px;
     height: 50px;
     border-radius: 50%;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(5px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    transition: transform 0.2s;
+    font-size: 24px;
+    text-decoration: none;
+    z-index: 1000;
+    transition: var(--transition);
 }
 
-.home-button:active {
+.home-btn:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.home-btn:active {
     transform: scale(0.9);
 }
 

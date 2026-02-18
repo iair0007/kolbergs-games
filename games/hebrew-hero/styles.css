@@ -7,12 +7,19 @@
    CSS Variables / Design Tokens
    ========================================== */
 :root {
-    /* Primary Colors */
+    /* Primary Colors - Design System Standard */
     --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    --warning-gradient: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+    --warning-gradient: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
     --error-gradient: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+    --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+
+    /* Glassmorphism */
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --shadow-color: rgba(0, 0, 0, 0.3);
 
     /* Utility */
     --hidden: none;
@@ -25,17 +32,6 @@
     --error: #e74c3c;
     --info: #74b9ff;
 
-    /* Background Colors */
-    --bg-primary: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-    --bg-card: rgba(255, 255, 255, 0.95);
-    --bg-overlay: rgba(0, 0, 0, 0.5);
-
-    /* Text Colors */
-    --text-primary: #2d3436;
-    --text-secondary: #636e72;
-    --text-muted: #b2bec3;
-    --text-white: #ffffff;
-
     /* Shadows */
     --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
     --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.15);
@@ -43,6 +39,7 @@
     --shadow-glow: 0 0 40px rgba(108, 92, 231, 0.3);
 
     /* Borders & Radius */
+    --border-radius: 16px;
     --radius-small: 12px;
     --radius-medium: 20px;
     --radius-large: 30px;
@@ -70,6 +67,7 @@
     --letter-size-small: 2rem;
 
     /* Transitions */
+    --transition: all 0.3s ease;
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -86,52 +84,48 @@
 
 body {
     font-family: var(--font-primary);
-    background: var(--bg-primary);
+    background: var(--bg-gradient);
     color: var(--text-primary);
+    min-height: 100vh;
     min-height: 100svh;
-    overflow-x: hidden;
+    overflow: hidden;
     direction: rtl;
 }
 
 #app {
-    position: relative;
+    min-height: 100vh;
     min-height: 100svh;
-    padding: var(--spacing-md);
-    padding-top: calc(var(--spacing-xl) + 20px);
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
 /* ==========================================
    Navigation Elements
    ========================================== */
+/* Home Button - Design System Standard */
 .home-btn {
     position: fixed;
-    top: var(--spacing-md);
+    top: 15px;
+    left: 15px;
     width: 50px;
     height: 50px;
-    border-radius: var(--radius-round);
-    background: var(--bg-card);
-    border: 3px solid var(--primary);
-    font-size: 1.5rem;
+    border-radius: 50%;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    font-size: 24px;
     text-decoration: none;
     z-index: 100;
-    transition: var(--transition-normal);
-    box-shadow: var(--shadow-soft);
+    transition: var(--transition);
 }
 
-.home-btn {
-    right: var(--spacing-md);
-}
-
-
-
-.home-btn:hover,
-.settings-btn:hover {
+.home-btn:hover {
     transform: scale(1.1);
-    box-shadow: var(--shadow-medium);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .stats-display {
@@ -162,22 +156,26 @@ body {
    ========================================== */
 .screen {
     display: none;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    animation: fadeInUp 0.5s ease;
+    flex: 1;
+    padding: 20px;
+    padding-top: 70px;
+    overflow-y: auto;
 }
 
 .screen.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .screen-content {
-    background: var(--bg-card);
-    border-radius: var(--radius-large);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-medium);
-    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
 }
 
 @keyframes fadeInUp {

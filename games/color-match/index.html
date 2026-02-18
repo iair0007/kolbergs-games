@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Color Match Challenge - Kolberg's Games</title>
+    <meta name="description" content="אתגר התאמת הצבעים - התאם צבעים לפני שנגמר הזמן!">
+
+    <!-- Platform responsive CSS (REQUIRED) -->
+    <link rel="stylesheet" href="../../platform/responsive.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Game styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Home Button (MANDATORY) -->
+        <a href="../../index.html" class="home-btn" aria-label="Return to Home">🏠</a>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <div class="screen-content">
+                <div class="hero-badge">🎨</div>
+                <h1 class="game-title" id="game-title">אתגר התאמת הצבעים</h1>
+                <p class="subtitle" id="game-subtitle">Color Match Challenge</p>
+                <p class="description" id="game-description">התאם צבעים לפני שנגמר הזמן!</p>
+
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="he">🇮🇱 עברית</button>
+                    <button class="lang-btn" data-lang="en">🇺🇸 English</button>
+                </div>
+
+                <div class="difficulty-selector">
+                    <h3 id="difficulty-label">בחר רמת קושי:</h3>
+                    <div class="difficulty-buttons">
+                        <button class="difficulty-btn active" data-difficulty="easy">
+                            <span class="diff-icon">😊</span>
+                            <span class="diff-name" data-he="קל" data-en="Easy">קל</span>
+                            <span class="diff-info" data-he="10 סיבובים • 10 שניות" data-en="10 rounds • 10s each">10
+                                סיבובים • 10 שניות</span>
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="medium">
+                            <span class="diff-icon">😎</span>
+                            <span class="diff-name" data-he="בינוני" data-en="Medium">בינוני</span>
+                            <span class="diff-info" data-he="15 סיבובים • 7 שניות" data-en="15 rounds • 7s each">15
+                                סיבובים • 7 שניות</span>
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="hard">
+                            <span class="diff-icon">🔥</span>
+                            <span class="diff-name" data-he="קשה" data-en="Hard">קשה</span>
+                            <span class="diff-info" data-he="20 סיבובים • 5 שניות" data-en="20 rounds • 5s each">20
+                                סיבובים • 5 שניות</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="start-btn magic-btn" id="start-game">
+                    <span class="btn-icon">🚀</span>
+                    <span id="start-btn-text">התחל משחק!</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="screen-content">
+                <div class="game-header">
+                    <div class="score-display">
+                        <span class="score-label" id="score-label">ניקוד:</span>
+                        <span class="score-value" id="score">0</span>
+                    </div>
+                    <div class="round-display">
+                        <span id="current-round">1</span>/<span id="total-rounds">10</span>
+                    </div>
+                    <div class="streak-display" id="streak-display">
+                        🔥 <span id="streak">0</span>
+                    </div>
+                </div>
+
+                <div class="timer-container">
+                    <div class="timer-bar" id="timer-bar"></div>
+                </div>
+
+                <div class="color-display" id="color-display">
+                    <div class="color-box" id="color-box"></div>
+                </div>
+
+                <div class="question-text" id="question-text">איזה צבע זה?</div>
+
+                <div class="options-container" id="options-container">
+                    <!-- Color options will be dynamically added here -->
+                </div>
+
+                <button class="back-btn game-back" id="back-to-difficulty">← חזרה לבחירת רמה</button>
+            </div>
+        </div>
+
+        <!-- Complete Screen -->
+        <div id="complete-screen" class="screen">
+            <div class="screen-content">
+                <div class="trophy">🏆</div>
+                <h1 class="complete-title">Well Done!</h1>
+
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-label" id="final-score-label">ניקוד סופי:</span>
+                        <span class="stat-value" id="final-score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label" id="accuracy-label">דיוק:</span>
+                        <span class="stat-value" id="accuracy">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label" id="best-streak-label">רצף הכי טוב:</span>
+                        <span class="stat-value" id="best-streak">0</span>
+                    </div>
+                </div>
+
+                <div class="complete-actions">
+                    <button class="magic-btn" id="play-again">
+                        <span class="btn-icon">🔄</span>
+                        <span id="play-again-text">שחק שוב</span>
+                    </button>
+                    <button class="magic-btn secondary" id="back-to-menu"><span id="main-menu-text">🏠 תפריט
+                            ראשי</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
