@@ -61,25 +61,30 @@ function init() {
     initializePatternSelector();
 }
 
+function addTouchHandler(el, fn) {
+    el.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        fn();
+    }, { passive: false });
+    el.addEventListener('click', fn);
+}
+
 function setupEventListeners() {
     // Mode selection buttons
     document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.addEventListener('click', () => selectMode(btn.dataset.mode));
-        btn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            selectMode(btn.dataset.mode);
-        }, { passive: false });
+        addTouchHandler(btn, () => selectMode(btn.dataset.mode));
     });
 
     // Tool buttons
-    document.getElementById('rotate-btn').addEventListener('click', rotateTool);
-    document.getElementById('color-btn').addEventListener('click', colorTool);
-    document.getElementById('delete-btn').addEventListener('click', deleteTool);
-    document.getElementById('clear-btn').addEventListener('click', clearAll);
+    addTouchHandler(document.getElementById('rotate-btn'), rotateTool);
+    addTouchHandler(document.getElementById('color-btn'), colorTool);
+    addTouchHandler(document.getElementById('delete-btn'), deleteTool);
+    addTouchHandler(document.getElementById('clear-btn'), clearAll);
 
     // Complete screen buttons
-    document.getElementById('play-again').addEventListener('click', playAgain);
-    document.getElementById('back-to-menu').addEventListener('click', backToMenu);
+    addTouchHandler(document.getElementById('play-again'), playAgain);
+    addTouchHandler(document.getElementById('back-to-menu'), backToMenu);
 }
 
 // ==========================================
@@ -142,12 +147,13 @@ function initializeColorPicker() {
         colorItem.style.backgroundColor = colorData.hex;
         colorItem.title = colorData.name;
 
-        colorItem.addEventListener('click', () => {
+        const applyColor = () => {
             if (GameState.canvasManager) {
                 GameState.canvasManager.changeSelectedColor(colorData.hex);
                 hideColorPicker();
             }
-        });
+        };
+        addTouchHandler(colorItem, applyColor);
 
         colorGrid.appendChild(colorItem);
     });

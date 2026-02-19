@@ -128,6 +128,8 @@ body {
     transition: var(--transition);
     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
     font-family: inherit;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .magic-btn:hover {
@@ -183,6 +185,8 @@ body {
     gap: 8px;
     font-family: inherit;
     min-height: 120px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .mode-btn:hover {
@@ -323,6 +327,8 @@ body {
     align-items: center;
     justify-content: center;
     background: white;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .shape-item:hover {
@@ -363,6 +369,8 @@ body {
     gap: 5px;
     font-family: inherit;
     min-width: 80px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .tool-btn:hover {
@@ -424,6 +432,8 @@ body {
     cursor: pointer;
     transition: var(--transition);
     border: 3px solid rgba(255, 255, 255, 0.3);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .color-item:hover {
