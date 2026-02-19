@@ -67,11 +67,16 @@ function init() {
 function setupEventListeners() {
     // Start game button
     const startBtn = document.getElementById('start-game');
-    startBtn.addEventListener('click', handleStartGame);
+    let touchHandled = false;
     startBtn.addEventListener('touchstart', (e) => {
         e.preventDefault();
+        touchHandled = true;
         handleStartGame();
     }, { passive: false });
+    startBtn.addEventListener('click', () => {
+        if (touchHandled) { touchHandled = false; return; }
+        handleStartGame();
+    });
 
     // Mode selector buttons
     document.querySelectorAll('.mode-btn').forEach(btn => {
@@ -115,9 +120,11 @@ function showScreen(screenId) {
 // GAME LOGIC
 // ==========================================
 function handleStartGame() {
-    unlockAudio().then(() => {
-        startGame();
-    });
+    // Start the game immediately — don't block on async audio unlock.
+    // Audio is unlocked as a side effect; Promise boundaries lose the gesture
+    // context on iOS which previously caused the button to appear broken.
+    startGame();
+    unlockAudio(); // non-blocking, runs in background
 }
 
 function startGame() {

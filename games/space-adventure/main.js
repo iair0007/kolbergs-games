@@ -164,11 +164,10 @@ function setupEventListeners() {
 
     // Start game button
     const startBtn = document.getElementById('start-game');
-    startBtn.addEventListener('click', startGame);
-    startBtn.addEventListener('touchstart', (e) => {
+    startBtn.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         startGame();
-    }, { passive: false });
+    });
 
     // Play again button
     document.getElementById('play-again').addEventListener('click', startGame);
