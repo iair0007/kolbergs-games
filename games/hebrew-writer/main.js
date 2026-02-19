@@ -156,6 +156,8 @@ function unlockAudio() {
             );
         }
 
+        // Resolve after at most 3s even if voices or audio fail to load
+        setTimeout(resolve, 3000);
         Promise.all(promises).then(() => {
             // Give a small delay for speech to initialize
             setTimeout(resolve, 200);
