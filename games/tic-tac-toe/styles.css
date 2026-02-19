@@ -78,11 +78,19 @@ body {
   height: 100%;
   opacity: 0;
   transition: opacity 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .screen.active {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   opacity: 1;
+  padding-top: 70px;
+  padding-bottom: 20px;
 }
 
 .screen-content {
@@ -478,6 +486,12 @@ body {
   margin-top: 10px;
 }
 
+/* Center welcome and result screens vertically */
+#welcome-screen.screen.active,
+#result-screen.screen.active {
+  justify-content: center;
+}
+
 /* ===================================
    RESPONSIVE DESIGN
    =================================== */
@@ -485,40 +499,71 @@ body {
 /* Mobile Portrait */
 @media (max-width: 480px) {
   .screen-content {
-    gap: 20px;
-    padding: 15px;
-  }
-  
-  .character-grid {
-    grid-template-columns: repeat(2, 1fr);
     gap: 15px;
+    padding: 10px;
   }
-  
-  .game-header {
-    flex-direction: column;
+
+  .character-grid {
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
   }
-  
-  .player-info {
+
+  .character-card {
+    padding: 8px;
+  }
+
+  .character-card img {
+    max-height: 80px;
+  }
+
+  /* Compact horizontal header on mobile to keep board visible */
+  .game-header {
     flex-direction: row;
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .player-avatar {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .turn-indicator {
-    flex-direction: row;
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .game-board {
     gap: 8px;
-    padding: 10px;
+    padding: 8px 12px;
+  }
+
+  .player-info {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .player-avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .player-label {
+    font-size: 0.75rem;
+  }
+
+  .turn-indicator {
+    flex-direction: column;
+    gap: 3px;
+    flex: 0.6;
+  }
+
+  .turn-text {
+    font-size: 0.75rem;
+  }
+
+  .current-turn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .game-board {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .mode-btn {
+    padding: 20px;
+    min-height: 100px;
+  }
+
+  .result-buttons {
+    flex-direction: column;
   }
 }
 
@@ -551,30 +596,52 @@ body {
 
 /* Landscape Mobile */
 @media (max-height: 500px) and (orientation: landscape) {
+  .screen.active {
+    padding-top: 10px;
+    justify-content: flex-start;
+  }
+
   .screen-content {
-    gap: 15px;
+    gap: 10px;
     padding: 10px;
   }
-  
+
   .game-title {
     font-size: 2rem;
   }
-  
+
   .mode-btn {
-    padding: 15px;
-    min-height: 80px;
+    padding: 12px;
+    min-height: 70px;
   }
-  
+
   .mode-btn .icon {
     font-size: 2rem;
   }
-  
-  .game-board {
-    max-width: 350px;
+
+  .mode-buttons {
+    flex-direction: row;
   }
-  
+
+  .game-board {
+    max-width: 300px;
+  }
+
   .winner-display {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
+  }
+
+  .character-grid {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 5px;
+  }
+
+  .character-card {
+    padding: 5px;
+  }
+
+  .character-card img {
+    max-height: 60px;
   }
 }
