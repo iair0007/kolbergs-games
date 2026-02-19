@@ -203,6 +203,10 @@ document.addEventListener('DOMContentLoaded', () => {
             card.appendChild(cardInner);
 
             card.addEventListener('click', () => handleCardClick(card));
+            card.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handleCardClick(card);
+            }, { passive: false });
 
             ui.grid.appendChild(card);
             gameState.cards.push(card);
