@@ -92,14 +92,14 @@ const ANIMAL_SOUNDS = {
 // Difficulty configurations
 const DIFFICULTY_CONFIG = {
     easy: {
-        pairs: 6,
-        animals: ANIMALS.slice(0, 6),
+        pairs: 3,
+        animals: ANIMALS.slice(0, 3),
         timer: null,
         gridClass: 'easy'
     },
     medium: {
-        pairs: 8,
-        animals: ANIMALS,
+        pairs: 6,
+        animals: ANIMALS.slice(0, 6),
         timer: 180, // 3 minutes
         gridClass: 'medium'
     },

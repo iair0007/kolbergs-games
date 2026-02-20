@@ -125,8 +125,18 @@ function setupEventListeners() {
     // Play again button
     document.getElementById('play-again').addEventListener('click', handleStartGame);
 
-    // Back to menu button
+    // Back to menu button (complete screen)
     document.getElementById('back-to-menu').addEventListener('click', () => {
+        showScreen('welcome-screen');
+        resetGame();
+    });
+
+    // Back to menu button (game screen)
+    document.getElementById('back-to-game-menu').addEventListener('click', () => {
+        if (GameState.timerInterval) {
+            clearInterval(GameState.timerInterval);
+            GameState.timerInterval = null;
+        }
         showScreen('welcome-screen');
         resetGame();
     });
@@ -284,8 +294,12 @@ function handleCardClick(cardId) {
     cardElement.classList.add('flipped');
     GameState.flippedCards.push(cardData);
 
-    // Play flip sound
-    playSound('flip');
+    // Play flip sound (or animal sound in sound mode)
+    if (GameState.mode === 'sound') {
+        playAnimalSound(cardData.animal);
+    } else {
+        playSound('flip');
+    }
 
     // Check for match if two cards flipped
     if (GameState.flippedCards.length === 2) {
@@ -397,9 +411,15 @@ function completeGame() {
 }
 
 function updateStars() {
-    if (GameState.moves > 30) {
+    const thresholds = {
+        easy:   { two: 4,  one: 7  },
+        medium: { two: 10, one: 18 },
+        hard:   { two: 14, one: 24 }
+    };
+    const t = thresholds[GameState.difficulty];
+    if (GameState.moves > t.one) {
         GameState.stars = 1;
-    } else if (GameState.moves > 20) {
+    } else if (GameState.moves > t.two) {
         GameState.stars = 2;
     } else {
         GameState.stars = 3;
