@@ -8,12 +8,21 @@ Kolberg's Games is a static, browser-based game platform for child-friendly game
 
 ## Running Locally
 
-```bash
+\```bash
 python3 -m http.server 8000
 # Open http://localhost:8000
-```
+\```
 
 Opening `index.html` directly from the filesystem will not work — asset loading relies on HTTP requests.
+
+## Workflow Rules
+- Always open a Pull Request after making any code changes
+- Never push to a branch without opening a PR
+- Always link the PR to the issue it fixes using "Fixes #issue_number" in the PR description
+- PR title should reference the issue (e.g. "Fix #12 - brief description")
+- Never close an issue without a linked PR
+- Always add a clear description in the PR explaining what was changed and why
+- Post a comment on the issue summarizing what you changed before opening the PR
 
 ## Architecture
 
