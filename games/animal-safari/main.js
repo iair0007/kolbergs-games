@@ -8,6 +8,23 @@
 let audioContext = null;
 let audioUnlocked = false;
 let speechSynth = window.speechSynthesis;
+let hebrewVoice = null;
+
+function findHebrewVoice() {
+    if (!speechSynth) return null;
+    const voices = speechSynth.getVoices();
+    return voices.find(v => v.lang.startsWith('he')) || null;
+}
+
+function ensureHebrewVoice() {
+    if (hebrewVoice) return;
+    hebrewVoice = findHebrewVoice();
+    if (!hebrewVoice && speechSynth && speechSynth.onvoiceschanged !== undefined) {
+        speechSynth.onvoiceschanged = () => {
+            hebrewVoice = findHebrewVoice();
+        };
+    }
+}
 
 function initAudioContext() {
     if (audioContext) return audioContext;
@@ -25,13 +42,20 @@ function unlockAudio() {
 
     initAudioContext();
 
+    // Also try to find Hebrew voice on audio unlock
+    ensureHebrewVoice();
+
     return new Promise((resolve) => {
         if (audioContext && audioContext.state === 'suspended') {
             audioContext.resume().then(() => {
                 console.log('AudioContext resumed');
                 audioUnlocked = true;
                 resolve();
+            }).catch(() => {
+                resolve();
             });
+            // Fallback: resolve after 500ms in case resume() hangs (common on iOS)
+            setTimeout(resolve, 500);
         } else {
             audioUnlocked = true;
             resolve();
@@ -62,6 +86,8 @@ const GameState = {
 // ==========================================
 function init() {
     setupEventListeners();
+    // Start loading voices early so they're ready when needed
+    ensureHebrewVoice();
 }
 
 function setupEventListeners() {
@@ -419,13 +445,24 @@ function playAnimalSound(animal) {
         // Cancel any ongoing speech
         speechSynth.cancel();
 
+        // Ensure we have a Hebrew voice loaded
+        ensureHebrewVoice();
+
         const utterance = new SpeechSynthesisUtterance(soundConfig.text);
         utterance.lang = 'he-IL';
         utterance.pitch = soundConfig.pitch;
         utterance.rate = soundConfig.rate;
         utterance.volume = 1.0;
 
-        speechSynth.speak(utterance);
+        // Set Hebrew voice if available for correct pronunciation
+        if (hebrewVoice) {
+            utterance.voice = hebrewVoice;
+        }
+
+        // Small delay to ensure cancel() is processed (iOS Safari quirk)
+        setTimeout(() => {
+            speechSynth.speak(utterance);
+        }, 50);
     }
 }
 

@@ -31,7 +31,11 @@ function unlockAudio() {
                 console.log('AudioContext resumed');
                 audioUnlocked = true;
                 resolve();
+            }).catch(() => {
+                resolve();
             });
+            // Fallback: resolve after 500ms in case resume() hangs (common on iOS)
+            setTimeout(resolve, 500);
         } else {
             audioUnlocked = true;
             resolve();
