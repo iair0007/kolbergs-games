@@ -38,11 +38,41 @@ You are a mobile testing specialist for the Kolberg's Games platform. Your job i
 - Hebrew voice (`he-IL`) often missing on Android — check for graceful degradation
 - Speech synthesis hangs on Safari without a warmup utterance (volume 0.01, rate 2)
 - `speechSynthesis.cancel()` must be called before every new utterance on iOS
-- Pattern to verify:
+- **CRITICAL — warmup must be called BEFORE any `await` in `unlockAudio()`:**
+  iOS Safari only grants `speechSynthesis` permission when `speak()` is called synchronously
+  inside a user gesture handler. Any `await` before the `speak()` call breaks the gesture chain
+  and silences ALL subsequent speech for the entire session — permanently.
   ```javascript
-  // AudioContext resume in gesture handler, not on load
-  // waitForVoices() with onvoiceschanged fallback
-  // warmup utterance on first interaction
+  // CORRECT — warmup speak() happens before any await
+  async function unlockAudio() {
+      initAudioContext();
+      if (!audioReady && 'speechSynthesis' in window) {
+          speechSynthesis.cancel();
+          const warmup = new SpeechSynthesisUtterance('.');
+          warmup.volume = 0.01; warmup.rate = 2; warmup.lang = 'he-IL';
+          speechSynthesis.speak(warmup); // ← synchronous, within gesture
+      }
+      if (audioContext.state === 'suspended') await audioContext.resume(); // async after speak is ok
+      if (audioReady) return;
+      await waitForVoices();
+      audioReady = true;
+  }
+
+  // WRONG — speak() called after await, breaks gesture chain, speech silenced forever
+  async function unlockAudio() {
+      await audioContext.resume();   // ← breaks gesture chain
+      await waitForVoices();         // ← breaks it again
+      speechSynthesis.speak(warmup); // ← too late, iOS ignores this
+  }
+  ```
+- **`playTone()` must retry after `AudioContext.resume()`, not silently return:**
+  When AudioContext is suspended on the first tap, `resume()` is async. If `playTone()`
+  just calls `resume()` and returns, the sound is lost. Retry via `.then()`:
+  ```javascript
+  if (audioContext.state === 'suspended') {
+      audioContext.resume().then(() => playTone(freq, duration, type, vol)).catch(() => {});
+      return;
+  }
   ```
 
 #### 3. Viewport Height
@@ -136,9 +166,10 @@ Produce a clear report:
 - [ ] `AudioContext` created lazily (not on page load)
 - [ ] `audioContext.resume()` called inside user gesture handler
 - [ ] `waitForVoices()` handles async voice loading via `onvoiceschanged`
-- [ ] Warmup utterance fires on first user interaction (for Safari)
+- [ ] Warmup `speechSynthesis.speak()` fires **before any `await`** in `unlockAudio()` — not after
 - [ ] `speechSynthesis.cancel()` called before each new utterance
 - [ ] Graceful degradation when Hebrew voice (`he-IL`) is unavailable
+- [ ] `playTone()` retries the tone via `.then()` after `audioContext.resume()` — does not silently return
 
 ### Screens
 - [ ] Welcome screen fits without scrolling on iPhone SE (375×667)
@@ -153,6 +184,8 @@ Produce a clear report:
 **Known fixed bugs** (don't regress these):
 - PR #5: Start buttons were not firing on mobile because only `click` was used — now both `click` + `touchstart` are required
 - Safari voice issues: voices don't load until after a user gesture — warmup pattern required
+- color-code (main branch): `speechSynthesis` feedback was silenced forever because `unlockAudio()` called `await` before the warmup `speak()`. The `await` breaks the iOS gesture chain. Fix: warmup `speak()` must be the first statement in `unlockAudio()`, before any `await`.
+- color-code (main branch): SFX silent on first tap because `playTone()` returned without playing when `AudioContext` was suspended. Fix: resume and retry the tone via `.then()` instead of returning.
 
 **Reference for correct patterns**: `games/hebrew-writer/main.js` and `games/hebrew-writer/index.html`
 

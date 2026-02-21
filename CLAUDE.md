@@ -142,6 +142,18 @@ function speakWord(text) {
 
 Never call `unlockAudio()` on page load — only inside a button handler.
 
+**CRITICAL — `speechSynthesis.speak()` must come BEFORE any `await` in `unlockAudio()`.**
+iOS Safari only grants speech permission when `speak()` is called synchronously inside a user gesture. Any `await` before the `speak()` call breaks the gesture chain and permanently silences all speech for the session. The warmup `speak()` must be the very first statement — before `await audioContext.resume()`, before `await waitForVoices()`, before anything async.
+
+**`playTone()` must retry after `audioContext.resume()`, not silently return.**
+`AudioContext` is suspended on the first tap. If `playTone()` fires a resume and returns, the tone is lost. Use `.then()` to retry:
+```javascript
+if (audioContext.state === 'suspended') {
+    audioContext.resume().then(() => playTone(freq, duration, type, vol)).catch(() => {});
+    return;
+}
+```
+
 ### Rule 3 — Screen Layout (Viewport & Sizing)
 
 These four CSS rules prevent the most common layout bugs on mobile:
