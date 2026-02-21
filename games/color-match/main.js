@@ -118,17 +118,20 @@ function updateLanguage(lang) {
 // SPEECH SYNTHESIS
 // ==========================================
 function speakColor(colorName) {
-    if ('speechSynthesis' in window) {
-        // Cancel any ongoing speech
-        window.speechSynthesis.cancel();
+    if (!('speechSynthesis' in window)) return;
 
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    // iOS workaround: a tiny delay after cancel() before speaking
+    // is needed on mobile to avoid the speech being silently swallowed.
+    setTimeout(() => {
         const utterance = new SpeechSynthesisUtterance(colorName);
         utterance.lang = currentLanguage === 'he' ? 'he-IL' : 'en-US';
         utterance.rate = 0.9;
         utterance.pitch = 1;
-
         window.speechSynthesis.speak(utterance);
-    }
+    }, 50);
 }
 
 // ==========================================
@@ -431,10 +434,18 @@ function checkAnswer(selectedColor) {
         btn.style.pointerEvents = 'none';
     });
 
+    // Speak feedback immediately (must be within the gesture handler for mobile)
+    const correctColorName = currentLanguage === 'he'
+        ? GameState.currentColor.nameHe
+        : GameState.currentColor.name;
+
     if (isCorrect) {
         handleCorrectAnswer();
+        speakColor(correctColorName);
     } else {
         handleWrongAnswer();
+        // On wrong answer, speak the correct color so the user learns it
+        speakColor(correctColorName);
     }
 
     // Move to next round after delay
