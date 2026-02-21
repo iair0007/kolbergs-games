@@ -302,10 +302,14 @@ function revealSecret() {
     });
 }
 
-function addHistoryRow(guess, result) {
-    const config = DIFFICULTY_CONFIG[GameState.difficulty];
-    const row    = document.createElement('div');
+function addHistoryRow(guess, result, guessNumber) {
+    const row = document.createElement('div');
     row.className = 'history-row';
+
+    // Guess number badge
+    const numBadge = document.createElement('div');
+    numBadge.className = 'guess-number';
+    numBadge.textContent = `#${guessNumber}`;
 
     // Circles
     const circles = document.createElement('div');
@@ -332,10 +336,14 @@ function addHistoryRow(guess, result) {
     feedback.appendChild(icons);
     feedback.appendChild(caption);
 
+    row.appendChild(numBadge);
     row.appendChild(circles);
     row.appendChild(feedback);
 
-    document.getElementById('history-container').appendChild(row);
+    const container = document.getElementById('history-container');
+    container.appendChild(row);
+    // Scroll so the newest guess is always visible
+    row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 /* ─── CONFETTI ─────────────────────────────────────── */
@@ -398,10 +406,11 @@ function submitGuess() {
     const result = checkGuess(GameState.secret, guess);
 
     GameState.history.push({ guess, result });
+    const guessNumber = GameState.history.length;
     GameState.attemptsLeft--;
     GameState.currentGuess = [];
 
-    addHistoryRow(guess, result);
+    addHistoryRow(guess, result, guessNumber);
     renderHearts();
     renderGuessSlots();
 
