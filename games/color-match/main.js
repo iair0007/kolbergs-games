@@ -3,44 +3,110 @@
  */
 
 // ==========================================
-// AUDIO CONTEXT
+// AUDIO CONTEXT (Shared for mobile compatibility)
 // ==========================================
 let audioContext = null;
 let audioUnlocked = false;
+let speechReady = false;
+let selectedVoice = null;
 
 function initAudioContext() {
     if (audioContext) return audioContext;
     try {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        console.log('AudioContext created');
+        console.log('AudioContext created, state:', audioContext.state);
     } catch (e) {
         console.warn('Could not create AudioContext:', e);
     }
     return audioContext;
 }
 
+// Find the best voice for a given language prefix (e.g. 'he' or 'en')
+function findVoiceForLang(langPrefix) {
+    if (!('speechSynthesis' in window)) return null;
+    const voices = speechSynthesis.getVoices();
+    // Prefer local (on-device) voices first
+    return voices.find(v => v.lang.startsWith(langPrefix) && v.localService)
+        || voices.find(v => v.lang.startsWith(langPrefix))
+        || null;
+}
+
+// Wait for voices to load — Chrome on Android loads them asynchronously
+function waitForVoices() {
+    return new Promise((resolve) => {
+        if (!('speechSynthesis' in window)) { resolve(); return; }
+
+        let voices = speechSynthesis.getVoices();
+        if (voices.length > 0) { resolve(); return; }
+
+        let attempts = 0;
+        const poll = () => {
+            voices = speechSynthesis.getVoices();
+            attempts++;
+            if (voices.length > 0) {
+                resolve();
+            } else if (attempts < 20) {
+                setTimeout(poll, 100);
+            } else {
+                console.warn('Could not load speech voices after polling');
+                resolve();
+            }
+        };
+
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = resolve;
+        }
+        poll();
+    });
+}
+
+// Unlock audio — MUST be called from a user gesture (touch/click)
 function unlockAudio() {
-    if (audioUnlocked) return Promise.resolve();
+    if (audioUnlocked && speechReady) return Promise.resolve();
 
     initAudioContext();
 
     return new Promise((resolve) => {
+        const promises = [];
+
         if (audioContext && audioContext.state === 'suspended') {
-            audioContext.resume().then(() => {
-                console.log('AudioContext resumed');
-                audioUnlocked = true;
-                resolve();
-            }).catch(() => {
-                resolve();
-            });
-            // Fallback: resolve after 500ms in case resume() hangs (common on iOS)
-            setTimeout(resolve, 500);
-        } else {
+            promises.push(
+                audioContext.resume().then(() => {
+                    console.log('AudioContext resumed');
+                    audioUnlocked = true;
+                }).catch(e => console.warn('Could not resume AudioContext:', e))
+            );
+        } else if (audioContext) {
             audioUnlocked = true;
-            resolve();
         }
+
+        if ('speechSynthesis' in window) {
+            promises.push(
+                waitForVoices().then(() => {
+                    const langPrefix = currentLanguage === 'he' ? 'he' : 'en';
+                    selectedVoice = findVoiceForLang(langPrefix);
+                    console.log('Voice selected:', selectedVoice ? selectedVoice.name : 'none (will use default)');
+
+                    // iOS Safari: speak a nearly-silent utterance to unlock the speech gate
+                    speechSynthesis.cancel();
+                    const warmUp = new SpeechSynthesisUtterance('.');
+                    warmUp.volume = 0.01;
+                    warmUp.rate = 2;
+                    warmUp.lang = currentLanguage === 'he' ? 'he-IL' : 'en-US';
+                    if (selectedVoice) warmUp.voice = selectedVoice;
+                    warmUp.onend = () => { console.log('Speech synthesis unlocked'); speechReady = true; };
+                    warmUp.onerror = () => { console.warn('Speech warmup error, continuing'); speechReady = true; };
+                    speechSynthesis.speak(warmUp);
+                })
+            );
+        }
+
+        // Always resolve after 3s max so the game never hangs
+        setTimeout(resolve, 3000);
+        Promise.all(promises).then(() => setTimeout(resolve, 200));
     });
 }
+
 
 // ==========================================
 // LANGUAGE SYSTEM
@@ -120,17 +186,23 @@ function updateLanguage(lang) {
 function speakColor(colorName) {
     if (!('speechSynthesis' in window)) return;
 
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
+    // Re-select voice in case language changed since unlockAudio
+    const langPrefix = currentLanguage === 'he' ? 'he' : 'en';
+    const voice = findVoiceForLang(langPrefix) || selectedVoice;
 
-    // iOS workaround: a tiny delay after cancel() before speaking
-    // is needed on mobile to avoid the speech being silently swallowed.
+    // Cancel any ongoing speech
+    speechSynthesis.cancel();
+
+    // Small delay after cancel() — iOS quirk: speak() right after cancel() gets dropped
     setTimeout(() => {
         const utterance = new SpeechSynthesisUtterance(colorName);
         utterance.lang = currentLanguage === 'he' ? 'he-IL' : 'en-US';
         utterance.rate = 0.9;
-        utterance.pitch = 1;
-        window.speechSynthesis.speak(utterance);
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        if (voice) utterance.voice = voice;
+        console.log('Speaking:', colorName, '| voice:', voice ? voice.name : 'default');
+        speechSynthesis.speak(utterance);
     }, 50);
 }
 
@@ -434,18 +506,16 @@ function checkAnswer(selectedColor) {
         btn.style.pointerEvents = 'none';
     });
 
-    // Speak feedback immediately (must be within the gesture handler for mobile)
+    // Speak the correct color name (must be within the gesture handler for mobile)
     const correctColorName = currentLanguage === 'he'
         ? GameState.currentColor.nameHe
         : GameState.currentColor.name;
+    speakColor(correctColorName);
 
     if (isCorrect) {
         handleCorrectAnswer();
-        speakColor(correctColorName);
     } else {
         handleWrongAnswer();
-        // On wrong answer, speak the correct color so the user learns it
-        speakColor(correctColorName);
     }
 
     // Move to next round after delay
