@@ -23,9 +23,6 @@
     <!-- Home button — fixed, top-left, always visible -->
     <a href="../../index.html" class="home-btn" aria-label="חזרה לדף הבית">🏠</a>
 
-    <!-- Music toggle — fixed, top-right -->
-    <button class="music-btn" id="music-btn" aria-label="מוזיקה">🎵</button>
-
     <!-- ═══════════════════════════════════════════
          WELCOME SCREEN
     ═══════════════════════════════════════════ -->
@@ -35,7 +32,7 @@
             <div class="hero-badge">🔐</div>
 
             <h1 class="game-title">פורץ הקודים</h1>
-            <p class="game-description">נחש את קוד הצבעים הסודי! ⭐ = מקום נכון · 🌸 = צבע נכון מקום שגוי</p>
+            <p class="game-description">נחש את קוד הצבעים הסודי! בכל ניסיון תקבל רמזים: ⭐ = צבע נכון במקום הנכון, 🌸 = צבע נכון אבל במקום הלא נכון, ❌ = הצבע לא בקוד בכלל</p>
 
             <!-- Difficulty selector -->
             <div class="difficulty-selector">
@@ -47,7 +44,7 @@
             <!-- Unique colors toggle -->
             <button class="unique-toggle" id="unique-toggle">
                 <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                <span class="toggle-label">🌈 צבעים ייחודיים</span>
+                <span class="toggle-label">ללא חזרות בקוד — כל צבע פעם אחת בלבד</span>
             </button>
 
             <!-- Start button -->
@@ -74,6 +71,15 @@
         <div class="secret-area" id="secret-area">
             <span class="secret-label">הקוד הסודי:</span>
             <div class="secret-slots" id="secret-slots"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend-strip">
+            <span>⭐ צבע + מקום נכון</span>
+            <span class="legend-sep">·</span>
+            <span>🌸 צבע נכון, מקום שגוי</span>
+            <span class="legend-sep">·</span>
+            <span>❌ לא בקוד</span>
         </div>
 
         <!-- History of past guesses -->

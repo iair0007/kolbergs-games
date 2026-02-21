@@ -100,48 +100,6 @@ const GameState = {
     gameOver:     false,
 };
 
-/* ─── MUSIC ────────────────────────────────────────── */
-let musicOn        = false;
-let musicTimeout   = null;
-const PENTATONIC   = [261.63, 293.66, 329.63, 392.00, 440.00, 392.00, 329.63, 293.66]; // C4 D4 E4 G4 A4
-
-function playNote(freq, startTime, duration) {
-    if (!audioContext) return;
-    const osc  = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-    osc.frequency.value = freq;
-    osc.type = 'sine';
-    gain.gain.setValueAtTime(0, startTime);
-    gain.gain.linearRampToValueAtTime(0.07, startTime + 0.05);
-    gain.gain.linearRampToValueAtTime(0,    startTime + duration - 0.05);
-    osc.start(startTime);
-    osc.stop(startTime + duration);
-}
-
-function scheduleMusicLoop() {
-    if (!musicOn || !audioContext) return;
-    const noteDur = 0.38;
-    const now     = audioContext.currentTime;
-    PENTATONIC.forEach((freq, i) => playNote(freq, now + i * noteDur, noteDur));
-    const loopDur = PENTATONIC.length * noteDur * 1000;
-    musicTimeout = setTimeout(scheduleMusicLoop, loopDur);
-}
-
-function startMusic() {
-    if (!audioContext) return;
-    musicOn = true;
-    scheduleMusicLoop();
-    document.getElementById('music-btn').textContent = '🎵';
-}
-
-function stopMusic() {
-    musicOn = false;
-    clearTimeout(musicTimeout);
-    document.getElementById('music-btn').textContent = '🔇';
-}
-
 /* ─── SFX ──────────────────────────────────────────── */
 function playTone(freq, duration = 0.12, type = 'sine', vol = 0.15) {
     if (!audioContext) return;
@@ -392,7 +350,7 @@ function showComplete(won) {
     } else {
         playLose();
         const names = GameState.secret.map(id => colorById(id).name).join(', ');
-        speakText(`לא נורא! הקוד היה: ${names}`);
+        speakText(`לא נורא! הקוד היה ${names}`);
     }
 }
 
@@ -434,10 +392,13 @@ function submitGuess() {
         speakText('לא נכון, נסה שוב!');
     } else {
         playClick();
-        const parts = [];
-        if (result.stars   > 0) parts.push(`יש לך ${result.stars} במקום הנכון`);
-        if (result.flowers > 0) parts.push(`ו-${result.flowers} צבע נכון במקום הלא נכון`);
-        speakText(parts.join(', ') + '!');
+        if (result.stars > 0 && result.flowers > 0) {
+            speakText(`יש לך ${result.stars} במקום הנכון, ו${result.flowers} צבע נכון במקום הלא נכון!`);
+        } else if (result.stars > 0) {
+            speakText(`יש לך ${result.stars} במקום הנכון!`);
+        } else {
+            speakText(`${result.flowers} צבע נכון אבל במקום הלא נכון!`);
+        }
     }
 }
 
@@ -462,8 +423,6 @@ function startGame() {
     renderPalette();
 
     showScreen('game-screen');
-
-    if (!musicOn) startMusic();
 }
 
 /* ─── INIT ─────────────────────────────────────────── */
@@ -489,7 +448,6 @@ function init() {
 
     /* Back to menu from game screen */
     addBtn(document.getElementById('back-to-menu'), () => {
-        stopMusic();
         GameState.gameOver = true;
         showScreen('welcome-screen');
     });
@@ -510,18 +468,7 @@ function init() {
 
     /* Back to welcome from complete screen */
     addBtn(document.getElementById('back-to-welcome-btn'), () => {
-        stopMusic();
         showScreen('welcome-screen');
-    });
-
-    /* Music toggle */
-    addBtn(document.getElementById('music-btn'), () => {
-        initAudioContext();
-        if (musicOn) {
-            stopMusic();
-        } else {
-            startMusic();
-        }
     });
 }
 
