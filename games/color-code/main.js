@@ -44,11 +44,12 @@ function waitForVoices() {
 }
 
 async function unlockAudio() {
-    if (audioReady) return;
     initAudioContext();
+    // Always resume if suspended — AudioContext can re-suspend after app backgrounding.
     if (audioContext && audioContext.state === 'suspended') {
         await audioContext.resume();
     }
+    if (audioReady) return; // voices already loaded; skip warmup on subsequent calls
     await waitForVoices();
     if ('speechSynthesis' in window) {
         const warmup = new SpeechSynthesisUtterance('.');
@@ -107,6 +108,12 @@ const GameState = {
 /* ─── SFX ──────────────────────────────────────────── */
 function playTone(freq, duration = 0.12, type = 'sine', vol = 0.15) {
     if (!audioContext) return;
+    // On iOS Safari the AudioContext can re-suspend after backgrounding; skip silently.
+    if (audioContext.state !== 'running') {
+        // Attempt a best-effort resume (no await — fire-and-forget is fine for SFX)
+        audioContext.resume().catch(() => {});
+        return;
+    }
     const osc  = audioContext.createOscillator();
     const gain = audioContext.createGain();
     osc.connect(gain);

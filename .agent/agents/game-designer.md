@@ -216,6 +216,7 @@ Before declaring a game "done", verify:
 - [ ] Works on iPhone SE (375px wide) without horizontal scroll
 - [ ] Touch events on all interactive elements
 - [ ] Registered in `platform/games.json`
+- [ ] **Mobile tester has reviewed the game** — run `/mobile-test games/<game-id>/` and fix all ❌ items before opening PR
 
 ---
 

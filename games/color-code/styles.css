@@ -53,8 +53,9 @@ body {
 /* ─── Home Button ──────────────────────────────────── */
 .home-btn {
     position: fixed;
-    top: 15px;
-    left: 15px;
+    /* Use max() so the button clears the safe area (notch / Dynamic Island) on all devices */
+    top: max(15px, env(safe-area-inset-top, 0px));
+    left: max(15px, env(safe-area-inset-left, 0px));
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -331,8 +332,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    /* padding-left: clear the fixed home button (50px wide + 15px from edge = 65px footprint).
+       In RTL the hint button is on the physical left, so it must not sit behind the home button.
+       padding-top: account for safe area (notch / Dynamic Island) */
     padding: 12px 16px;
-    padding-top: 18px;
+    padding-top: max(18px, env(safe-area-inset-top, 0px));
+    padding-left: max(70px, calc(env(safe-area-inset-left, 0px) + 70px));
     flex-shrink: 0;
 }
 
@@ -348,6 +353,7 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
+    flex-shrink: 0; /* prevent button text from squishing on small screens */
 }
 .nav-btn:hover { background: rgba(255,255,255,0.15); }
 
@@ -816,7 +822,7 @@ body {
         --swatch-size: 48px;
     }
 
-    .game-nav { padding: 10px 12px; padding-top: 14px; }
+    .game-nav { padding: 10px 12px; padding-top: 14px; padding-left: max(70px, calc(env(safe-area-inset-left, 0px) + 70px)); }
     .history-container { padding: 6px 10px; gap: 6px; }
     .history-row { padding: 8px 10px; gap: 8px; }
     .current-guess { padding: 6px 10px 2px; }
@@ -828,13 +834,14 @@ body {
 /* ─── iPhone SE ────────────────────────────────────── */
 @media (max-width: 375px) {
     :root {
-        --slot-size:   40px;
-        --swatch-size: 42px;
+        /* Keep at 44px minimum for touch targets — do not go below 44px */
+        --slot-size:   44px;
+        --swatch-size: 44px;
     }
 
     .history-circle, .guess-slot, .swatch { border-width: 2px; }
-    .game-nav { gap: 6px; }
-    .hearts-row { font-size: 1rem; }
+    .game-nav { gap: 4px; }
+    .hearts-row { font-size: 1rem; letter-spacing: 2px; }
 }
 
 /* ─── Landscape Mobile ─────────────────────────────── */
@@ -846,7 +853,8 @@ body {
 
     #welcome-screen.active { padding-top: 60px; }
     .hero-badge { font-size: 48px; }
-    .game-nav { padding: 6px 12px; }
+    /* Keep left padding to clear the home button in RTL landscape */
+    .game-nav { padding: 6px 12px; padding-left: max(70px, calc(env(safe-area-inset-left, 0px) + 70px)); }
     .secret-area { padding: 4px 12px; }
     .history-container { gap: 4px; }
     .history-row { padding: 6px 10px; }
