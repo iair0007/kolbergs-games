@@ -45,20 +45,28 @@ function waitForVoices() {
 
 async function unlockAudio() {
     initAudioContext();
-    // Always resume if suspended — AudioContext can re-suspend after app backgrounding.
-    if (audioContext && audioContext.state === 'suspended') {
-        await audioContext.resume();
-    }
-    if (audioReady) return; // voices already loaded; skip warmup on subsequent calls
-    await waitForVoices();
-    if ('speechSynthesis' in window) {
+
+    // IMPORTANT: speak the warmup utterance SYNCHRONOUSLY before any awaits.
+    // iOS Safari only grants speechSynthesis permission when speak() is called
+    // within the synchronous execution of a user gesture handler.
+    // Any await before the speak() call breaks the gesture chain and silences
+    // ALL subsequent speakText() calls for the entire session.
+    if (!audioReady && 'speechSynthesis' in window) {
+        speechSynthesis.cancel();
         const warmup = new SpeechSynthesisUtterance('.');
         warmup.volume = 0.01;
         warmup.rate   = 2;
         warmup.lang   = 'he-IL';
         speechSynthesis.speak(warmup);
-        await new Promise(r => setTimeout(r, 200));
     }
+
+    // Now safe to do async work — gesture permission for speech is already granted above.
+    if (audioContext && audioContext.state === 'suspended') {
+        await audioContext.resume();
+    }
+    if (audioReady) return; // voices already loaded; skip the rest on subsequent calls
+    await waitForVoices();
+    await new Promise(r => setTimeout(r, 100));
     audioReady = true;
 }
 
@@ -108,12 +116,14 @@ const GameState = {
 /* ─── SFX ──────────────────────────────────────────── */
 function playTone(freq, duration = 0.12, type = 'sine', vol = 0.15) {
     if (!audioContext) return;
-    // On iOS Safari the AudioContext can re-suspend after backgrounding; skip silently.
-    if (audioContext.state !== 'running') {
-        // Attempt a best-effort resume (no await — fire-and-forget is fine for SFX)
-        audioContext.resume().catch(() => {});
+    // If the AudioContext is suspended (e.g. first tap after game start, or after
+    // app backgrounding), resume it and RETRY the tone once running.
+    // Previously we returned without playing — that caused silent first taps.
+    if (audioContext.state === 'suspended') {
+        audioContext.resume().then(() => playTone(freq, duration, type, vol)).catch(() => {});
         return;
     }
+    if (audioContext.state !== 'running') return;
     const osc  = audioContext.createOscillator();
     const gain = audioContext.createGain();
     osc.connect(gain);

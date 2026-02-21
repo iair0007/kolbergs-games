@@ -111,12 +111,22 @@ function waitForVoices() {
 // Audio unlock — MUST be called inside the start button handler
 async function unlockAudio() {
     initAudioContext();
+    // CRITICAL: speak the warmup BEFORE any await.
+    // iOS Safari only grants speechSynthesis permission when speak() is called
+    // synchronously inside a user gesture. Any await before speak() breaks the
+    // gesture chain and silences ALL subsequent speech for the session.
+    if (!audioReady && 'speechSynthesis' in window) {
+        speechSynthesis.cancel();
+        const warmup = new SpeechSynthesisUtterance('.');
+        warmup.volume = 0.01; warmup.rate = 2; warmup.lang = 'he-IL';
+        speechSynthesis.speak(warmup);
+    }
+    // Now safe to do async work (gesture permission already granted above)
     if (audioContext.state === 'suspended') await audioContext.resume();
+    if (audioReady) return;
     await waitForVoices();
-    // Warmup utterance — required for Safari to not hang on first speech
-    const warmup = new SpeechSynthesisUtterance('.');
-    warmup.volume = 0.01; warmup.rate = 2; warmup.lang = 'he-IL';
-    speechSynthesis.speak(warmup);
+    await new Promise(r => setTimeout(r, 100));
+    audioReady = true;
 }
 
 // Always cancel before speaking — iOS Safari stacks utterances otherwise
