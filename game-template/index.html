@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>GAME_TITLE - Kolberg's Games</title>
+
+    <!-- Platform responsive CSS — MUST be first stylesheet -->
+    <link rel="stylesheet" href="../../platform/responsive.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+
+    <!-- Game styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- Home button — fixed, top-left, always visible -->
+        <a href="../../index.html" class="home-btn" aria-label="Return to Home">🏠</a>
+
+        <!-- ═══════════════════════════════════════════
+             WELCOME SCREEN
+        ═══════════════════════════════════════════ -->
+        <div id="welcome-screen" class="screen active">
+            <div class="screen-content">
+
+                <!-- Game icon / hero badge -->
+                <div class="hero-badge">🎮</div>
+
+                <!-- Title and description -->
+                <h1 class="game-title">GAME_TITLE</h1>
+                <p class="game-description">GAME_DESCRIPTION</p>
+
+                <!-- Difficulty selector -->
+                <div class="difficulty-selector">
+                    <button class="diff-btn active" data-difficulty="easy">קל</button>
+                    <button class="diff-btn" data-difficulty="medium">בינוני</button>
+                    <button class="diff-btn" data-difficulty="hard">קשה</button>
+                </div>
+
+                <!-- Start button -->
+                <button class="magic-btn" id="start-btn">
+                    <span>התחל משחק</span>
+                    <span>🚀</span>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+             GAME SCREEN
+        ═══════════════════════════════════════════ -->
+        <div id="game-screen" class="screen">
+
+            <!-- Score display (fixed, top-right) -->
+            <div class="stats-display" id="stats-display">
+                <span id="score-display">⭐ 0</span>
+            </div>
+
+            <div class="screen-content">
+
+                <!-- Progress bar -->
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <p class="progress-text" id="progress-text">שאלה 1 מתוך 5</p>
+
+                <!-- Main picture / question area -->
+                <div class="picture-container">
+                    <div class="picture-emoji" id="picture-emoji">🌟</div>
+                </div>
+
+                <!-- Speaker button (for TTS) -->
+                <button class="speaker-btn" id="speaker-btn" aria-label="השמע שוב">🔊</button>
+
+                <!-- Question / instruction text -->
+                <p class="question-text" id="question-text">מה זה?</p>
+
+                <!-- Answer options grid -->
+                <div class="options-grid" id="options-grid">
+                    <!-- Options injected by main.js -->
+                </div>
+
+                <!-- Feedback message -->
+                <div class="feedback-container" id="feedback-container">
+                    <span class="feedback-text" id="feedback-text"></span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+             COMPLETE SCREEN
+        ═══════════════════════════════════════════ -->
+        <div id="complete-screen" class="screen">
+            <div class="screen-content">
+
+                <div class="trophy-badge" id="trophy-emoji">🏆</div>
+                <h2 class="complete-title">כל הכבוד!</h2>
+
+                <div class="score-card">
+                    <div class="score-row">
+                        <span class="score-label">ניקוד:</span>
+                        <span class="score-value" id="final-score">0</span>
+                    </div>
+                    <div class="score-row">
+                        <span class="score-label">דיוק:</span>
+                        <span class="score-value" id="final-accuracy">0%</span>
+                    </div>
+                    <div class="score-row stars-row" id="final-stars">⭐⭐⭐</div>
+                </div>
+
+                <div class="complete-buttons">
+                    <button class="magic-btn" id="play-again-btn">
+                        <span>שחק שוב</span>
+                        <span>🔄</span>
+                    </button>
+                    <button class="magic-btn secondary" id="menu-btn">
+                        <span>תפריט</span>
+                        <span>🏠</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- /#app -->
+
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>פורץ הקודים - Kolberg's Games</title>
+
+    <!-- Platform responsive CSS — MUST be first stylesheet -->
+    <link rel="stylesheet" href="../../platform/responsive.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+
+    <!-- Game styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+<div id="app">
+
+    <!-- Home button — fixed, top-left, always visible -->
+    <a href="../../index.html" class="home-btn" aria-label="חזרה לדף הבית">🏠</a>
+
+    <!-- ═══════════════════════════════════════════
+         WELCOME SCREEN
+    ═══════════════════════════════════════════ -->
+    <div id="welcome-screen" class="screen active">
+        <div class="screen-content">
+
+            <div class="hero-badge">🔐</div>
+
+            <h1 class="game-title">פורץ הקודים</h1>
+
+            <div class="symbol-legend">
+                <div class="symbol-item"><span class="sym">⭐</span><span class="sym-label">מקום נכון</span></div>
+                <div class="symbol-item"><span class="sym">🌸</span><span class="sym-label">צבע נכון</span></div>
+                <div class="symbol-item"><span class="sym">❌</span><span class="sym-label">לא בקוד</span></div>
+            </div>
+
+            <!-- Difficulty selector -->
+            <div class="difficulty-selector">
+                <button class="diff-btn active" data-difficulty="easy"><span class="diff-main">🟢 קל</span><span class="diff-sub">3 צבעים</span></button>
+                <button class="diff-btn" data-difficulty="medium"><span class="diff-main">🟡 בינוני</span><span class="diff-sub">4 צבעים</span></button>
+                <button class="diff-btn" data-difficulty="hard"><span class="diff-main">🔴 קשה</span><span class="diff-sub">5 צבעים</span></button>
+                <button class="diff-btn" data-difficulty="super"><span class="diff-main">💀 סופר</span><span class="diff-sub">עם חזרות</span></button>
+            </div>
+
+            <!-- Extra-color toggle (disabled for super) -->
+            <!-- OFF = extra distractor color in palette (harder, default)  -->
+            <!-- ON  = palette shows only the code colors (easier)          -->
+            <button class="unique-toggle" id="unique-toggle">
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                <span class="toggle-label" id="toggle-label">🌈 עם צבע מסיח</span>
+            </button>
+
+            <!-- Start button -->
+            <button class="magic-btn start-btn-dominant" id="start-btn">
+                <span>🚀</span>
+                <span>התחל לשחק!</span>
+            </button>
+
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         GAME SCREEN
+    ═══════════════════════════════════════════ -->
+    <div id="game-screen" class="screen">
+
+        <!-- Navigation bar -->
+        <div class="game-nav">
+            <button class="nav-btn" id="back-to-menu">🔙 תפריט</button>
+            <div class="hearts-row" id="hearts-row"></div>
+            <button class="nav-btn hint-nav-btn" id="help-btn">💡 רמז (2)</button>
+        </div>
+
+        <!-- Secret code area (revealed on game end) -->
+        <div class="secret-area" id="secret-area">
+            <span class="secret-label">הקוד הסודי:</span>
+            <div class="secret-slots" id="secret-slots"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend-strip">
+            <span>⭐ צבע + מקום נכון</span>
+            <span class="legend-sep">·</span>
+            <span>🌸 צבע נכון, מקום שגוי</span>
+            <span class="legend-sep">·</span>
+            <span>❌ לא בקוד</span>
+        </div>
+
+        <!-- History of past guesses -->
+        <div class="history-container" id="history-container"></div>
+
+        <!-- Current guess input row -->
+        <div class="current-guess" id="current-guess">
+            <div class="guess-slots" id="guess-slots"></div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="guess-actions">
+            <button class="action-btn clear-btn" id="clear-guess">🗑 נקה</button>
+            <button class="action-btn submit-btn" id="submit-guess">✅ שלח</button>
+        </div>
+
+        <!-- Color palette -->
+        <div class="palette" id="palette"></div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         COMPLETE SCREEN
+    ═══════════════════════════════════════════ -->
+    <div id="complete-screen" class="screen">
+        <div class="screen-content">
+
+            <div class="outcome-badge" id="outcome-badge">🎉</div>
+            <h2 class="complete-title" id="complete-title">ניצחת!</h2>
+            <p class="complete-subtitle" id="complete-subtitle"></p>
+
+            <!-- Secret code reveal -->
+            <div class="reveal-area">
+                <p class="reveal-label">הקוד הסודי היה:</p>
+                <div class="reveal-slots" id="reveal-slots"></div>
+            </div>
+
+            <!-- Full guess history -->
+            <div class="complete-history-section">
+                <p class="complete-history-label">כל הניסיונות שלך:</p>
+                <div class="complete-history" id="complete-history"></div>
+            </div>
+
+            <div class="complete-buttons">
+                <button class="magic-btn" id="play-again-btn">
+                    <span>🔄 שחק שוב</span>
+                </button>
+                <button class="magic-btn secondary" id="back-to-welcome-btn">
+                    <span>🏠 תפריט</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+</div><!-- /#app -->
+
+<script src="data.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
