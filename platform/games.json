@@ -89,5 +89,12 @@
     "description": "חקור את ממלכת החיות! התאם חיות, למד את הקולות שלהן וגלה עובדות מדהימות 🦁",
     "path": "games/animal-safari/index.html",
     "image": "platform/images/animal_safari.png"
+  },
+  {
+    "id": "color-code",
+    "title": "פורץ הקודים",
+    "description": "נחש את קוד הצבעים הסודי — משחק לוגיקה מהנה לילדים 🔐",
+    "path": "games/color-code/index.html",
+    "image": "platform/images/color_code.png"
   }
 ]

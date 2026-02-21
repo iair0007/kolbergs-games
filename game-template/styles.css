@@ -1,0 +1,436 @@
+/* ═══════════════════════════════════════════════════════
+   GAME_TITLE — Styles
+   Built on the Kolberg's Games Design System
+   Reference: .agent/workflows/game-design-system.md
+═══════════════════════════════════════════════════════ */
+
+/* ─── Design Tokens ────────────────────────────────── */
+:root {
+    --primary-gradient:   linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-gradient:   linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --warning-gradient:   linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+    --bg-gradient:        linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    --card-bg:            rgba(255, 255, 255, 0.1);
+    --text-primary:       #ffffff;
+    --text-secondary:     rgba(255, 255, 255, 0.8);
+    --shadow-color:       rgba(0, 0, 0, 0.3);
+    --border-radius:      16px;
+    --transition:         all 0.3s ease;
+}
+
+/* ─── Reset & Base ─────────────────────────────────── */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* RULE: height: 100% + overflow: hidden on html/body is required.
+   Without this, mobile viewport height bugs appear. */
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Rubik', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    /* RULE: Always pair 100vh with 100svh.
+       100vh breaks on iOS Safari (URL bar not counted).
+       100svh is the correct mobile-safe unit. */
+    min-height: 100vh;
+    min-height: 100svh;
+}
+
+#app {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* ─── Home Button ──────────────────────────────────── */
+/* RULE: Must match this exactly — position, size, style.
+   Never change this across games. */
+.home-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    text-decoration: none;
+    z-index: 100;
+    transition: var(--transition);
+}
+.home-btn:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ─── Screen System ────────────────────────────────── */
+.screen {
+    display: none;
+    flex: 1;
+    padding: 20px;
+    padding-top: 70px;         /* clear the home button */
+    overflow-y: auto;
+}
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.screen-content {
+    /* RULE: Never use 100vw — causes horizontal scrollbar on mobile.
+       Use width: 100% instead. */
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+/* ─── Stats Display ────────────────────────────────── */
+.stats-display {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    z-index: 100;
+}
+
+/* ─── Welcome Screen ───────────────────────────────── */
+.hero-badge {
+    /* RULE: Use clamp() for font sizes — never fixed px on large text.
+       Scales correctly across iPhone SE (375px) to iPad (1024px). */
+    font-size: clamp(60px, 20vw, 100px);
+    animation: bounce 2s infinite;
+    line-height: 1;
+}
+
+.game-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.8rem, 7vw, 3rem);
+    text-align: center;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.game-description {
+    font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+    color: var(--text-secondary);
+    text-align: center;
+    max-width: 320px;
+}
+
+/* ─── Difficulty Selector ──────────────────────────── */
+.difficulty-selector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.diff-btn {
+    /* RULE: Minimum 44×44px touch target on all interactive elements. */
+    min-height: 44px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    background: var(--card-bg);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.diff-btn.active {
+    background: var(--primary-gradient);
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+.diff-btn:hover {
+    transform: scale(1.05);
+}
+
+/* ─── Buttons ──────────────────────────────────────── */
+.magic-btn {
+    /* RULE: min-height 44px ensures touch target on mobile. */
+    min-height: 44px;
+    background: var(--primary-gradient);
+    border: none;
+    border-radius: 30px;
+    padding: 14px 36px;
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: var(--transition);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    font-family: inherit;
+    width: 100%;
+    max-width: 300px;
+}
+.magic-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+}
+.magic-btn:active {
+    transform: translateY(0);
+}
+.magic-btn.secondary {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: none;
+}
+
+/* ─── Game Screen ──────────────────────────────────── */
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    background: var(--success-gradient);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+.progress-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.picture-container {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.picture-emoji {
+    font-size: clamp(60px, 18vw, 90px);
+    animation: float 3s infinite;
+    line-height: 1;
+}
+
+.speaker-btn {
+    /* RULE: 60×60px — large enough for touch, clearly visible */
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--secondary-gradient);
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+}
+.speaker-btn:hover {
+    transform: scale(1.1);
+}
+
+.question-text {
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* ─── Options Grid ─────────────────────────────────── */
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+}
+
+.option-btn {
+    /* RULE: min-height 56px — comfortable touch target for kids. */
+    min-height: 56px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--border-radius);
+    padding: 12px;
+    font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+}
+.option-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+.option-btn.correct {
+    background: var(--success-gradient);
+    border-color: transparent;
+    animation: pulse 0.4s ease;
+}
+.option-btn.wrong {
+    background: var(--warning-gradient);
+    border-color: transparent;
+    animation: shake 0.4s ease;
+}
+.option-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* ─── Feedback ─────────────────────────────────────── */
+.feedback-container {
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.feedback-text {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+    font-weight: 700;
+    text-align: center;
+    animation: fadeInUp 0.3s ease;
+}
+
+/* ─── Complete Screen ──────────────────────────────── */
+.trophy-badge {
+    font-size: clamp(60px, 20vw, 100px);
+    animation: celebrate 0.6s ease forwards;
+    line-height: 1;
+}
+.complete-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
+    text-align: center;
+}
+
+.score-card {
+    width: 100%;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+}
+.score-label { color: var(--text-secondary); }
+.score-value { font-weight: 700; font-size: 1.2em; }
+.stars-row { justify-content: center; font-size: 1.6rem; letter-spacing: 4px; }
+
+.complete-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    align-items: center;
+}
+
+/* ─── Animations ───────────────────────────────────── */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-15px); }
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-10px); }
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.06); }
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%       { transform: translateX(-8px); }
+    75%       { transform: translateX(8px); }
+}
+@keyframes celebrate {
+    0%   { transform: scale(0.4) rotate(-10deg); opacity: 0; }
+    60%  { transform: scale(1.2) rotate(5deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Mobile Breakpoint ────────────────────────────── */
+@media (max-width: 480px) {
+    .screen {
+        padding: 16px;
+        padding-top: 70px;
+    }
+    .screen-content {
+        gap: 12px;
+    }
+    .options-grid {
+        gap: 8px;
+    }
+    .picture-container {
+        padding: 14px;
+    }
+    .complete-buttons {
+        gap: 10px;
+    }
+}
+
+/* ─── Landscape Mobile ─────────────────────────────── */
+@media (max-height: 500px) and (orientation: landscape) {
+    .screen {
+        justify-content: flex-start;
+        padding-top: 60px;
+    }
+    .hero-badge,
+    .trophy-badge {
+        font-size: 50px;
+    }
+    .screen-content {
+        gap: 10px;
+    }
+}

@@ -37,6 +37,8 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           additional_permissions: |
             actions: read
+          show_full_output: true
+          claude_args: '--max-turns 10'  
           prompt: |
             Always follow the rules defined in CLAUDE.md.
             When you finish making any code changes, always open a Pull Request.
