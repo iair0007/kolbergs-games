@@ -93,6 +93,11 @@ body {
     overflow-y: auto;
 }
 
+/* Complete screen: start from top when content is long */
+#complete-screen.active {
+    justify-content: flex-start;
+}
+
 .screen-content {
     width: 100%;
     max-width: 480px;
@@ -203,6 +208,32 @@ body {
     left: 19px;
 }
 
+/* Super difficulty button — distinct danger style */
+.diff-btn[data-difficulty="super"] {
+    border-color: rgba(255, 60, 60, 0.4);
+    color: #ff9999;
+}
+.diff-btn[data-difficulty="super"].active {
+    background: linear-gradient(135deg, #7b0000, #c0392b);
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(192, 57, 43, 0.5);
+}
+
+/* Disabled toggle (when super level is selected) */
+.unique-toggle.toggle-disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Toggle state hint text */
+.toggle-hint {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    margin-top: -8px;
+}
+
 /* ─── Magic Button ─────────────────────────────────── */
 .magic-btn {
     min-height: 44px;
@@ -262,6 +293,17 @@ body {
     transition: var(--transition);
 }
 .nav-btn:hover { background: rgba(255,255,255,0.15); }
+
+/* ─── Hint Button ──────────────────────────────────── */
+.hint-nav-btn {
+    border-color: rgba(241, 196, 15, 0.4);
+    color: #f1c40f;
+    white-space: nowrap;
+}
+.hint-nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
 
 /* ─── Hearts Row ───────────────────────────────────── */
 .hearts-row {
@@ -509,6 +551,45 @@ body {
     box-shadow: 0 4px 18px rgba(0,0,0,0.4);
 }
 .swatch:active { transform: scale(0.95); }
+
+/* ─── Complete History ─────────────────────────────── */
+.complete-history-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.complete-history-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.complete-history {
+    width: 100%;
+    max-height: 35vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.complete-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.complete-row.winning-row {
+    background: rgba(17, 153, 142, 0.2);
+    border-color: rgba(17, 153, 142, 0.4);
+}
 
 /* ─── Complete Screen ──────────────────────────────── */
 .outcome-badge {

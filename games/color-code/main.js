@@ -90,14 +90,18 @@ function addBtn(element, handler) {
 }
 
 /* ─── GAME STATE ───────────────────────────────────── */
+// extraColor = true  → extra distractor in palette (toggle OFF, default, harder)
+// extraColor = false → palette shows only code colors (toggle ON, easier)
 const GameState = {
-    difficulty:   'easy',
-    uniqueColors: false,
-    secret:       [],
-    currentGuess: [],
-    history:      [],
-    attemptsLeft: 0,
-    gameOver:     false,
+    difficulty:    'easy',
+    extraColor:    true,
+    paletteColors: [],
+    secret:        [],
+    currentGuess:  [],
+    history:       [],
+    attemptsLeft:  0,
+    gameOver:      false,
+    revealedHints: [],
 };
 
 /* ─── SFX ──────────────────────────────────────────── */
@@ -135,14 +139,32 @@ function shuffleArray(arr) {
     return a;
 }
 
-function generateSecret(config) {
-    const available = COLORS.slice(0, config.colorsCount);
-    if (GameState.uniqueColors && config.sequenceLength <= available.length) {
-        return shuffleArray(available).slice(0, config.sequenceLength).map(c => c.id);
+// Build the palette color list for this game round.
+// For super: all 6 colors (shuffle order only).
+// For others: first `colorsCount` shuffled colors = code colors;
+//   if extraColor is on, add one more shuffled color as distractor.
+function buildPaletteColors(config) {
+    const allShuffled = shuffleArray(COLORS);
+    if (config.allowRepeats) {
+        return allShuffled; // all 6 for super
     }
-    return Array.from({ length: config.sequenceLength }, () =>
-        available[Math.floor(Math.random() * available.length)].id
-    );
+    const size = config.colorsCount + (GameState.extraColor ? 1 : 0);
+    return allShuffled.slice(0, size);
+}
+
+// Generate the secret.
+// For super: random picks (with repeats) from all palette colors.
+// For others: always unique — shuffle the code-color slice and take all.
+//   The code colors are always the FIRST colorsCount entries of paletteColors
+//   (the last entry, when present, is the extra distractor and is never in the code).
+function generateSecret(paletteColors, config) {
+    if (config.allowRepeats) {
+        return Array.from({ length: config.sequenceLength }, () =>
+            paletteColors[Math.floor(Math.random() * paletteColors.length)].id
+        );
+    }
+    const codePool = shuffleArray(paletteColors.slice(0, config.colorsCount));
+    return codePool.slice(0, config.sequenceLength).map(c => c.id);
 }
 
 function checkGuess(secret, guess) {
@@ -184,18 +206,17 @@ function colorById(id) {
 
 function renderHearts() {
     const config = DIFFICULTY_CONFIG[GameState.difficulty];
-    const total  = config.maxAttempts;
-    const used   = total - GameState.attemptsLeft;
+    const used   = config.maxAttempts - GameState.attemptsLeft;
     document.getElementById('hearts-row').textContent =
         '❤️'.repeat(GameState.attemptsLeft) + '🖤'.repeat(used);
 }
 
 function renderGuessSlots() {
-    const config = DIFFICULTY_CONFIG[GameState.difficulty];
+    const config    = DIFFICULTY_CONFIG[GameState.difficulty];
     const container = document.getElementById('guess-slots');
     container.innerHTML = '';
     for (let i = 0; i < config.sequenceLength; i++) {
-        const slot = document.createElement('div');
+        const slot    = document.createElement('div');
         slot.className = 'guess-slot';
         const colorId = GameState.currentGuess[i];
         if (colorId) {
@@ -219,7 +240,7 @@ function renderPalette() {
     const config    = DIFFICULTY_CONFIG[GameState.difficulty];
     const container = document.getElementById('palette');
     container.innerHTML = '';
-    COLORS.slice(0, config.colorsCount).forEach(color => {
+    GameState.paletteColors.forEach(color => {
         const swatch = document.createElement('button');
         swatch.className = 'swatch';
         swatch.style.backgroundColor = color.hex;
@@ -264,12 +285,10 @@ function addHistoryRow(guess, result, guessNumber) {
     const row = document.createElement('div');
     row.className = 'history-row';
 
-    // Guess number badge
     const numBadge = document.createElement('div');
     numBadge.className = 'guess-number';
     numBadge.textContent = `#${guessNumber}`;
 
-    // Circles
     const circles = document.createElement('div');
     circles.className = 'history-circles';
     guess.forEach(colorId => {
@@ -279,7 +298,6 @@ function addHistoryRow(guess, result, guessNumber) {
         circles.appendChild(c);
     });
 
-    // Feedback
     const feedback = document.createElement('div');
     feedback.className = 'history-feedback';
 
@@ -300,8 +318,43 @@ function addHistoryRow(guess, result, guessNumber) {
 
     const container = document.getElementById('history-container');
     container.appendChild(row);
-    // Scroll so the newest guess is always visible
     row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* ─── HINT SYSTEM ──────────────────────────────────── */
+function updateHelpBtn() {
+    const config    = DIFFICULTY_CONFIG[GameState.difficulty];
+    const remaining = config.maxHints - GameState.revealedHints.length;
+    const btn       = document.getElementById('help-btn');
+    btn.textContent = `💡 רמז (${remaining})`;
+    btn.disabled    = remaining <= 0 || GameState.gameOver;
+}
+
+function revealHint() {
+    const config = DIFFICULTY_CONFIG[GameState.difficulty];
+    if (GameState.revealedHints.length >= config.maxHints || GameState.gameOver) return;
+
+    // Collect unrevealed positions
+    const unrevealed = [];
+    for (let i = 0; i < config.sequenceLength; i++) {
+        if (!GameState.revealedHints.includes(i)) unrevealed.push(i);
+    }
+    if (unrevealed.length === 0) return;
+
+    const idx = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+    GameState.revealedHints.push(idx);
+
+    // Reveal that slot in the secret area
+    const slots = document.querySelectorAll('.secret-slot');
+    if (slots[idx]) {
+        slots[idx].classList.add('revealed');
+        slots[idx].style.backgroundColor = colorById(GameState.secret[idx]).hex;
+        slots[idx].textContent = '';
+    }
+
+    updateHelpBtn();
+    playClick();
+    speakText(`רמז! מיקום ${idx + 1} הוא ${colorById(GameState.secret[idx]).name}`);
 }
 
 /* ─── CONFETTI ─────────────────────────────────────── */
@@ -310,21 +363,55 @@ function launchConfetti() {
     for (let i = 0; i < 70; i++) {
         const piece = document.createElement('div');
         piece.className = 'confetti-piece';
-        piece.style.left            = `${Math.random() * 100}vw`;
-        piece.style.top             = `${Math.random() * -20}vh`;
-        piece.style.background      = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.left              = `${Math.random() * 100}vw`;
+        piece.style.top               = `${Math.random() * -20}vh`;
+        piece.style.background        = colors[Math.floor(Math.random() * colors.length)];
         piece.style.animationDuration = `${1.5 + Math.random() * 2}s`;
-        piece.style.animationDelay  = `${Math.random() * 0.8}s`;
+        piece.style.animationDelay    = `${Math.random() * 0.8}s`;
         document.body.appendChild(piece);
         setTimeout(() => piece.remove(), 4000);
     }
 }
 
 /* ─── COMPLETE SCREEN ──────────────────────────────── */
+function renderCompleteHistory() {
+    const config    = DIFFICULTY_CONFIG[GameState.difficulty];
+    const container = document.getElementById('complete-history');
+    container.innerHTML = '';
+
+    GameState.history.forEach(({ guess, result }, i) => {
+        const row = document.createElement('div');
+        row.className = 'complete-row';
+        if (result.stars === config.sequenceLength) row.classList.add('winning-row');
+
+        const num = document.createElement('span');
+        num.className   = 'guess-number';
+        num.textContent = `#${i + 1}`;
+
+        const circles = document.createElement('div');
+        circles.className = 'history-circles';
+        guess.forEach(colorId => {
+            const c = document.createElement('div');
+            c.className = 'history-circle';
+            c.style.backgroundColor = colorById(colorId).hex;
+            circles.appendChild(c);
+        });
+
+        const icons = document.createElement('div');
+        icons.className = 'feedback-icons';
+        icons.textContent = buildFeedbackIcons(result.stars, result.flowers, result.wrong);
+
+        row.appendChild(num);
+        row.appendChild(circles);
+        row.appendChild(icons);
+        container.appendChild(row);
+    });
+}
+
 function showComplete(won) {
     revealSecret();
 
-    // Reveal slots on complete screen
+    // Populate the code reveal on complete screen
     const revealContainer = document.getElementById('reveal-slots');
     revealContainer.innerHTML = '';
     GameState.secret.forEach((colorId, i) => {
@@ -335,12 +422,13 @@ function showComplete(won) {
         revealContainer.appendChild(circle);
     });
 
-    document.getElementById('outcome-badge').textContent   = won ? '🎉' : '💪';
-    document.getElementById('complete-title').textContent  = won ? 'ניצחת!' : 'כמעט!';
+    document.getElementById('outcome-badge').textContent    = won ? '🎉' : '💪';
+    document.getElementById('complete-title').textContent   = won ? 'ניצחת!' : 'כמעט!';
     document.getElementById('complete-subtitle').textContent = won
         ? 'כל הכבוד! פרצת את הקוד!'
-        : `הנסיון הגיע לסוף — אל תתייאש!`;
+        : 'הנסיונות הגיעו לסוף — אל תתייאש!';
 
+    renderCompleteHistory();
     showScreen('complete-screen');
 
     if (won) {
@@ -378,14 +466,14 @@ function submitGuess() {
     if (won || lost) {
         GameState.gameOver = true;
         document.getElementById('submit-guess').disabled = true;
+        updateHelpBtn();
         setTimeout(() => showComplete(won), 600);
         return;
     }
 
-    // Feedback speech and SFX
+    // Speech and SFX feedback
     if (result.stars === 0 && result.flowers === 0) {
         playWrong();
-        // Shake the current-guess row
         const cg = document.getElementById('current-guess');
         cg.classList.add('shake');
         cg.addEventListener('animationend', () => cg.classList.remove('shake'), { once: true });
@@ -402,17 +490,40 @@ function submitGuess() {
     }
 }
 
+/* ─── TOGGLE HELPER ────────────────────────────────── */
+function updateToggleUI() {
+    const toggle   = document.getElementById('unique-toggle');
+    const hint     = document.getElementById('toggle-hint');
+    const isSuper  = GameState.difficulty === 'super';
+    const easyMode = !GameState.extraColor; // toggle ON = easy mode (no distractor)
+
+    toggle.disabled = isSuper;
+    toggle.classList.toggle('toggle-disabled', isSuper);
+    // active class = easy mode is ON (no extra distractor)
+    toggle.classList.toggle('active', easyMode && !isSuper);
+
+    if (isSuper) {
+        hint.textContent = 'מצב סופר: כל 6 הצבעים, חזרות מותרות';
+    } else if (easyMode) {
+        hint.textContent = 'מצב קל פעיל: רק צבעי הקוד בפלטה';
+    } else {
+        hint.textContent = 'מצב רגיל: יש צבע מסיח בפלטה';
+    }
+}
+
 /* ─── START GAME ───────────────────────────────────── */
 function startGame() {
     unlockAudio(); // non-blocking; must be inside user gesture
 
     const config = DIFFICULTY_CONFIG[GameState.difficulty];
 
-    GameState.secret       = generateSecret(config);
-    GameState.currentGuess = [];
-    GameState.history      = [];
-    GameState.attemptsLeft = config.maxAttempts;
-    GameState.gameOver     = false;
+    GameState.paletteColors = buildPaletteColors(config);
+    GameState.secret        = generateSecret(GameState.paletteColors, config);
+    GameState.currentGuess  = [];
+    GameState.history       = [];
+    GameState.attemptsLeft  = config.maxAttempts;
+    GameState.gameOver      = false;
+    GameState.revealedHints = [];
 
     document.getElementById('history-container').innerHTML = '';
     document.getElementById('submit-guess').disabled = false;
@@ -421,6 +532,7 @@ function startGame() {
     renderHearts();
     renderGuessSlots();
     renderPalette();
+    updateHelpBtn();
 
     showScreen('game-screen');
 }
@@ -433,14 +545,16 @@ function init() {
             document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             GameState.difficulty = btn.dataset.difficulty;
+            updateToggleUI();
         });
     });
 
-    /* Unique colors toggle */
+    /* Extra-color toggle */
     const uniqueToggle = document.getElementById('unique-toggle');
     addBtn(uniqueToggle, () => {
-        GameState.uniqueColors = !GameState.uniqueColors;
-        uniqueToggle.classList.toggle('active', GameState.uniqueColors);
+        if (GameState.difficulty === 'super') return; // disabled for super
+        GameState.extraColor = !GameState.extraColor;
+        updateToggleUI();
     });
 
     /* Start button */
@@ -463,6 +577,9 @@ function init() {
     /* Submit guess */
     addBtn(document.getElementById('submit-guess'), submitGuess);
 
+    /* Help / hint button */
+    addBtn(document.getElementById('help-btn'), revealHint);
+
     /* Play again */
     addBtn(document.getElementById('play-again-btn'), startGame);
 
@@ -470,6 +587,9 @@ function init() {
     addBtn(document.getElementById('back-to-welcome-btn'), () => {
         showScreen('welcome-screen');
     });
+
+    /* Set initial toggle UI state */
+    updateToggleUI();
 }
 
 document.addEventListener('DOMContentLoaded', init);

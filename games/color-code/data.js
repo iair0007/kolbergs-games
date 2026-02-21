@@ -2,7 +2,6 @@
 
 /* ═══════════════════════════════════════════════════════
    פורץ הקודים — data.js
-   Colors, difficulty config, and static content.
 ═══════════════════════════════════════════════════════ */
 
 const COLORS = [
@@ -14,8 +13,12 @@ const COLORS = [
     { id: 'orange', name: 'כתום',   hex: '#FF9F43' },
 ];
 
+// colorsCount  = colors in the code (= minimum palette size, no extra color)
+// allowRepeats = true only for super — all other levels always have unique colors in code
+// maxHints     = how many hint reveals are available per game
 const DIFFICULTY_CONFIG = {
-    easy:   { sequenceLength: 3, colorsCount: 4, maxAttempts: 8,  label: 'קל',     emoji: '🟢' },
-    medium: { sequenceLength: 4, colorsCount: 5, maxAttempts: 8,  label: 'בינוני', emoji: '🟡' },
-    hard:   { sequenceLength: 5, colorsCount: 6, maxAttempts: 10, label: 'קשה',    emoji: '🔴' },
+    easy:   { sequenceLength: 3, colorsCount: 3, maxAttempts: 8,  label: 'קל',     emoji: '🟢', allowRepeats: false, maxHints: 2 },
+    medium: { sequenceLength: 4, colorsCount: 4, maxAttempts: 8,  label: 'בינוני', emoji: '🟡', allowRepeats: false, maxHints: 2 },
+    hard:   { sequenceLength: 5, colorsCount: 5, maxAttempts: 10, label: 'קשה',    emoji: '🔴', allowRepeats: false, maxHints: 1 },
+    super:  { sequenceLength: 5, colorsCount: 6, maxAttempts: 12, label: 'סופר',   emoji: '💀', allowRepeats: true,  maxHints: 1 },
 };

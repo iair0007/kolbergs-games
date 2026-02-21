@@ -39,13 +39,17 @@
                 <button class="diff-btn active" data-difficulty="easy">🟢 קל</button>
                 <button class="diff-btn" data-difficulty="medium">🟡 בינוני</button>
                 <button class="diff-btn" data-difficulty="hard">🔴 קשה</button>
+                <button class="diff-btn" data-difficulty="super">💀 סופר</button>
             </div>
 
-            <!-- Unique colors toggle -->
+            <!-- Extra-color toggle (disabled for super) -->
+            <!-- OFF = extra distractor color in palette (harder, default)  -->
+            <!-- ON  = palette shows only the code colors (easier)          -->
             <button class="unique-toggle" id="unique-toggle">
                 <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                <span class="toggle-label">ללא חזרות בקוד — כל צבע פעם אחת בלבד</span>
+                <span class="toggle-label">🎯 מצב קל — ללא צבע מסיח</span>
             </button>
+            <p class="toggle-hint" id="toggle-hint">כרגע: יש צבע מסיח בפלטה (מצב רגיל)</p>
 
             <!-- Start button -->
             <button class="magic-btn" id="start-btn">
@@ -65,6 +69,7 @@
         <div class="game-nav">
             <button class="nav-btn" id="back-to-menu">🔙 תפריט</button>
             <div class="hearts-row" id="hearts-row"></div>
+            <button class="nav-btn hint-nav-btn" id="help-btn">💡 רמז (2)</button>
         </div>
 
         <!-- Secret code area (revealed on game end) -->
@@ -111,10 +116,16 @@
             <h2 class="complete-title" id="complete-title">ניצחת!</h2>
             <p class="complete-subtitle" id="complete-subtitle"></p>
 
-            <!-- Code reveal -->
+            <!-- Secret code reveal -->
             <div class="reveal-area">
                 <p class="reveal-label">הקוד הסודי היה:</p>
                 <div class="reveal-slots" id="reveal-slots"></div>
+            </div>
+
+            <!-- Full guess history -->
+            <div class="complete-history-section">
+                <p class="complete-history-label">כל הניסיונות שלך:</p>
+                <div class="complete-history" id="complete-history"></div>
             </div>
 
             <div class="complete-buttons">
