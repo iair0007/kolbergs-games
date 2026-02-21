@@ -124,12 +124,38 @@ body {
     background-clip: text;
 }
 
-.game-description {
-    font-size: clamp(0.85rem, 3vw, 1rem);
+/* ─── Symbol Legend (replaces game-description) ────── */
+.symbol-legend {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.symbol-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    padding: 10px 14px;
+    min-width: 72px;
+}
+
+.sym {
+    font-size: clamp(1.6rem, 6vw, 2rem);
+    line-height: 1;
+}
+
+.sym-label {
+    font-size: clamp(0.7rem, 2.5vw, 0.8rem);
     color: var(--text-secondary);
     text-align: center;
-    max-width: 340px;
-    line-height: 1.5;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 /* ─── Difficulty Selector ──────────────────────────── */
@@ -141,9 +167,9 @@ body {
 }
 
 .diff-btn {
-    min-height: 44px;
-    padding: 10px 20px;
-    border-radius: 25px;
+    min-height: 56px;
+    padding: 10px 18px;
+    border-radius: 18px;
     background: var(--card-bg);
     border: 2px solid rgba(255, 255, 255, 0.2);
     color: var(--text-primary);
@@ -152,6 +178,10 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
 }
 .diff-btn.active {
     background: var(--primary-gradient);
@@ -159,6 +189,19 @@ body {
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 .diff-btn:hover { transform: scale(1.05); }
+
+.diff-main {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.diff-sub {
+    font-size: 0.72rem;
+    font-weight: 500;
+    opacity: 0.75;
+    line-height: 1;
+}
 
 /* ─── Unique Colors Toggle ─────────────────────────── */
 .unique-toggle {
@@ -226,12 +269,10 @@ body {
     pointer-events: none;
 }
 
-/* Toggle state hint text */
-.toggle-hint {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
-    text-align: center;
-    margin-top: -8px;
+/* Toggle label */
+.toggle-label {
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
 /* ─── Magic Button ─────────────────────────────────── */
@@ -257,6 +298,22 @@ body {
 }
 .magic-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(102,126,234,0.5); }
 .magic-btn:active { transform: translateY(0); }
+
+/* Dominant start button — larger, floating animation */
+.start-btn-dominant {
+    font-size: clamp(1.2rem, 5vw, 1.5rem);
+    padding: 18px 44px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 10px 30px rgba(245, 87, 108, 0.5);
+    animation: floatBtn 2s ease-in-out infinite;
+    max-width: 340px;
+}
+.start-btn-dominant:hover {
+    box-shadow: 0 14px 40px rgba(245, 87, 108, 0.65);
+    animation: none;
+    transform: translateY(-4px);
+}
+
 .magic-btn.secondary {
     background: var(--card-bg);
     backdrop-filter: blur(10px);
@@ -299,6 +356,10 @@ body {
     border-color: rgba(241, 196, 15, 0.4);
     color: #f1c40f;
     white-space: nowrap;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 .hint-nav-btn:disabled {
     opacity: 0.35;
@@ -307,8 +368,8 @@ body {
 
 /* ─── Hearts Row ───────────────────────────────────── */
 .hearts-row {
-    font-size: clamp(1.1rem, 4vw, 1.4rem);
-    letter-spacing: 2px;
+    font-size: clamp(1.3rem, 4.5vw, 1.6rem);
+    letter-spacing: 4px;
     text-align: center;
     flex: 1;
     text-align: right;
@@ -432,17 +493,13 @@ body {
 }
 
 .feedback-icons {
-    font-size: clamp(0.9rem, 3vw, 1.1rem);
-    letter-spacing: 2px;
+    font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+    letter-spacing: 3px;
     direction: ltr;
 }
 
 .feedback-caption {
-    font-size: 0.82rem;
-    color: rgba(255,255,255,0.7);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: none;
 }
 
 /* ─── Current Guess ────────────────────────────────── */
@@ -468,16 +525,19 @@ body {
     cursor: pointer;
     transition: var(--transition);
     flex-shrink: 0;
+    animation: breathe 2s ease-in-out infinite;
 }
 
 .guess-slot.filled {
     border-style: solid;
     border-color: rgba(255,255,255,0.5);
+    animation: slotFill 0.25s ease both;
 }
 
 .guess-slot:hover.filled {
     opacity: 0.75;
     transform: scale(0.95);
+    animation: none;
 }
 
 .current-guess.shake {
@@ -552,6 +612,10 @@ body {
 }
 .swatch:active { transform: scale(0.95); }
 
+.swatch.swatch-pop {
+    animation: swatchPop 0.3s ease both;
+}
+
 /* ─── Complete History ─────────────────────────────── */
 .complete-history-section {
     width: 100%;
@@ -589,13 +653,15 @@ body {
 .complete-row.winning-row {
     background: rgba(17, 153, 142, 0.2);
     border-color: rgba(17, 153, 142, 0.4);
+    animation: winPulse 1.5s ease infinite;
 }
 
 /* ─── Complete Screen ──────────────────────────────── */
 .outcome-badge {
-    font-size: clamp(60px, 20vw, 100px);
+    font-size: clamp(80px, 22vw, 120px);
     animation: celebrate 0.6s ease forwards;
     line-height: 1;
+    filter: drop-shadow(0 0 24px rgba(255, 215, 0, 0.5));
 }
 
 .complete-title {
@@ -649,6 +715,18 @@ body {
     align-items: center;
 }
 
+#play-again-btn {
+    animation: floatBtn 2s ease-in-out infinite;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 10px 30px rgba(245, 87, 108, 0.45);
+    font-size: clamp(1.1rem, 4.5vw, 1.3rem);
+    padding: 16px 40px;
+}
+#play-again-btn:hover {
+    animation: none;
+    transform: translateY(-4px);
+}
+
 /* ─── Confetti ─────────────────────────────────────── */
 .confetti-piece {
     position: fixed;
@@ -661,6 +739,33 @@ body {
 }
 
 /* ─── Animations ───────────────────────────────────── */
+@keyframes breathe {
+    0%, 100% { transform: scale(1);    box-shadow: 0 0 0px rgba(255,255,255,0); }
+    50%       { transform: scale(1.05); box-shadow: 0 0 14px rgba(255,255,255,0.2); }
+}
+
+@keyframes slotFill {
+    0%   { transform: scale(0.5); opacity: 0.5; }
+    60%  { transform: scale(1.2); }
+    100% { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes swatchPop {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+@keyframes winPulse {
+    0%, 100% { box-shadow: 0 0 0px rgba(46,204,113,0); }
+    50%       { box-shadow: 0 0 20px rgba(46,204,113,0.6); }
+}
+
+@keyframes floatBtn {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+}
+
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50%       { transform: translateY(-15px); }

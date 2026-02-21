@@ -32,14 +32,19 @@
             <div class="hero-badge">🔐</div>
 
             <h1 class="game-title">פורץ הקודים</h1>
-            <p class="game-description">נחש את קוד הצבעים הסודי! בכל ניסיון תקבל רמזים: ⭐ = צבע נכון במקום הנכון, 🌸 = צבע נכון אבל במקום הלא נכון, ❌ = הצבע לא בקוד בכלל</p>
+
+            <div class="symbol-legend">
+                <div class="symbol-item"><span class="sym">⭐</span><span class="sym-label">מקום נכון</span></div>
+                <div class="symbol-item"><span class="sym">🌸</span><span class="sym-label">צבע נכון</span></div>
+                <div class="symbol-item"><span class="sym">❌</span><span class="sym-label">לא בקוד</span></div>
+            </div>
 
             <!-- Difficulty selector -->
             <div class="difficulty-selector">
-                <button class="diff-btn active" data-difficulty="easy">🟢 קל</button>
-                <button class="diff-btn" data-difficulty="medium">🟡 בינוני</button>
-                <button class="diff-btn" data-difficulty="hard">🔴 קשה</button>
-                <button class="diff-btn" data-difficulty="super">💀 סופר</button>
+                <button class="diff-btn active" data-difficulty="easy"><span class="diff-main">🟢 קל</span><span class="diff-sub">3 צבעים</span></button>
+                <button class="diff-btn" data-difficulty="medium"><span class="diff-main">🟡 בינוני</span><span class="diff-sub">4 צבעים</span></button>
+                <button class="diff-btn" data-difficulty="hard"><span class="diff-main">🔴 קשה</span><span class="diff-sub">5 צבעים</span></button>
+                <button class="diff-btn" data-difficulty="super"><span class="diff-main">💀 סופר</span><span class="diff-sub">עם חזרות</span></button>
             </div>
 
             <!-- Extra-color toggle (disabled for super) -->
@@ -47,14 +52,13 @@
             <!-- ON  = palette shows only the code colors (easier)          -->
             <button class="unique-toggle" id="unique-toggle">
                 <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                <span class="toggle-label">🎯 מצב קל — ללא צבע מסיח</span>
+                <span class="toggle-label" id="toggle-label">🌈 עם צבע מסיח</span>
             </button>
-            <p class="toggle-hint" id="toggle-hint">כרגע: יש צבע מסיח בפלטה (מצב רגיל)</p>
 
             <!-- Start button -->
-            <button class="magic-btn" id="start-btn">
-                <span>התחל לשחק!</span>
+            <button class="magic-btn start-btn-dominant" id="start-btn">
                 <span>🚀</span>
+                <span>התחל לשחק!</span>
             </button>
 
         </div>

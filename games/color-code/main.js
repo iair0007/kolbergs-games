@@ -251,6 +251,11 @@ function renderPalette() {
                 GameState.currentGuess.push(color.id);
                 renderGuessSlots();
                 playClick();
+                // Swatch pop animation
+                swatch.classList.remove('swatch-pop');
+                void swatch.offsetWidth; // force reflow to restart animation
+                swatch.classList.add('swatch-pop');
+                setTimeout(() => swatch.classList.remove('swatch-pop'), 300);
             }
         });
         container.appendChild(swatch);
@@ -493,7 +498,7 @@ function submitGuess() {
 /* ─── TOGGLE HELPER ────────────────────────────────── */
 function updateToggleUI() {
     const toggle   = document.getElementById('unique-toggle');
-    const hint     = document.getElementById('toggle-hint');
+    const label    = document.getElementById('toggle-label');
     const isSuper  = GameState.difficulty === 'super';
     const easyMode = !GameState.extraColor; // toggle ON = easy mode (no distractor)
 
@@ -503,11 +508,11 @@ function updateToggleUI() {
     toggle.classList.toggle('active', easyMode && !isSuper);
 
     if (isSuper) {
-        hint.textContent = 'מצב סופר: כל 6 הצבעים, חזרות מותרות';
+        label.textContent = '🚫 לא זמין';
     } else if (easyMode) {
-        hint.textContent = 'מצב קל פעיל: רק צבעי הקוד בפלטה';
+        label.textContent = '🎯 ללא צבע מסיח';
     } else {
-        hint.textContent = 'מצב רגיל: יש צבע מסיח בפלטה';
+        label.textContent = '🌈 עם צבע מסיח';
     }
 }
 
