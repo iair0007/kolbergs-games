@@ -188,6 +188,12 @@ Before opening a PR for any new game, verify all of these:
 - [ ] `dir="rtl" lang="he"` on `<html>`
 - [ ] Home button at `top: 15px; left: 15px` fixed
 
+**Mobile Test (mandatory — run before every PR)**
+- [ ] Run `/mobile-test games/<game-id>/` and fix every ❌ item
+- [ ] Nav bar buttons do not overlap the home button on any screen size
+- [ ] Home button clears safe area (notch / Dynamic Island) using `max(15px, env(safe-area-inset-top))`
+- [ ] All touch targets ≥ 44×44px including on iPhone SE (375px)
+
 ### Language
 
 Most games are Hebrew (RTL). Use `dir="rtl"` and `lang="he"` attributes. Google Fonts Rubik and Fredoka are used for Hebrew/English text.
