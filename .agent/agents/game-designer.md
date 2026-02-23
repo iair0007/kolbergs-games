@@ -212,10 +212,13 @@ Before declaring a game "done", verify:
 - [ ] Three screens exist: welcome, game, complete
 - [ ] `data.js` is separate from `main.js`
 - [ ] All required CSS variables defined
+- [ ] `startGame()` calls `unlockAudio()` fire-and-forget — game must NOT wait on `.then()` to switch screens
+- [ ] `waitForVoices()` has a 3-second timeout safety net (Android `onvoiceschanged` can hang forever)
 - [ ] Audio unlocked on first user gesture
 - [ ] Works on iPhone SE (375px wide) without horizontal scroll
 - [ ] Touch events on all interactive elements
-- [ ] Registered in `platform/games.json`
+- [ ] Registered in `platform/games.json` with a real SVG image path (not an emoji string)
+- [ ] Thumbnail SVG created at `platform/images/<game-id>.svg`
 - [ ] **Mobile tester has reviewed the game** — run `/mobile-test games/<game-id>/` and fix all ❌ items before opening PR
 
 ---
@@ -227,3 +230,5 @@ Always study `games/hebrew-writer/` before starting a new game. It's the gold st
 - `styles.css` — full design system with all CSS variables, animations, responsive
 - `main.js` — audio unlock, screen navigation, touch events, game state management
 - `data.js` — clean data structure with content, config, and messages
+
+Also study `games/feelings-match/main.js` for the fire-and-forget audio unlock pattern required since PR #14.

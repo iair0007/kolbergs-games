@@ -28,11 +28,11 @@ Read the game's three files: `index.html`, `styles.css`, and `main.js`. Then pro
 - Does `touchstart` use `e.preventDefault()` and `{ passive: false }`?
 - Is `AudioContext` created lazily (NOT on page load — only on user gesture)?
 - Is `audioContext.resume()` called inside the user gesture handler?
-- Is there a `waitForVoices()` function or equivalent that handles async voice loading via `onvoiceschanged`?
+- Is there a `waitForVoices()` function with a **3-second timeout** fallback (not just `onvoiceschanged`)? — required to prevent game freeze on Android
 - Is there a warmup utterance (volume 0.01, rate 2) fired on first user interaction?
 - Is `speechSynthesis.cancel()` called before every new utterance?
 - Is there graceful handling when Hebrew voice (`he-IL`) is unavailable?
-- Does the start button handler call `unlockAudio()` (or equivalent) before starting the game?
+- Does the start button handler call `unlockAudio()` **fire-and-forget** (not `.then()`)? — game must start immediately without waiting for audio to resolve
 
 ## Report Format
 

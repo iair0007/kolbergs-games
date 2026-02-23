@@ -51,7 +51,10 @@ function waitForVoices() {
             resolve();
             return;
         }
+        /* Timeout safety net — on some Android devices onvoiceschanged never fires */
+        const timeout = setTimeout(() => { hebrewVoice = findHebrewVoice(); resolve(); }, 3000);
         speechSynthesis.onvoiceschanged = () => {
+            clearTimeout(timeout);
             hebrewVoice = findHebrewVoice();
             resolve();
         };
@@ -336,17 +339,20 @@ function showComplete() {
 ═══════════════════════════════════════════════════════ */
 
 function startGame() {
-    /* RULE: unlockAudio() must be called here, inside the button handler */
-    unlockAudio().then(() => {
-        score        = 0;
-        correctCount = 0;
-        currentIndex = 0;
-        answered     = false;
-        document.getElementById('score-display').textContent = '⭐ 0';
-        buildQuestions();
-        showScreen('game-screen');
-        showQuestion();
-    });
+    /* RULE: unlockAudio() must be called here, inside the button handler.
+       Fire-and-forget — speak() fires synchronously before any await (iOS safe).
+       The game must NOT wait for audio to resolve; waitForVoices() can hang on
+       some Android devices when onvoiceschanged never fires. */
+    unlockAudio().catch(() => {});
+
+    score        = 0;
+    correctCount = 0;
+    currentIndex = 0;
+    answered     = false;
+    document.getElementById('score-display').textContent = '⭐ 0';
+    buildQuestions();
+    showScreen('game-screen');
+    showQuestion();
 }
 
 /* ═══════════════════════════════════════════════════════
