@@ -96,5 +96,12 @@
     "description": "נחש את קוד הצבעים הסודי — משחק לוגיקה מהנה לילדים 🔐",
     "path": "games/color-code/index.html",
     "image": "platform/images/color_code.png"
+  },
+  {
+    "id": "feelings-match",
+    "title": "הרגשות שלי",
+    "description": "למד על רגשות בעברית! ראה סיטואציה ובחר את הפרצוף הנכון 😊😢😠",
+    "path": "games/feelings-match/index.html",
+    "image": "❤️"
   }
 ]

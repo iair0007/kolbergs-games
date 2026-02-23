@@ -1,0 +1,547 @@
+/* ═══════════════════════════════════════════════════════
+   הרגשות שלי — Styles
+   Built on the Kolberg's Games Design System
+   Warm, heart-centered palette for emotional learning
+═══════════════════════════════════════════════════════ */
+
+/* ─── Design Tokens ────────────────────────────────── */
+:root {
+    --primary-gradient:   linear-gradient(135deg, #f857a6 0%, #ff5858 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-gradient:   linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --warning-gradient:   linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+    --bg-gradient:        linear-gradient(160deg, #2d1b69 0%, #11998e 50%, #38ef7d 100%);
+    --card-bg:            rgba(255, 255, 255, 0.12);
+    --text-primary:       #ffffff;
+    --text-secondary:     rgba(255, 255, 255, 0.85);
+    --shadow-color:       rgba(0, 0, 0, 0.3);
+    --border-radius:      20px;
+    --transition:         all 0.3s ease;
+}
+
+/* ─── Reset & Base ─────────────────────────────────── */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Rubik', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    min-height: 100vh;
+    min-height: 100svh;
+}
+
+#app {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* ─── Home Button ──────────────────────────────────── */
+.home-btn {
+    position: fixed;
+    top: max(15px, env(safe-area-inset-top));
+    left: 15px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    text-decoration: none;
+    z-index: 100;
+    transition: var(--transition);
+}
+.home-btn:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ─── Screen System ────────────────────────────────── */
+.screen {
+    display: none;
+    flex: 1;
+    padding: 20px;
+    padding-top: 70px;
+    overflow-y: auto;
+}
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.screen-content {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+/* ─── Stats Display ────────────────────────────────── */
+.stats-display {
+    position: fixed;
+    top: max(15px, env(safe-area-inset-top));
+    right: 15px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    z-index: 100;
+}
+
+/* ─── Welcome Screen ───────────────────────────────── */
+
+/* Parade of emotion faces bouncing across the welcome screen */
+.emotions-parade {
+    display: flex;
+    gap: 8px;
+    font-size: clamp(36px, 12vw, 60px);
+    line-height: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.emotions-parade span {
+    display: inline-block;
+    animation: bounce-in 0.6s ease both;
+}
+.emotions-parade span:nth-child(1) { animation-delay: 0.0s; }
+.emotions-parade span:nth-child(2) { animation-delay: 0.1s; }
+.emotions-parade span:nth-child(3) { animation-delay: 0.2s; }
+.emotions-parade span:nth-child(4) { animation-delay: 0.3s; }
+.emotions-parade span:nth-child(5) { animation-delay: 0.4s; }
+.emotions-parade span:nth-child(6) { animation-delay: 0.5s; }
+
+.game-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 8vw, 3.2rem);
+    text-align: center;
+    background: linear-gradient(135deg, #FFD700, #FF69B4, #FF6347);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    line-height: 1.1;
+}
+
+.game-description {
+    font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+    color: var(--text-secondary);
+    text-align: center;
+    max-width: 300px;
+    line-height: 1.5;
+}
+
+/* ─── Difficulty Selector ──────────────────────────── */
+.difficulty-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+}
+
+.diff-btn {
+    min-height: 56px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: var(--card-bg);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    max-width: 110px;
+}
+.diff-emoji {
+    font-size: 1.3rem;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+.diff-btn.active {
+    background: var(--primary-gradient);
+    border-color: transparent;
+    box-shadow: 0 4px 20px rgba(248, 87, 166, 0.5);
+    transform: scale(1.05);
+}
+.diff-btn:hover:not(.active) {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/* ─── Buttons ──────────────────────────────────────── */
+.magic-btn {
+    min-height: 52px;
+    background: var(--primary-gradient);
+    border: none;
+    border-radius: 30px;
+    padding: 14px 36px;
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: var(--transition);
+    box-shadow: 0 8px 25px rgba(248, 87, 166, 0.4);
+    font-family: inherit;
+    width: 100%;
+    max-width: 300px;
+}
+.magic-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(248, 87, 166, 0.5);
+}
+.magic-btn:active {
+    transform: translateY(0);
+}
+.magic-btn.secondary {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: none;
+}
+
+/* ─── Game Screen ──────────────────────────────────── */
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FF69B4);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+.progress-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ─── Scene Container ──────────────────────────────── */
+/* Shows the emoji situation — big and colorful */
+.scene-container {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+.scene-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,215,0,0.05), rgba(255,105,180,0.05));
+    pointer-events: none;
+}
+.scene-emoji {
+    font-size: clamp(48px, 16vw, 80px);
+    line-height: 1;
+    letter-spacing: 4px;
+    animation: scene-pulse 3s ease-in-out infinite;
+    text-align: center;
+}
+
+/* ─── Speaker Button ───────────────────────────────── */
+.speaker-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+}
+.speaker-btn:hover, .speaker-btn:active {
+    transform: scale(1.15);
+}
+
+.question-text {
+    font-size: clamp(1.1rem, 4.5vw, 1.4rem);
+    font-weight: 700;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+/* ─── Emotion Option Buttons ───────────────────────── */
+/* Big emoji face buttons — designed for pre-readers */
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+}
+
+/* When 3 options (medium), show 3 columns */
+.options-grid.cols-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.option-btn {
+    /* Large touch target — kids need generous tapping area */
+    min-height: 90px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--border-radius);
+    padding: 10px 8px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.option-emoji {
+    font-size: clamp(40px, 12vw, 58px);
+    line-height: 1;
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.option-label {
+    font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+}
+
+.option-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+.option-btn:hover .option-emoji {
+    transform: scale(1.1);
+}
+
+.option-btn.correct {
+    background: var(--success-gradient);
+    border-color: #38ef7d;
+    animation: correct-pop 0.5s ease;
+    box-shadow: 0 0 30px rgba(56, 239, 125, 0.6);
+}
+.option-btn.wrong {
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    border-color: #e74c3c;
+    animation: shake 0.4s ease;
+}
+.option-btn:disabled {
+    cursor: not-allowed;
+}
+
+/* ─── Feedback ─────────────────────────────────────── */
+.feedback-container {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.feedback-text {
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    font-weight: 700;
+    text-align: center;
+    animation: fadeInUp 0.3s ease;
+}
+
+/* ─── Complete Screen ──────────────────────────────── */
+.trophy-badge {
+    font-size: clamp(60px, 20vw, 100px);
+    animation: celebrate 0.6s ease forwards;
+    line-height: 1;
+}
+.complete-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
+    text-align: center;
+    background: linear-gradient(135deg, #FFD700, #FF69B4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.complete-subtitle {
+    font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.score-card {
+    width: 100%;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--border-radius);
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+}
+.score-label { color: var(--text-secondary); }
+.score-value { font-weight: 700; font-size: 1.2em; }
+.stars-row { justify-content: center; font-size: 1.8rem; letter-spacing: 6px; }
+
+/* Emotion summary shown on complete screen */
+.learned-emotions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    font-size: clamp(28px, 8vw, 40px);
+    line-height: 1;
+}
+
+.complete-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    align-items: center;
+}
+
+/* ─── Animations ───────────────────────────────────── */
+@keyframes bounce-in {
+    0%   { transform: scale(0) translateY(30px); opacity: 0; }
+    60%  { transform: scale(1.2) translateY(-5px); opacity: 1; }
+    100% { transform: scale(1) translateY(0); }
+}
+
+@keyframes scene-pulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.04); }
+}
+
+@keyframes correct-pop {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.12); }
+    60%  { transform: scale(0.96); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-10px); }
+    40%       { transform: translateX(10px); }
+    60%       { transform: translateX(-7px); }
+    80%       { transform: translateX(7px); }
+}
+
+@keyframes celebrate {
+    0%   { transform: scale(0.4) rotate(-15deg); opacity: 0; }
+    50%  { transform: scale(1.25) rotate(8deg); }
+    75%  { transform: scale(0.92) rotate(-3deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Mobile Breakpoint ────────────────────────────── */
+@media (max-width: 480px) {
+    .screen {
+        padding: 12px;
+        padding-top: 68px;
+    }
+    .screen-content {
+        gap: 10px;
+    }
+    .options-grid {
+        gap: 8px;
+    }
+    .option-btn {
+        min-height: 78px;
+    }
+    .scene-container {
+        padding: 14px 16px;
+    }
+    .complete-buttons {
+        gap: 10px;
+    }
+}
+
+/* ─── Landscape Mobile ─────────────────────────────── */
+@media (max-height: 500px) and (orientation: landscape) {
+    .screen {
+        justify-content: flex-start;
+        padding-top: 56px;
+    }
+    .emotions-parade {
+        font-size: 30px;
+    }
+    .trophy-badge {
+        font-size: 50px;
+    }
+    .screen-content {
+        gap: 8px;
+    }
+    .scene-emoji {
+        font-size: 42px;
+    }
+    .option-btn {
+        min-height: 62px;
+    }
+    .option-emoji {
+        font-size: 32px;
+    }
+}
+
+/* ─── 4-option layout: 2x2 grid ───────────────────── */
+.options-grid.cols-4 {
+    grid-template-columns: 1fr 1fr;
+}
