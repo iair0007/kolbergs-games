@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2d1b69"/>
+      <stop offset="50%" stop-color="#11998e"/>
+      <stop offset="100%" stop-color="#38ef7d"/>
+    </linearGradient>
+    <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f857a6"/>
+      <stop offset="100%" stop-color="#ff5858"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="200" height="200" rx="22" fill="url(#bg)"/>
+
+  <!-- Heart shape (center) -->
+  <path d="M100 140 C60 110, 38 88, 38 68 C38 50, 52 38, 68 38 C80 38, 90 45, 100 55 C110 45, 120 38, 132 38 C148 38, 162 50, 162 68 C162 88, 140 110, 100 140 Z" fill="url(#heartGrad)" opacity="0.95"/>
+
+  <!-- Happy face (top-left) -->
+  <circle cx="44" cy="44" r="18" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+  <circle cx="39" cy="41" r="2.2" fill="#fff"/>
+  <circle cx="49" cy="41" r="2.2" fill="#fff"/>
+  <path d="M38 47 Q44 52 50 47" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+  <!-- Sad face (top-right) -->
+  <circle cx="156" cy="44" r="18" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+  <circle cx="151" cy="41" r="2.2" fill="#fff"/>
+  <circle cx="161" cy="41" r="2.2" fill="#fff"/>
+  <path d="M150 49 Q156 44 162 49" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+  <!-- Angry face (bottom-left) -->
+  <circle cx="44" cy="156" r="18" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+  <circle cx="39" cy="153" r="2.2" fill="#fff"/>
+  <circle cx="49" cy="153" r="2.2" fill="#fff"/>
+  <path d="M37 148 L42 151" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+  <path d="M51 148 L46 151" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+  <path d="M38 160 Q44 156 50 160" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+  <!-- Surprised face (bottom-right) -->
+  <circle cx="156" cy="156" r="18" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+  <circle cx="151" cy="153" r="2.2" fill="#fff"/>
+  <circle cx="161" cy="153" r="2.2" fill="#fff"/>
+  <ellipse cx="156" cy="161" rx="4" ry="5" fill="none" stroke="#fff" stroke-width="2"/>
+
+  <!-- White sparkles -->
+  <text x="100" y="178" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.7)" font-family="sans-serif">הרגשות שלי</text>
+</svg>

@@ -186,8 +186,32 @@ Produce a clear report:
 - Safari voice issues: voices don't load until after a user gesture — warmup pattern required
 - color-code (main branch): `speechSynthesis` feedback was silenced forever because `unlockAudio()` called `await` before the warmup `speak()`. The `await` breaks the iOS gesture chain. Fix: warmup `speak()` must be the first statement in `unlockAudio()`, before any `await`.
 - color-code (main branch): SFX silent on first tap because `playTone()` returned without playing when `AudioContext` was suspended. Fix: resume and retry the tone via `.then()` instead of returning.
+- feelings-match (PR #14): Start button did nothing on mobile because `startGame()` was gated behind `unlockAudio().then(...)`. On Android, `waitForVoices()` hangs when `onvoiceschanged` never fires. Fixes: (1) call `unlockAudio()` fire-and-forget, start game immediately; (2) add 3s timeout to `waitForVoices()`.
 
-**Reference for correct patterns**: `games/hebrew-writer/main.js` and `games/hebrew-writer/index.html`
+**`waitForVoices()` must always have a timeout (Android safety net):**
+```javascript
+function waitForVoices() {
+    return new Promise((resolve) => {
+        if (!('speechSynthesis' in window)) { resolve(); return; }
+        const voices = speechSynthesis.getVoices();
+        if (voices.length > 0) { hebrewVoice = findHebrewVoice(); resolve(); return; }
+        const timeout = setTimeout(() => { hebrewVoice = findHebrewVoice(); resolve(); }, 3000);
+        speechSynthesis.onvoiceschanged = () => { clearTimeout(timeout); hebrewVoice = findHebrewVoice(); resolve(); };
+    });
+}
+```
+
+**`startGame()` must never block on `unlockAudio()`:**
+```javascript
+function startGame() {
+    unlockAudio().catch(() => {}); // fire-and-forget — iOS speak() fires synchronously before any await
+    buildQuestions();
+    showScreen('game-screen');
+    showQuestion();
+}
+```
+
+**Reference for correct patterns**: `games/hebrew-writer/main.js`, `games/hebrew-writer/index.html`, and `games/feelings-match/main.js` (fire-and-forget audio pattern)
 
 **Where to check audio unlock**: look for `unlockAudio()` function called in the start button handler
 

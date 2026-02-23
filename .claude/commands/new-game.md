@@ -120,6 +120,8 @@ const TRY_AGAIN = [...]; // Hebrew phrases
 
 ## Step 4: Register the Game
 
+Create a thumbnail SVG at `platform/images/[game-id].svg` — an emoji string in the image field will NOT render. Look at `platform/images/feelings_match.svg` as a reference: a colored background rect with SVG shapes or text representing the game theme.
+
 Add the game to `platform/games.json`:
 ```json
 {
@@ -127,11 +129,19 @@ Add the game to `platform/games.json`:
     "title": "[Hebrew title]",
     "description": "[1 sentence in Hebrew]",
     "path": "games/[game-id]/index.html",
-    "image": "🎮"
+    "image": "platform/images/[game-id].svg"
 }
 ```
 
-Use an appropriate emoji for the image field that represents the game theme.
+Also ensure `startGame()` calls `unlockAudio()` fire-and-forget — never gate the screen switch on audio resolving:
+```javascript
+function startGame() {
+    unlockAudio().catch(() => {}); // fire-and-forget
+    buildQuestions();
+    showScreen('game-screen');
+    showQuestion();
+}
+```
 
 ## Step 5: Verify
 

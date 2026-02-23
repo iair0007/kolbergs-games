@@ -174,6 +174,21 @@ Preserve compatibility with existing games
 
 When specs and implementation disagree, specs are the source of truth.
 
+Mobile Audio Critical Pattern
+
+When implementing startGame() in any game, never make the game start conditional on unlockAudio() resolving. Call unlockAudio() fire-and-forget so iOS Safari gets the synchronous speak() call inside the user gesture, and start the game immediately after:
+
+  unlockAudio().catch(() => {});   // fire-and-forget — speak() runs synchronously before any await
+  buildQuestions();
+  showScreen('game-screen');
+  showQuestion();
+
+Always add a 3-second timeout to waitForVoices() so the game never hangs on Android devices where onvoiceschanged never fires.
+
+Game Thumbnail Images
+
+Every entry in platform/games.json must have a real image path (SVG or PNG in platform/images/) for the "image" field. An emoji string will not render correctly as a card thumbnail. Create an SVG in platform/images/<game-id>.svg and reference it as "platform/images/<game-id>.svg".
+
 Out of Scope
 
 User accounts
