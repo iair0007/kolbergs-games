@@ -88,17 +88,19 @@ async function unlockAudio() {
     audioReady = true;
 }
 
-/* RULE: Always cancel before speak(). iOS Safari stacks utterances. */
+/* RULE: Always cancel before speak(). iOS Safari stacks utterances.
+   IMPORTANT: speak() must be called synchronously after cancel() — NOT inside
+   a setTimeout. On iOS Safari, cancel() resets the internal speech permission
+   state; calling speak() in a setTimeout then fires outside the gesture context
+   and produces silent failures. Call speak() synchronously instead. */
 function speakText(text) {
     if (!('speechSynthesis' in window)) return;
     speechSynthesis.cancel();
-    setTimeout(() => {
-        const u = new SpeechSynthesisUtterance(text.replace(/[?!.,;:]/g, ''));
-        u.lang = 'he-IL';
-        u.rate = 0.75;
-        if (hebrewVoice) u.voice = hebrewVoice;
-        speechSynthesis.speak(u);
-    }, 50);
+    const u = new SpeechSynthesisUtterance(text.replace(/[?!.,;:]/g, ''));
+    u.lang = 'he-IL';
+    u.rate = 0.75;
+    if (hebrewVoice) u.voice = hebrewVoice;
+    speechSynthesis.speak(u);
 }
 
 /* Play a short chime tone for feedback */
@@ -391,8 +393,11 @@ function init() {
     addBtn('play-again-btn', startGame);
     addBtn('menu-btn',       () => showScreen('welcome-screen'));
 
-    /* Speaker button — replay current scene description */
+    /* Speaker button — replay current scene description.
+       Re-calls unlockAudio() in case the AudioContext was suspended
+       (e.g. after switching tabs), then speaks immediately. */
     addBtn('speaker-btn', () => {
+        unlockAudio().catch(() => {});
         const item = questions[currentIndex];
         if (item) speakScene(item);
     });

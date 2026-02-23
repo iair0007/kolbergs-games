@@ -36,7 +36,10 @@ function waitForVoices() {
             resolve();
             return;
         }
+        /* Timeout safety net — on some Android devices onvoiceschanged never fires */
+        const timeout = setTimeout(() => { hebrewVoice = findHebrewVoice(); resolve(); }, 3000);
         speechSynthesis.onvoiceschanged = () => {
+            clearTimeout(timeout);
             hebrewVoice = findHebrewVoice();
             resolve();
         };

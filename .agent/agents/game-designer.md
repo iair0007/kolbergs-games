@@ -215,6 +215,9 @@ Before declaring a game "done", verify:
 - [ ] `startGame()` calls `unlockAudio()` fire-and-forget — game must NOT wait on `.then()` to switch screens
 - [ ] `waitForVoices()` has a 3-second timeout safety net (Android `onvoiceschanged` can hang forever)
 - [ ] Audio unlocked on first user gesture
+- [ ] `speakText()` calls `speak()` **synchronously** after `cancel()` — NOT inside a `setTimeout` (see Audio Rules below)
+- [ ] Speaker button handler calls `unlockAudio().catch(() => {})` before speaking (in case AudioContext was suspended)
+- [ ] No CSS rule sets `.feedback-caption { display: none }` — feedback text must be visible after guesses
 - [ ] Works on iPhone SE (375px wide) without horizontal scroll
 - [ ] Touch events on all interactive elements
 - [ ] Registered in `platform/games.json` with a real SVG image path (not an emoji string)
@@ -223,12 +226,66 @@ Before declaring a game "done", verify:
 
 ---
 
+## Audio Rules (Enforced — Do Not Deviate)
+
+These rules come from bugs found in production games. Read before writing any audio code.
+
+### Rule A — `speakText()` must call `speak()` synchronously
+
+```javascript
+// CORRECT
+function speakText(text) {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/[?!.,;:]/g, ''));
+    u.lang = 'he-IL';
+    u.rate = 0.8;
+    if (hebrewVoice) u.voice = hebrewVoice;
+    speechSynthesis.speak(u);   // ← synchronous, NOT in setTimeout
+}
+
+// WRONG — breaks iOS Safari speaker button
+function speakText(text) {
+    speechSynthesis.cancel();
+    setTimeout(() => {
+        speechSynthesis.speak(...);  // ← cancel() resets iOS permission, then this fires outside gesture context → silent
+    }, 50);
+}
+```
+
+### Rule B — `waitForVoices()` must have a 3-second timeout
+
+```javascript
+function waitForVoices() {
+    return new Promise((resolve) => {
+        if (!('speechSynthesis' in window)) { resolve(); return; }
+        const voices = speechSynthesis.getVoices();
+        if (voices.length > 0) { hebrewVoice = findHebrewVoice(); resolve(); return; }
+        // Safety net: onvoiceschanged never fires on some Android devices
+        const timeout = setTimeout(() => { hebrewVoice = findHebrewVoice(); resolve(); }, 3000);
+        speechSynthesis.onvoiceschanged = () => { clearTimeout(timeout); hebrewVoice = findHebrewVoice(); resolve(); };
+    });
+}
+```
+
+Without the timeout, if `onvoiceschanged` never fires, `hebrewVoice` stays `null` permanently and all speech is silent.
+
+### Rule C — Speaker button must re-call `unlockAudio()`
+
+```javascript
+addBtn('speaker-btn', () => {
+    unlockAudio().catch(() => {});  // ← re-unlock if AudioContext was suspended
+    const item = questions[currentIndex];
+    if (item) speakScene(item);
+});
+```
+
+### Rule D — Feedback text CSS must be visible
+
+Never add `display: none` to `.feedback-caption` or any element that shows per-guess feedback. The text is generated dynamically; hiding it in CSS silently breaks the whole feedback system.
+
+---
+
 ## The Reference Implementation
 
-Always study `games/hebrew-writer/` before starting a new game. It's the gold standard:
-- `index.html` — correct structure, all required meta tags, three screens
-- `styles.css` — full design system with all CSS variables, animations, responsive
-- `main.js` — audio unlock, screen navigation, touch events, game state management
-- `data.js` — clean data structure with content, config, and messages
-
-Also study `games/feelings-match/main.js` for the fire-and-forget audio unlock pattern required since PR #14.
+Always study `games/color-code/main.js` for the canonical audio pattern (synchronous `speakText`, timeout in `waitForVoices`). Also study `games/feelings-match/main.js` for the fire-and-forget `unlockAudio()` pattern and the speaker button pattern.
