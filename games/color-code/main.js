@@ -72,15 +72,18 @@ async function unlockAudio() {
 
 function speakText(text) {
     if (!('speechSynthesis' in window)) return;
+    // Cancel any current speech, then speak synchronously.
+    // IMPORTANT: on iOS Safari, calling speak() inside setTimeout (even 50ms)
+    // places it outside the user-gesture context after cancel() resets iOS's
+    // internal speech permission state — causing silent failures on mobile.
+    // Calling speak() synchronously keeps it within the gesture context.
     speechSynthesis.cancel();
-    setTimeout(() => {
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang  = 'he-IL';
-        u.rate  = 0.85;
-        u.pitch = 1.1;
-        if (hebrewVoice) u.voice = hebrewVoice;
-        speechSynthesis.speak(u);
-    }, 50);
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang  = 'he-IL';
+    u.rate  = 0.85;
+    u.pitch = 1.1;
+    if (hebrewVoice) u.voice = hebrewVoice;
+    speechSynthesis.speak(u);
 }
 
 /* ─── TOUCH DEDUPLICATION ──────────────────────────── */
