@@ -505,7 +505,10 @@ body {
 }
 
 .feedback-caption {
-    display: none;
+    font-size: clamp(0.7rem, 2.5vw, 0.82rem);
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 600;
+    direction: rtl;
 }
 
 /* ─── Current Guess ────────────────────────────────── */
