@@ -14,6 +14,25 @@
 import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
 import fs from 'fs';
 
+/* ── Project limits (CLAUDE.md) ─────────────────────────────
+   A child picks from this palette and paints every square, so both caps
+   are hard: 12 colors, 1024 squares. Refuse rather than ship past them. */
+const MAX_COLORS = 12;
+const MAX_SQUARES = 1024;
+
+function enforceLimits(name, n, colorCount) {
+    const squares = n * n;
+    const problems = [];
+    if (colorCount > MAX_COLORS) problems.push(`${colorCount} colors (max ${MAX_COLORS})`);
+    if (squares > MAX_SQUARES)   problems.push(`${squares} squares (max ${MAX_SQUARES}, i.e. 32x32)`);
+    if (problems.length) {
+        console.error(`\n${name} exceeds the project limits: ${problems.join(', ')}`);
+        console.error('Reduce the color count or the grid size and run again.\n');
+        process.exit(1);
+    }
+}
+
+
 const OUT = '/tmp/claude-0/-home-user-kolbergs-games/fa7e2146-2df9-50f3-882a-e3267a47c66f/scratchpad';
 const spec = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const diag = process.argv.includes('--diag');
@@ -280,6 +299,7 @@ for (let r = 0; r < N; r++) {
     rows.push(line);
 }
 
+enforceLimits(spec.out, N, palette.length);
 fs.writeFileSync(`${OUT}/${spec.out}.json`, JSON.stringify({ n: N, palette, counts, rows }, null, 1));
 fs.writeFileSync(`${OUT}/${spec.out}-full.png`,
     Buffer.from(result.colorizedUrl.split(',')[1], 'base64'));

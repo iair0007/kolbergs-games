@@ -493,12 +493,25 @@ function sizePalette() {
 
     /* Try progressively tighter gaps until every color fits on one row
        without going under the 44px touch minimum. */
-    let gap = 10, size = 44;
+    let gap = 10, size = 44, perRow = count, fits = false;
     for (const g of [10, 8, 6]) {
         gap = g;
         const avail = el.clientWidth - g * 2 - g * (count - 1);
         size = Math.max(44, Math.min(cap, Math.floor(avail / count)));
-        if (size * count + g * (count - 1) + g * 2 <= el.clientWidth) break;
+        if (size * count + g * (count - 1) + g * 2 <= el.clientWidth) { fits = true; break; }
+    }
+
+    /* A full 12-color palette will not fit one phone row at a 44px touch
+       target — wrap to two rows rather than hiding colors off-screen. */
+    el.classList.toggle('two-rows', !fits);
+    if (!fits) {
+        perRow = Math.ceil(count / 2);
+        for (const g of [10, 8, 6]) {
+            gap = g;
+            const avail = el.clientWidth - g * 2 - g * (perRow - 1);
+            size = Math.max(44, Math.min(cap, Math.floor(avail / perRow)));
+            if (size * perRow + g * (perRow - 1) + g * 2 <= el.clientWidth) break;
+        }
     }
 
     el.style.gap = gap + 'px';

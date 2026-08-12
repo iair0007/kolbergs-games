@@ -10,6 +10,25 @@
 import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
 import fs from 'fs';
 
+/* ── Project limits (CLAUDE.md) ─────────────────────────────
+   A child picks from this palette and paints every square, so both caps
+   are hard: 12 colors, 1024 squares. Refuse rather than ship past them. */
+const MAX_COLORS = 12;
+const MAX_SQUARES = 1024;
+
+function enforceLimits(name, n, colorCount) {
+    const squares = n * n;
+    const problems = [];
+    if (colorCount > MAX_COLORS) problems.push(`${colorCount} colors (max ${MAX_COLORS})`);
+    if (squares > MAX_SQUARES)   problems.push(`${squares} squares (max ${MAX_SQUARES}, i.e. 32x32)`);
+    if (problems.length) {
+        console.error(`\n${name} exceeds the project limits: ${problems.join(', ')}`);
+        console.error('Reduce the color count or the grid size and run again.\n');
+        process.exit(1);
+    }
+}
+
+
 const [imgPath, nArg, kArg, outName] = process.argv.slice(2);
 const N = Number(nArg || 40);
 const K = Number(kArg || 12);
@@ -134,6 +153,7 @@ for (let r = 0; r < N; r++) {
 }
 
 const name = outName || 'out';
+enforceLimits(name, N, result.palette.length);
 fs.writeFileSync(`${OUT}/${name}.json`, JSON.stringify({
     n: N, palette: result.palette, counts: result.counts, rows
 }, null, 1));

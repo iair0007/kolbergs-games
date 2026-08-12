@@ -104,6 +104,18 @@ See `games/hebrew-writer/main.js` for complete implementation.
 
 ---
 
+## 🎯 Required: Puzzle Size Caps
+
+Any content a child works through piece by piece:
+
+- **Max 12 colors** in a palette they choose from
+- **Max 1024 squares / items** in one puzzle (a 32 × 32 grid)
+
+Difficulty comes from more detail, not more grind. Build tools must enforce
+both caps themselves — see `games/paint-by-number/tools/`.
+
+---
+
 ## ✅ Quick Checklist
 
 Before launching a new game:
@@ -117,6 +129,7 @@ Before launching a new game:
 - [ ] Tested on tablet
 - [ ] Tested on desktop
 - [ ] No horizontal scrolling
+- [ ] Palette ≤ 12 colors, puzzle ≤ 1024 squares
 
 ---
 

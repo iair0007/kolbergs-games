@@ -1,5 +1,10 @@
 # Picture conversion tools
 
+**Both scripts refuse to write a picture that breaks the project limits in
+CLAUDE.md — at most 12 colors and at most 1024 squares (a 32 x 32 grid).**
+Every square is painted by hand by a child; these are the caps that keep a
+picture finishable in one sitting.
+
 Build-time only — the game itself never runs these, and the repo keeps its
 no-build-step rule. They turn a source image into the fixed grids in
 `scenes.js`. Chromium (via Playwright) does the image decoding, so there are
@@ -10,7 +15,9 @@ no image libraries to install.
     node convert.mjs <image> <gridSize> <colors> <outName>
 
 Downsamples the image and reduces it to `<colors>` with k-means. Right for
-photos and painted illustrations.
+photos and painted illustrations — but note that a dim, largely monochrome
+photo will not survive 12 colors; it turns to mud. Line art holds up far
+better at low color counts.
 
 ## Line art → grid
 

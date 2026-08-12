@@ -445,6 +445,13 @@ body {
     justify-content: safe center;
 }
 .palette::-webkit-scrollbar { display: none; }
+/* 12 colors do not fit one phone row at a 44px touch target */
+.palette.two-rows {
+    flex-wrap: wrap;
+    overflow-x: hidden;
+    justify-content: center;
+    row-gap: 8px;
+}
 
 .color-btn {
     position: relative;

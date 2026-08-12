@@ -180,6 +180,30 @@ Also required in `html, body`:
 html, body { height: 100%; overflow: hidden; }
 ```
 
+### Rule 4 — Puzzle Size (How Much a Kid Is Asked To Do)
+
+A puzzle a child cannot finish is a puzzle they abandon. Two hard caps on any
+content a child works through piece by piece — grids, palettes, card decks,
+question sets:
+
+- **12 colors maximum** in any palette the child chooses from. Past that the
+  palette stops fitting on a phone, and telling two similar shades apart stops
+  being fun.
+- **1024 squares / items maximum** in a single puzzle — a 32 × 32 grid. That is
+  about a sitting's worth of painting.
+
+Prefer fewer. Difficulty should come from *more detail in the picture*, not
+from a longer grind: a 32 × 32 grid of a real illustration is harder and more
+rewarding than a 56 × 56 grid of the same thing.
+
+**Enforce it in the build tools, not by memory.** The paint-by-number
+converters in `games/paint-by-number/tools/` exit with an error rather than
+write a picture that breaks either cap. Any future generator does the same.
+
+A knock-on effect worth knowing: a dim, largely monochrome photo cannot be
+reduced to 12 colors — it turns to mud. Bold, flat-colored art and line art
+survive the cap; muted photographs do not, so pick source images accordingly.
+
 ### Pre-Launch Checklist
 
 Before opening a PR for any new game, verify all of these:
@@ -203,6 +227,11 @@ Before opening a PR for any new game, verify all of these:
 - [ ] Welcome screen fits iPhone SE (375×667) without scrolling
 - [ ] Game screen fits landscape mobile without overflow
 - [ ] All buttons ≥ 44px tall
+
+**Content size**
+- [ ] No palette exceeds 12 colors
+- [ ] No single puzzle exceeds 1024 squares / items
+- [ ] Any generator enforces both caps itself, rather than relying on review
 
 **Structure**
 - [ ] `viewport-fit=cover` in meta viewport tag
