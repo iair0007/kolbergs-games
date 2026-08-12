@@ -103,5 +103,12 @@
     "description": "למד על רגשות בעברית! ראה סיטואציה ובחר את הפרצוף הנכון 😊😢😠",
     "path": "games/feelings-match/index.html",
     "image": "platform/images/feelings_match.svg"
+  },
+  {
+    "id": "paint-by-number",
+    "title": "צבע לפי מספר",
+    "description": "בחר צבע, לחץ על המשבצות עם המספר המתאים וגלה את התמונה! 🎨",
+    "path": "games/paint-by-number/index.html",
+    "image": "platform/images/paint_by_number.svg"
   }
 ]

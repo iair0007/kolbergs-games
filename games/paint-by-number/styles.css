@@ -1,0 +1,578 @@
+/* ═══════════════════════════════════════════════════════
+   צבע לפי מספר (Paint by Number) — Styles
+   Built on the Kolberg's Games Design System
+═══════════════════════════════════════════════════════ */
+
+/* ─── Design Tokens ────────────────────────────────── */
+:root {
+    --primary-gradient:   linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-gradient:   linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --warning-gradient:   linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+    --bg-gradient:        linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    --card-bg:            rgba(255, 255, 255, 0.1);
+    --text-primary:       #ffffff;
+    --text-secondary:     rgba(255, 255, 255, 0.8);
+    --shadow-color:       rgba(0, 0, 0, 0.3);
+    --border-radius:      16px;
+    --transition:         all 0.3s ease;
+    --paper:              #fdfdfd;
+}
+
+/* ─── Reset & Base ─────────────────────────────────── */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Rubik', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    min-height: 100vh;
+    min-height: 100svh;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#app {
+    min-height: 100vh;
+    min-height: 100svh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    /* platform responsive.css centers #app's children — screens must stretch */
+    align-items: stretch;
+    justify-content: flex-start;
+    position: relative;
+}
+
+/* ─── Home Button ──────────────────────────────────── */
+.home-btn {
+    position: fixed;
+    top: max(15px, env(safe-area-inset-top));
+    left: max(15px, env(safe-area-inset-left));
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    text-decoration: none;
+    z-index: 100;
+    transition: var(--transition);
+}
+.home-btn:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.28);
+}
+
+/* ─── Screen System ────────────────────────────────── */
+.screen {
+    display: none;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    padding: 20px;
+    padding-top: 74px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.screen-content {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+.screen-content.wide {
+    max-width: 720px;
+}
+
+/* ─── Welcome Screen ───────────────────────────────── */
+.hero-badge {
+    font-size: clamp(56px, 18vw, 92px);
+    animation: bounce 2s infinite;
+    line-height: 1;
+}
+
+.game-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.8rem, 7vw, 3rem);
+    text-align: center;
+    background: var(--secondary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.game-description {
+    font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+    color: var(--text-secondary);
+    text-align: center;
+    max-width: 330px;
+}
+
+.difficulty-selector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.diff-btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px 18px;
+    border-radius: 25px;
+    background: var(--card-bg);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.diff-btn.active {
+    background: var(--primary-gradient);
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+.diff-btn:hover {
+    transform: scale(1.05);
+}
+
+.difficulty-hint {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* ─── Buttons ──────────────────────────────────────── */
+.magic-btn {
+    min-height: 48px;
+    background: var(--primary-gradient);
+    border: none;
+    border-radius: 30px;
+    padding: 12px 32px;
+    font-size: clamp(1rem, 4vw, 1.25rem);
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: var(--transition);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    font-family: inherit;
+    width: 100%;
+    max-width: 300px;
+}
+.magic-btn:hover  { transform: translateY(-3px); }
+.magic-btn:active { transform: translateY(0); }
+.magic-btn.secondary {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: none;
+}
+
+/* ─── Picture Select Screen ────────────────────────── */
+/* A centered flex column clips its own overflow at the top on mobile —
+   the chooser must start at the top and scroll normally. */
+#select-screen.active {
+    justify-content: flex-start;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+}
+
+.select-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.4rem, 6vw, 2rem);
+    text-align: center;
+}
+.select-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.picture-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+    width: 100%;
+}
+
+.picture-card {
+    background: var(--card-bg);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--border-radius);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+    color: var(--text-primary);
+    min-height: 44px;
+}
+.picture-card:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+.picture-card canvas {
+    width: 100%;
+    max-width: 92px;
+    aspect-ratio: 1 / 1;
+    background: var(--paper);
+    border-radius: 10px;
+    image-rendering: pixelated;
+}
+.picture-card .pic-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════
+   GAME SCREEN
+═══════════════════════════════════════════════════ */
+#game-screen.active {
+    padding: 0;
+    padding-top: max(8px, env(safe-area-inset-top));
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    justify-content: flex-start;
+    gap: 8px;
+    overflow: hidden;
+}
+
+/* ─── Top Bar ──────────────────────────────────────── */
+.game-topbar {
+    width: 100%;
+    /* physical padding — keeps clear of the fixed home button in RTL too */
+    padding-left: 76px;
+    padding-right: 14px;
+    min-height: 54px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.preview-box {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--paper);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.preview-box canvas {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+}
+
+.progress-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.progress-container {
+    flex: 1;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 5px;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--success-gradient);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+.progress-text {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    min-width: 44px;
+    text-align: center;
+}
+
+/* ─── Canvas ───────────────────────────────────────── */
+.canvas-wrap {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    width: auto;
+    margin: 0 10px;
+    border-radius: 14px;
+    background: var(--paper);
+    box-shadow: 0 6px 20px var(--shadow-color);
+    overflow: hidden;
+}
+#paint-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* RULE: needed so pinch-zoom / drag gestures reach the game, not the browser */
+    touch-action: none;
+}
+
+.oops-msg,
+.praise-msg {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: clamp(0.85rem, 3.5vw, 1rem);
+    font-weight: 700;
+    color: #fff;
+    pointer-events: none;
+    opacity: 0;
+    white-space: nowrap;
+    max-width: 92%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.oops-msg {
+    bottom: 12px;
+    background: linear-gradient(135deg, #f2994a 0%, #f5576c 100%);
+}
+.praise-msg {
+    top: 12px;
+    background: var(--success-gradient);
+}
+.oops-msg.show   { animation: popMsg 1.3s ease forwards; }
+.praise-msg.show { animation: popMsg 1.3s ease forwards; }
+
+/* ─── Toolbar ──────────────────────────────────────── */
+.toolbar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 12px;
+    flex-shrink: 0;
+}
+
+.tool-btn {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+.tool-btn:hover { transform: scale(1.08); }
+.tool-btn.active-mode {
+    background: var(--primary-gradient);
+    border-color: transparent;
+}
+.tool-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.hint-count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--secondary-gradient);
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+}
+
+/* ─── Palette ──────────────────────────────────────── */
+.palette {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    padding: 4px 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-shrink: 0;
+    scrollbar-width: none;
+    justify-content: safe center;
+}
+.palette::-webkit-scrollbar { display: none; }
+
+.color-btn {
+    position: relative;
+    flex: 0 0 auto;
+    width: 56px;
+    height: 56px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1.25rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.3s ease;
+}
+.color-btn.selected {
+    border-color: #38ef7d;
+    transform: scale(1.12);
+    box-shadow: 0 0 0 4px rgba(56, 239, 125, 0.35);
+}
+.color-btn.done {
+    opacity: 0.35;
+    font-size: 1.5rem;
+}
+.color-btn .left-count {
+    position: absolute;
+    bottom: -3px;
+    right: -3px;
+    background: rgba(0, 0, 0, 0.72);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    min-width: 20px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+}
+.color-btn.done .left-count { display: none; }
+
+/* ═══════════════════════════════════════════════════
+   COMPLETE SCREEN
+═══════════════════════════════════════════════════ */
+.complete-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+    text-align: center;
+    animation: celebrate 0.6s ease forwards;
+}
+.final-art {
+    background: var(--paper);
+    border-radius: var(--border-radius);
+    padding: 10px;
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+.final-art canvas {
+    display: block;
+    width: min(52vw, 200px);
+    height: min(52vw, 200px);
+    image-rendering: pixelated;
+}
+
+.score-card {
+    width: 100%;
+    max-width: 320px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: clamp(0.9rem, 3.5vw, 1.05rem);
+}
+.score-label { color: var(--text-secondary); }
+.score-value { font-weight: 700; font-size: 1.15em; }
+.stars-row   { justify-content: center; font-size: 1.6rem; letter-spacing: 4px; }
+
+.complete-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
+}
+
+/* ─── Animations ───────────────────────────────────── */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-14px); }
+}
+@keyframes celebrate {
+    0%   { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+    60%  { transform: scale(1.15) rotate(4deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes popMsg {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(8px) scale(0.9); }
+    15%  { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    80%  { opacity: 1; }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+}
+
+/* ─── Mobile Breakpoint ────────────────────────────── */
+@media (max-width: 480px) {
+    .screen { padding: 16px; padding-top: 74px; }
+    .screen-content { gap: 12px; }
+    .picture-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+    .color-btn { width: 50px; height: 50px; font-size: 1.1rem; }
+    .toolbar { gap: 8px; }
+}
+
+/* ─── Landscape Mobile ─────────────────────────────── */
+@media (max-height: 500px) and (orientation: landscape) {
+    .screen {
+        justify-content: flex-start;
+        padding-top: 66px;
+    }
+    .hero-badge { font-size: 46px; }
+    .screen-content { gap: 8px; }
+
+    .game-topbar { min-height: 46px; }
+    .toolbar { gap: 8px; }
+    .tool-btn { width: 44px; height: 44px; font-size: 18px; }
+    .color-btn { width: 44px; height: 44px; font-size: 1rem; border-width: 2px; }
+    .palette { padding: 2px 10px; gap: 8px; }
+    .final-art canvas { width: 120px; height: 120px; }
+}

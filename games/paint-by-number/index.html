@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>צבע לפי מספר - Kolberg's Games</title>
+
+    <!-- Platform responsive CSS — MUST be first stylesheet -->
+    <link rel="stylesheet" href="../../platform/responsive.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+
+    <!-- Game styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- Home button — fixed, top-left, always visible -->
+        <a href="../../index.html" class="home-btn" aria-label="חזרה לדף הבית">🏠</a>
+
+        <!-- ═══════════════════════════════════════════
+             WELCOME SCREEN
+        ═══════════════════════════════════════════ -->
+        <div id="welcome-screen" class="screen active">
+            <div class="screen-content">
+
+                <div class="hero-badge">🎨</div>
+
+                <h1 class="game-title">צבע לפי מספר</h1>
+                <p class="game-description">
+                    בחר צבע, לחץ על המשבצות עם אותו מספר, וגלה את התמונה!
+                </p>
+
+                <div class="difficulty-selector">
+                    <button class="diff-btn active" data-difficulty="easy">🟢 קל</button>
+                    <button class="diff-btn" data-difficulty="medium">🟡 בינוני</button>
+                    <button class="diff-btn" data-difficulty="hard">🔴 קשה</button>
+                </div>
+                <p class="difficulty-hint" id="difficulty-hint">12 × 12 משבצות</p>
+
+                <button class="magic-btn" id="start-btn">
+                    <span>בחר תמונה</span>
+                    <span>🖼️</span>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+             PICTURE SELECT SCREEN
+        ═══════════════════════════════════════════ -->
+        <div id="select-screen" class="screen">
+            <div class="screen-content wide">
+
+                <h2 class="select-title">איזו תמונה לצבוע?</h2>
+                <p class="select-subtitle" id="select-subtitle">רמה: קל</p>
+
+                <div class="picture-grid" id="picture-grid">
+                    <!-- Picture cards injected by main.js -->
+                </div>
+
+                <button class="magic-btn secondary" id="back-to-welcome-btn">
+                    <span>חזרה</span>
+                    <span>↩️</span>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+             GAME SCREEN
+        ═══════════════════════════════════════════ -->
+        <div id="game-screen" class="screen">
+
+            <!-- Top bar: preview thumbnail + progress -->
+            <div class="game-topbar">
+                <div class="preview-box" id="preview-box">
+                    <canvas id="preview-canvas" width="60" height="60"></canvas>
+                </div>
+                <div class="progress-wrap">
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text">0%</span>
+                </div>
+            </div>
+
+            <!-- Painting canvas -->
+            <div class="canvas-wrap" id="canvas-wrap">
+                <canvas id="paint-canvas"></canvas>
+                <div class="oops-msg" id="oops-msg"></div>
+                <div class="praise-msg" id="praise-msg"></div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <button class="tool-btn" id="zoom-out-btn" aria-label="הקטן">➖</button>
+                <button class="tool-btn" id="zoom-in-btn" aria-label="הגדל">➕</button>
+                <button class="tool-btn" id="fit-btn" aria-label="התאם למסך">🔲</button>
+                <button class="tool-btn" id="mode-btn" aria-label="מצב צביעה או הזזה">🖌️</button>
+                <button class="tool-btn" id="hint-btn" aria-label="רמז">
+                    💡<span class="hint-count" id="hint-count">5</span>
+                </button>
+            </div>
+
+            <!-- Color palette -->
+            <div class="palette" id="palette">
+                <!-- Color buttons injected by main.js -->
+            </div>
+
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+             COMPLETE SCREEN
+        ═══════════════════════════════════════════ -->
+        <div id="complete-screen" class="screen">
+            <div class="screen-content">
+
+                <h2 class="complete-title">כל הכבוד! 🎉</h2>
+
+                <div class="final-art">
+                    <canvas id="final-canvas" width="240" height="240"></canvas>
+                </div>
+
+                <div class="score-card">
+                    <div class="score-row">
+                        <span class="score-label">משבצות שצבעת:</span>
+                        <span class="score-value" id="final-cells">0</span>
+                    </div>
+                    <div class="score-row">
+                        <span class="score-label">זמן:</span>
+                        <span class="score-value" id="final-time">0:00</span>
+                    </div>
+                    <div class="score-row stars-row" id="final-stars">⭐⭐⭐</div>
+                </div>
+
+                <div class="complete-buttons">
+                    <button class="magic-btn" id="next-picture-btn">
+                        <span>תמונה נוספת</span>
+                        <span>🖼️</span>
+                    </button>
+                    <button class="magic-btn secondary" id="menu-btn">
+                        <span>תפריט</span>
+                        <span>🏠</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- /#app -->
+
+    <script src="data.js?v=1.0"></script>
+    <script src="main.js?v=1.0"></script>
+</body>
+</html>
