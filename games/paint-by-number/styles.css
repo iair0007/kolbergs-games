@@ -252,6 +252,16 @@ body {
     font-size: 0.95rem;
     font-weight: 700;
 }
+/* marks the full-detail illustrations, which carry their own grid size */
+.picture-card .pic-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #06301a;
+    background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+    border-radius: 999px;
+    padding: 2px 9px;
+    letter-spacing: 0.02em;
+}
 
 /* ═══════════════════════════════════════════════════
    GAME SCREEN
@@ -356,10 +366,9 @@ body {
     color: #fff;
     pointer-events: none;
     opacity: 0;
-    white-space: nowrap;
-    max-width: 92%;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 88%;
+    text-align: center;
+    line-height: 1.35;
 }
 .oops-msg {
     bottom: 12px;

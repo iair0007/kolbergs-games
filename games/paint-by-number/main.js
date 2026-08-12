@@ -230,7 +230,38 @@ function buildGrid(picture, n) {
         cells[i] = raw[i] >= 0 ? slotOf.get(raw[i]) : -1;
     }
 
-    return { n, cells, colors };
+    return assignGreys({ n, cells, colors });
+}
+
+/**
+ * Scenes arrive already rasterized — the grid IS the picture, taken from the
+ * source image, so there is nothing to resample. Same output shape as
+ * buildGrid() so the rest of the game cannot tell the two apart.
+ */
+const SCENE_CHARS = '0123456789abcdefghijklmnopqrstuvwxyz';
+
+function buildSceneGrid(scene) {
+    const n = scene.n;
+    const raw = new Int16Array(n * n);
+    const counts = new Map();
+    for (let row = 0; row < n; row++) {
+        const line = scene.rows[row];
+        for (let col = 0; col < n; col++) {
+            const ch = line[col];
+            const slot = ch === '.' ? -1 : SCENE_CHARS.indexOf(ch);
+            raw[row * n + col] = slot;
+            if (slot >= 0) counts.set(slot, (counts.get(slot) || 0) + 1);
+        }
+    }
+    const usedKeys = [...counts.keys()].sort((a, b) => a - b);
+    const slotOf = new Map();
+    const colors = usedKeys.map((key, idx) => {
+        slotOf.set(key, idx);
+        return { hex: scene.palette[key], number: idx + 1, total: counts.get(key) };
+    });
+    const cells = new Int16Array(n * n);
+    for (let i = 0; i < raw.length; i++) cells[i] = raw[i] >= 0 ? slotOf.get(raw[i]) : -1;
+    return assignGreys({ n, cells, colors });
 }
 
 /* ─── Color helpers ────────────────────────────────── */
@@ -250,6 +281,27 @@ function greyOf(hex) {
     const lum = 0.299 * r + 0.587 * g + 0.114 * b;
     const v   = Math.round(178 + (lum / 255) * 62);   /* 178 … 240 */
     return `rgb(${v}, ${v}, ${v})`;
+}
+
+/**
+ * Stretch the greys across the whole readable band for THIS picture.
+ * A palette drawn from a photo can sit inside a narrow slice of luminance —
+ * mapping it absolutely leaves the ghost image flat and unreadable, so the
+ * darkest color in the picture anchors one end and the lightest the other.
+ */
+function assignGreys(g) {
+    const lums = g.colors.map(c => {
+        const { r, g: gr, b } = hexToRgb(c.hex);
+        return 0.299 * r + 0.587 * gr + 0.114 * b;
+    });
+    const lo = Math.min(...lums), hi = Math.max(...lums);
+    const span = Math.max(1, hi - lo);
+    g.colors.forEach((c, i) => {
+        const t = (lums[i] - lo) / span;
+        const v = Math.round(150 + t * 92);           /* 150 … 242 */
+        c.grey = `rgb(${v}, ${v}, ${v})`;
+    });
+    return g;
 }
 
 /** Readable text color on top of a filled cell. */
@@ -342,7 +394,7 @@ function buildPictureChooser() {
     document.getElementById('select-subtitle').textContent =
         `רמה: ${GAME_CONFIG[difficulty].label} · ${n} × ${n} משבצות`;
 
-    PICTURES.forEach(pic => {
+    const addCard = (entry, grid, label, badge) => {
         const card = document.createElement('button');
         card.className = 'picture-card';
         card.type = 'button';
@@ -350,16 +402,23 @@ function buildPictureChooser() {
         const thumb = document.createElement('canvas');
         thumb.width = 120;
         thumb.height = 120;
-        drawFullColor(thumb, buildGrid(pic, n));
+        drawFullColor(thumb, grid);
         card.appendChild(thumb);
 
         const name = document.createElement('span');
         name.className = 'pic-name';
-        name.textContent = `${pic.emoji} ${pic.name}`;
+        name.textContent = label;
         card.appendChild(name);
 
+        if (badge) {
+            const tag = document.createElement('span');
+            tag.className = 'pic-badge';
+            tag.textContent = badge;
+            card.appendChild(tag);
+        }
+
         /* RULE: click + touchstart on every tappable element. */
-        const pick = () => startPicture(pic);
+        const pick = () => startPicture(entry);
         card.addEventListener('click', pick);
         card.addEventListener('touchstart', (e) => {
             e.preventDefault();
@@ -367,6 +426,17 @@ function buildPictureChooser() {
         }, { passive: false });
 
         gridEl.appendChild(card);
+    };
+
+    /* קשה leads with the real illustrations — they only work at this size. */
+    if (difficulty === 'hard' && typeof SCENES !== 'undefined') {
+        SCENES.forEach(scene => {
+            addCard(scene, buildSceneGrid(scene), `${scene.emoji} ${scene.name}`,
+                    `${scene.n} × ${scene.n}`);
+        });
+    }
+    PICTURES.forEach(pic => {
+        addCard(pic, buildGrid(pic, n), `${pic.emoji} ${pic.name}`, null);
     });
 }
 
@@ -454,11 +524,22 @@ function updatePalette() {
     });
 }
 
+/** A 20-color scene palette scrolls — keep the chosen color on screen. */
+function scrollPaletteToSelected() {
+    const btn = document.querySelector(`.color-btn[data-slot="${selectedSlot}"]`);
+    if (!btn) return;
+    const el = document.getElementById('palette');
+    if (el.scrollWidth <= el.clientWidth) return;
+    const target = btn.offsetLeft - (el.clientWidth - btn.offsetWidth) / 2;
+    el.scrollTo({ left: target, behavior: 'smooth' });
+}
+
 function selectColor(slot) {
     if (leftPerColor[slot] === 0) return;
     selectedSlot = slot;
     hintCell = -1;
     updatePalette();
+    scrollPaletteToSelected();
     playTone(520 + slot * 40, 0.09, 'sine', 0.1);
     requestRender();
 }
@@ -469,6 +550,7 @@ function selectNextUnfinishedColor() {
         if (leftPerColor[slot] > 0) {
             selectedSlot = slot;
             updatePalette();
+            scrollPaletteToSelected();
             requestRender();
             return true;
         }
@@ -597,7 +679,7 @@ function render() {
             const isDone  = painted[idx] === 1;
             const isActive = !isDone && slot === selectedSlot;
 
-            ctx.fillStyle = isDone ? color.hex : greyOf(color.hex);
+            ctx.fillStyle = isDone ? color.hex : (color.grey || greyOf(color.hex));
             ctx.fillRect(x0, y0, w, h);
 
             /* Gentle highlight on the squares that match the chosen color */
@@ -743,7 +825,8 @@ function drawPreview() {
             const idx = row * grid.n + col;
             const slot = grid.cells[idx];
             if (slot < 0) continue;
-            c2.fillStyle = painted[idx] ? grid.colors[slot].hex : greyOf(grid.colors[slot].hex);
+            c2.fillStyle = painted[idx] ? grid.colors[slot].hex
+                                       : (grid.colors[slot].grey || greyOf(grid.colors[slot].hex));
             const x0 = Math.round(col * cell), y0 = Math.round(row * cell);
             const x1 = Math.round((col + 1) * cell), y1 = Math.round((row + 1) * cell);
             c2.fillRect(x0, y0, x1 - x0, y1 - y0);
@@ -912,7 +995,8 @@ function useHint() {
 
 function startPicture(pic) {
     picture      = pic;
-    grid         = buildGrid(pic, GAME_CONFIG[difficulty].gridSize);
+    grid         = pic.rows ? buildSceneGrid(pic)
+                            : buildGrid(pic, GAME_CONFIG[difficulty].gridSize);
     painted      = new Uint8Array(grid.n * grid.n);
     totalCells   = grid.colors.reduce((sum, c) => sum + c.total, 0);
     leftPerColor = grid.colors.map(c => c.total);
