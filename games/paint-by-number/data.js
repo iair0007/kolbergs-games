@@ -213,6 +213,99 @@ const PICTURES = [
             { t: 'circle', cx: 0.28, cy: 0.72, r: 0.06, c: 3 },
             { t: 'circle', cx: 0.72, cy: 0.72, r: 0.06, c: 3 }
         ]
+    },
+
+    /* ── From the workshop scene ──────────────────────── */
+
+    {
+        id: 'crystal',
+        name: 'גביש קסם',
+        emoji: '💎',
+        palette: ['#ffffff', '#a8ecff', '#4bc4e8', '#1f74b8', '#c9a2ff'],
+        shapes: [
+            /* sparkles */
+            { t: 'circle', cx: 0.13, cy: 0.17, r: 0.055, c: 4 },
+            { t: 'circle', cx: 0.87, cy: 0.19, r: 0.055, c: 4 },
+            { t: 'circle', cx: 0.09, cy: 0.62, r: 0.04, c: 4 },
+            /* side shards */
+            { t: 'poly', pts: [[0.24, 0.34], [0.34, 0.56], [0.34, 0.90], [0.13, 0.90], [0.13, 0.58]], c: 2 },
+            { t: 'poly', pts: [[0.78, 0.40], [0.87, 0.62], [0.87, 0.92], [0.66, 0.92], [0.66, 0.62]], c: 3 },
+            /* main shard — left facet light, right facet deep */
+            { t: 'poly', pts: [[0.50, 0.04], [0.50, 0.94], [0.34, 0.76], [0.34, 0.28]], c: 1 },
+            { t: 'poly', pts: [[0.50, 0.04], [0.66, 0.28], [0.66, 0.76], [0.50, 0.94]], c: 2 },
+            /* facet edge + highlight */
+            { t: 'line', pts: [[0.50, 0.04], [0.50, 0.94]], w: 0.06, c: 3 },
+            { t: 'line', pts: [[0.43, 0.28], [0.43, 0.68]], w: 0.09, c: 0 }
+        ]
+    },
+    {
+        id: 'dog',
+        name: 'כלב',
+        emoji: '🐶',
+        palette: ['#d8b98f', '#8b6b4a', '#f2e3c9', '#3a2f2a', '#ff6f91'],
+        shapes: [
+            /* head */
+            { t: 'circle', cx: 0.50, cy: 0.40, r: 0.30, c: 0 },
+            /* shaggy top fur */
+            { t: 'ellipse', cx: 0.50, cy: 0.19, rx: 0.28, ry: 0.13, c: 1 },
+            /* floppy ears */
+            { t: 'ellipse', cx: 0.17, cy: 0.45, rx: 0.10, ry: 0.22, c: 1 },
+            { t: 'ellipse', cx: 0.83, cy: 0.45, rx: 0.10, ry: 0.22, c: 1 },
+            /* bandana */
+            { t: 'poly', pts: [[0.27, 0.67], [0.73, 0.67], [0.50, 0.94]], c: 4 },
+            /* muzzle */
+            { t: 'ellipse', cx: 0.50, cy: 0.53, rx: 0.16, ry: 0.12, c: 2 },
+            /* nose + eyes */
+            { t: 'ellipse', cx: 0.50, cy: 0.46, rx: 0.065, ry: 0.05, c: 3 },
+            { t: 'circle', cx: 0.37, cy: 0.33, r: 0.05, c: 3 },
+            { t: 'circle', cx: 0.63, cy: 0.33, r: 0.05, c: 3 }
+        ]
+    },
+    {
+        id: 'chest',
+        name: 'תיבת אוצר',
+        emoji: '💰',
+        palette: ['#b07a3c', '#6b4423', '#e0a83c', '#3a2f2a', '#d9a05b'],
+        shapes: [
+            /* body */
+            { t: 'rect', x: 0.12, y: 0.44, w: 0.76, h: 0.42, c: 0 },
+            /* domed lid */
+            { t: 'ellipse', cx: 0.50, cy: 0.42, rx: 0.38, ry: 0.20, c: 4 },
+            { t: 'rect', x: 0.12, y: 0.42, w: 0.76, h: 0.10, c: 1 },
+            /* gold straps */
+            { t: 'rect', x: 0.20, y: 0.24, w: 0.08, h: 0.62, c: 2 },
+            { t: 'rect', x: 0.72, y: 0.24, w: 0.08, h: 0.62, c: 2 },
+            /* lock plate + keyhole */
+            { t: 'rect', x: 0.43, y: 0.50, w: 0.14, h: 0.18, c: 2 },
+            { t: 'circle', cx: 0.50, cy: 0.57, r: 0.055, c: 3 },
+            /* feet */
+            { t: 'rect', x: 0.12, y: 0.86, w: 0.14, h: 0.08, c: 1 },
+            { t: 'rect', x: 0.74, y: 0.86, w: 0.14, h: 0.08, c: 1 }
+        ]
+    },
+    {
+        id: 'explorer',
+        name: 'הרפתקן',
+        emoji: '🧒',
+        palette: ['#f3d0ad', '#6b4423', '#2d2d3a', '#3b6ea8', '#f7f1e3'],
+        shapes: [
+            /* coat */
+            { t: 'poly', pts: [[0.10, 1.00], [0.18, 0.72], [0.82, 0.72], [0.90, 1.00]], c: 3 },
+            /* neck */
+            { t: 'rect', x: 0.43, y: 0.64, w: 0.14, h: 0.10, c: 0 },
+            /* collar */
+            { t: 'poly', pts: [[0.38, 0.72], [0.62, 0.72], [0.50, 0.90]], c: 4 },
+            /* head */
+            { t: 'ellipse', cx: 0.50, cy: 0.44, rx: 0.23, ry: 0.25, c: 0 },
+            /* hair — cap plus sideburns */
+            { t: 'ellipse', cx: 0.50, cy: 0.22, rx: 0.25, ry: 0.12, c: 1 },
+            { t: 'rect', x: 0.25, y: 0.24, w: 0.07, h: 0.16, c: 1 },
+            { t: 'rect', x: 0.68, y: 0.24, w: 0.07, h: 0.16, c: 1 },
+            /* eyes + smile */
+            { t: 'ellipse', cx: 0.40, cy: 0.45, rx: 0.045, ry: 0.055, c: 2 },
+            { t: 'ellipse', cx: 0.60, cy: 0.45, rx: 0.045, ry: 0.055, c: 2 },
+            { t: 'line', pts: [[0.43, 0.55], [0.50, 0.585], [0.57, 0.55]], w: 0.045, c: 2 }
+        ]
     }
 ];
 
