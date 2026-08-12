@@ -33,6 +33,34 @@ function enforceLimits(name, n, colorCount) {
 }
 
 
+
+/* Remove one-square specks: a square whose color matches none of its four
+   neighbours is line-junction noise, not picture. It reads as dirt and it
+   makes a child hunt across the grid for a single square of some color. */
+function despeckle(cells, n, passes = 2) {
+    for (let pass = 0; pass < passes; pass++) {
+        const out = cells.slice();
+        for (let y = 0; y < n; y++) {
+            for (let x = 0; x < n; x++) {
+                const i = y * n + x;
+                const nb = [];
+                if (x > 0)     nb.push(cells[i - 1]);
+                if (x < n - 1) nb.push(cells[i + 1]);
+                if (y > 0)     nb.push(cells[i - n]);
+                if (y < n - 1) nb.push(cells[i + n]);
+                if (nb.some(v => v === cells[i])) continue;
+                const tally = new Map();
+                nb.forEach(v => tally.set(v, (tally.get(v) || 0) + 1));
+                let best = cells[i], bestN = 0;
+                for (const [v, c] of tally) if (c > bestN) { bestN = c; best = v; }
+                out[i] = best;
+            }
+        }
+        cells = out;
+    }
+    return cells;
+}
+
 const OUT = '/tmp/claude-0/-home-user-kolbergs-games/fa7e2146-2df9-50f3-882a-e3267a47c66f/scratchpad';
 const spec = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const diag = process.argv.includes('--diag');
@@ -239,8 +267,17 @@ const result = await page.evaluate(async ({ dataUrl, spec, diag }) => {
     if (spec.bigDefault) pushHex(spec.bigDefault);
     const idxOf = new Map(palette.map((h, i) => [h, i]));
 
-    const side = Math.min(W, H);
-    const ox = (W - side) / 2, oy = (H - side) / 2;
+    /* A whole scene squeezed into 1024 squares reads as noise. `crop` picks
+       one subject out of the artwork so every square goes into that subject
+       instead of into background the child cannot identify anyway. */
+    let cropX = 0, cropY = 0, cropW = W, cropH = H;
+    if (spec.crop) {
+        const [cx0, cy0, cw, ch] = spec.crop;
+        cropX = Math.round(cx0 * W); cropY = Math.round(cy0 * H);
+        cropW = Math.round(cw * W);  cropH = Math.round(ch * H);
+    }
+    const side = Math.min(cropW, cropH);
+    const ox = cropX + (cropW - side) / 2, oy = cropY + (cropH - side) / 2;
     const inkVote = spec.inkVote ?? 0.62;
 
     const cells = [];
@@ -282,6 +319,24 @@ await browser.close();
 
 /* ── emit ──────────────────────────────────────────────────── */
 const N = spec.n;
+result.cells = despeckle(result.cells, N, spec.despeckle ?? 2);
+
+/* Stamps: the few features a 32-square grid cannot inherit from a detailed
+   drawing — eyes, a mouth, a dragon's pupil. The line art draws them with
+   strokes finer than a square, so they vanish in any faithful reduction and
+   the face lands as a blank oval. Placed by hand, in grid coordinates. */
+for (const st of spec.stamps || []) {
+    const [x, y, w, h, hex] = st.length === 3 ? [st[0], st[1], 1, 1, st[2]] : st;
+    let idx = result.palette.indexOf(hex);
+    if (idx < 0) { result.palette.push(hex); idx = result.palette.length - 1; }
+    for (let dy = 0; dy < h; dy++) {
+        for (let dx = 0; dx < w; dx++) {
+            const px = x + dx, py = y + dy;
+            if (px < 0 || py < 0 || px >= N || py >= N) continue;
+            result.cells[py * N + px] = idx;
+        }
+    }
+}
 const CHARS = '0123456789abcdefghijklmnopqrstuvwxyz';
 
 /* drop palette entries that ended up unused, then renumber */

@@ -29,9 +29,38 @@ function enforceLimits(name, n, colorCount) {
 }
 
 
-const [imgPath, nArg, kArg, outName] = process.argv.slice(2);
+const [imgPath, nArg, kArg, outName, cropArg] = process.argv.slice(2);
+const crop = cropArg ? cropArg.split(',').map(Number) : null;
 const N = Number(nArg || 40);
 const K = Number(kArg || 12);
+
+/* Remove one-square specks: a square whose color matches none of its four
+   neighbours is line-junction noise, not picture. It reads as dirt and it
+   makes a child hunt across the grid for a single square of some color. */
+function despeckle(cells, n, passes = 2) {
+    for (let pass = 0; pass < passes; pass++) {
+        const out = cells.slice();
+        for (let y = 0; y < n; y++) {
+            for (let x = 0; x < n; x++) {
+                const i = y * n + x;
+                const nb = [];
+                if (x > 0)     nb.push(cells[i - 1]);
+                if (x < n - 1) nb.push(cells[i + 1]);
+                if (y > 0)     nb.push(cells[i - n]);
+                if (y < n - 1) nb.push(cells[i + n]);
+                if (nb.some(v => v === cells[i])) continue;
+                const tally = new Map();
+                nb.forEach(v => tally.set(v, (tally.get(v) || 0) + 1));
+                let best = cells[i], bestN = 0;
+                for (const [v, c] of tally) if (c > bestN) { bestN = c; best = v; }
+                out[i] = best;
+            }
+        }
+        cells = out;
+    }
+    return cells;
+}
+
 const OUT = '/tmp/claude-0/-home-user-kolbergs-games/fa7e2146-2df9-50f3-882a-e3267a47c66f/scratchpad';
 
 const b64 = fs.readFileSync(imgPath).toString('base64');
@@ -41,7 +70,7 @@ const browser = await chromium.launch();
 const page = await browser.newPage();
 await page.setContent('<body style="margin:0"></body>');
 
-const result = await page.evaluate(async ({ dataUrl, N, K }) => {
+const result = await page.evaluate(async ({ dataUrl, N, K, crop }) => {
     /* ── decode + downsample ───────────────────────────────── */
     const img = new Image();
     img.src = dataUrl;
@@ -53,7 +82,7 @@ const result = await page.evaluate(async ({ dataUrl, N, K }) => {
     src.width = sw; src.height = sh;
     let sctx = src.getContext('2d');
     sctx.drawImage(img, 0, 0);
-    while (Math.min(sw, sh) > N * 3) {
+    while (Math.min(sw, sh) > N * 3 / (crop ? Math.min(crop[2], crop[3]) : 1)) {
         const nw = Math.max(N, Math.round(sw / 2)), nh = Math.max(N, Math.round(sh / 2));
         const tmp = document.createElement('canvas');
         tmp.width = nw; tmp.height = nh;
@@ -64,14 +93,20 @@ const result = await page.evaluate(async ({ dataUrl, N, K }) => {
         src = tmp; sw = nw; sh = nh;
     }
 
-    /* square crop from the centre, then to N×N */
-    const side = Math.min(sw, sh);
+    /* Crop to one subject when asked, else a square from the centre. */
+    let cropX = 0, cropY = 0, cropW = sw, cropH = sh;
+    if (crop) {
+        cropX = Math.round(crop[0] * sw); cropY = Math.round(crop[1] * sh);
+        cropW = Math.round(crop[2] * sw); cropH = Math.round(crop[3] * sh);
+    }
+    const side = Math.min(cropW, cropH);
     const cv = document.createElement('canvas');
     cv.width = cv.height = N;
     const ctx = cv.getContext('2d');
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(src, (sw - side) / 2, (sh - side) / 2, side, side, 0, 0, N, N);
+    ctx.drawImage(src, cropX + (cropW - side) / 2, cropY + (cropH - side) / 2,
+                  side, side, 0, 0, N, N);
     const data = ctx.getImageData(0, 0, N, N).data;
 
     const px = [];
@@ -139,12 +174,13 @@ const result = await page.evaluate(async ({ dataUrl, N, K }) => {
     const cells = assign.map(a => remap.get(a));
 
     return { palette, cells, counts: order.map(i => counts[i]) };
-}, { dataUrl: `data:${mime};base64,${b64}`, N, K });
+}, { dataUrl: `data:${mime};base64,${b64}`, N, K, crop });
 
 await browser.close();
 
 /* ── emit ──────────────────────────────────────────────────── */
 const CHARS = '0123456789abcdefghijklmnopqrstuvwxyz';
+result.cells = despeckle(result.cells, N, 2);
 const rows = [];
 for (let r = 0; r < N; r++) {
     let line = '';
