@@ -16,6 +16,11 @@
  * `c` is an index into the picture's `palette`. Shapes are painted in
  * order — later shapes cover earlier ones. A cell touched by no shape
  * stays empty (white paper, not paintable).
+ *
+ * Any shape may also carry `min: <gridSize>` — fine detail that is skipped
+ * on grids smaller than that. A mouth on a face five cells wide lands as a
+ * blob that reads like a mustache; `min: 20` keeps it out of easy mode and
+ * brings it back once there are cells enough to draw it.
  */
 
 'use strict';
@@ -305,6 +310,116 @@ const PICTURES = [
             { t: 'ellipse', cx: 0.40, cy: 0.45, rx: 0.045, ry: 0.055, c: 2 },
             { t: 'ellipse', cx: 0.60, cy: 0.45, rx: 0.045, ry: 0.055, c: 2 },
             { t: 'line', pts: [[0.43, 0.55], [0.50, 0.585], [0.57, 0.55]], w: 0.045, c: 2 }
+        ]
+    },
+
+    /* ── The podcast heroes ───────────────────────────
+       Line art has no colors, so these palettes are chosen to tell the
+       two heroes apart at a glance: אוקי is blue with a red cape and light
+       hair, יוין is crimson with a blue cape and dark hair. Their chest
+       emblems differ in shape too — a round compass vs a square book. */
+
+    {
+        id: 'oki',
+        name: 'אוקי',
+        emoji: '🦸',
+        palette: ['#f3d0ad', '#a9702f', '#2f6fd0', '#ffd93d', '#e74c3c'],
+        shapes: [
+            /* cape falling behind the shoulders */
+            { t: 'poly', pts: [[0.04, 0.64], [0.32, 0.52], [0.32, 1.00], [0.00, 1.00]], c: 4 },
+            { t: 'poly', pts: [[0.96, 0.64], [0.68, 0.52], [0.68, 1.00], [1.00, 1.00]], c: 4 },
+            /* shoulders */
+            { t: 'poly', pts: [[0.20, 1.00], [0.27, 0.66], [0.73, 0.66], [0.80, 1.00]], c: 2 },
+            /* neck */
+            { t: 'rect', x: 0.43, y: 0.56, w: 0.14, h: 0.12, c: 0 },
+            /* round compass emblem */
+            { t: 'circle', cx: 0.50, cy: 0.85, r: 0.11, c: 3 },
+            /* head */
+            { t: 'ellipse', cx: 0.50, cy: 0.37, rx: 0.21, ry: 0.23, c: 0 },
+            /* swept-back hair */
+            { t: 'ellipse', cx: 0.50, cy: 0.16, rx: 0.23, ry: 0.12, c: 1 },
+            { t: 'rect', x: 0.26, y: 0.18, w: 0.07, h: 0.15, c: 1 },
+            { t: 'rect', x: 0.67, y: 0.18, w: 0.07, h: 0.15, c: 1 },
+            /* eyes + smile */
+            { t: 'ellipse', cx: 0.41, cy: 0.38, rx: 0.045, ry: 0.055, c: 1 },
+            { t: 'ellipse', cx: 0.59, cy: 0.38, rx: 0.045, ry: 0.055, c: 1 },
+            { t: 'line', pts: [[0.42, 0.515], [0.46, 0.565], [0.54, 0.565], [0.58, 0.515]], w: 0.042, c: 1, min: 20 }
+        ]
+    },
+    {
+        id: 'yuin',
+        name: 'יוין',
+        emoji: '🦸‍♂️',
+        palette: ['#f3d0ad', '#2d2d3a', '#c0392b', '#ecf0f1', '#2f6fd0'],
+        shapes: [
+            /* cape falling behind the shoulders */
+            { t: 'poly', pts: [[0.04, 0.64], [0.32, 0.52], [0.32, 1.00], [0.00, 1.00]], c: 4 },
+            { t: 'poly', pts: [[0.96, 0.64], [0.68, 0.52], [0.68, 1.00], [1.00, 1.00]], c: 4 },
+            /* shoulders */
+            { t: 'poly', pts: [[0.20, 1.00], [0.27, 0.66], [0.73, 0.66], [0.80, 1.00]], c: 2 },
+            /* neck */
+            { t: 'rect', x: 0.43, y: 0.56, w: 0.14, h: 0.12, c: 0 },
+            /* square book emblem */
+            { t: 'rect', x: 0.39, y: 0.76, w: 0.22, h: 0.17, c: 3 },
+            /* head */
+            { t: 'ellipse', cx: 0.50, cy: 0.37, rx: 0.21, ry: 0.23, c: 0 },
+            /* taller dark hair */
+            { t: 'ellipse', cx: 0.50, cy: 0.14, rx: 0.23, ry: 0.13, c: 1 },
+            { t: 'rect', x: 0.26, y: 0.16, w: 0.07, h: 0.17, c: 1 },
+            { t: 'rect', x: 0.67, y: 0.16, w: 0.07, h: 0.17, c: 1 },
+            /* eyes + smile */
+            { t: 'ellipse', cx: 0.41, cy: 0.38, rx: 0.045, ry: 0.055, c: 1 },
+            { t: 'ellipse', cx: 0.59, cy: 0.38, rx: 0.045, ry: 0.055, c: 1 },
+            { t: 'line', pts: [[0.42, 0.515], [0.46, 0.565], [0.54, 0.565], [0.58, 0.515]], w: 0.042, c: 1, min: 20 }
+        ]
+    },
+    {
+        id: 'dragon',
+        name: 'דרקון',
+        emoji: '🐲',
+        palette: ['#3fa34d', '#256b33', '#f7d794', '#ffd93d', '#e74c3c', '#2d2d3a'],
+        shapes: [
+            /* neck */
+            { t: 'poly', pts: [[0.58, 0.58], [0.98, 0.62], [1.00, 1.00], [0.62, 1.00]], c: 1 },
+            /* head */
+            { t: 'ellipse', cx: 0.66, cy: 0.44, rx: 0.30, ry: 0.24, c: 0 },
+            /* snout */
+            { t: 'poly', pts: [[0.46, 0.30], [0.20, 0.42], [0.46, 0.56]], c: 0 },
+            /* lower jaw */
+            { t: 'poly', pts: [[0.46, 0.52], [0.24, 0.58], [0.48, 0.68]], c: 1 },
+            /* horns */
+            { t: 'poly', pts: [[0.60, 0.26], [0.68, 0.02], [0.78, 0.28]], c: 2 },
+            { t: 'poly', pts: [[0.82, 0.30], [0.99, 0.16], [0.94, 0.38]], c: 2 },
+            /* eye */
+            { t: 'circle', cx: 0.62, cy: 0.36, r: 0.085, c: 3 },
+            { t: 'circle', cx: 0.62, cy: 0.36, r: 0.045, c: 5 },
+            /* fire breath */
+            { t: 'poly', pts: [[0.33, 0.30], [0.00, 0.16], [0.07, 0.42], [0.00, 0.66], [0.35, 0.54]], c: 4 },
+            { t: 'poly', pts: [[0.29, 0.34], [0.06, 0.28], [0.11, 0.43], [0.05, 0.58], [0.30, 0.50]], c: 3 }
+        ]
+    },
+    {
+        id: 'magicbook',
+        name: 'ספר קסמים',
+        emoji: '📖',
+        palette: ['#6c5ce7', '#f7f1e3', '#e0a83c', '#a8ecff', '#2d2d3a'],
+        shapes: [
+            /* sparkles above the book */
+            { t: 'circle', cx: 0.50, cy: 0.09, r: 0.075, c: 3 },
+            { t: 'circle', cx: 0.24, cy: 0.17, r: 0.055, c: 3 },
+            { t: 'circle', cx: 0.76, cy: 0.17, r: 0.055, c: 3 },
+            /* cover */
+            { t: 'poly', pts: [[0.02, 0.42], [0.50, 0.30], [0.98, 0.42], [0.98, 0.86], [0.50, 0.96], [0.02, 0.86]], c: 0 },
+            /* pages */
+            { t: 'poly', pts: [[0.11, 0.50], [0.45, 0.41], [0.45, 0.83], [0.11, 0.76]], c: 1 },
+            { t: 'poly', pts: [[0.55, 0.41], [0.89, 0.50], [0.89, 0.76], [0.55, 0.83]], c: 1 },
+            /* spine */
+            { t: 'rect', x: 0.44, y: 0.34, w: 0.12, h: 0.58, c: 2 },
+            /* text lines */
+            { t: 'line', pts: [[0.16, 0.58], [0.40, 0.53]], w: 0.05, c: 4 },
+            { t: 'line', pts: [[0.16, 0.69], [0.40, 0.65]], w: 0.05, c: 4 },
+            { t: 'line', pts: [[0.60, 0.53], [0.84, 0.58]], w: 0.05, c: 4 },
+            { t: 'line', pts: [[0.60, 0.65], [0.84, 0.69]], w: 0.05, c: 4 }
         ]
     }
 ];

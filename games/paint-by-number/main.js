@@ -202,7 +202,11 @@ function buildGrid(picture, n) {
             const x = (col + 0.5) / n;
             let hit = -1;
             for (let s = 0; s < picture.shapes.length; s++) {
-                if (pointInShape(picture.shapes[s], x, y)) hit = picture.shapes[s].c;
+                const shape = picture.shapes[s];
+                /* `min` marks fine detail — skip it on grids too coarse to
+                   hold it, where it would land as an unreadable blob. */
+                if (shape.min && n < shape.min) continue;
+                if (pointInShape(shape, x, y)) hit = shape.c;
             }
             raw[row * n + col] = hit;
         }
