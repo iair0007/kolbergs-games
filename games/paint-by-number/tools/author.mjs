@@ -9,7 +9,8 @@
 import fs from 'fs';
 
 const OUT = '/tmp/claude-0/-home-user-kolbergs-games/fa7e2146-2df9-50f3-882a-e3267a47c66f/scratchpad';
-const N = 32;
+let N = Number(process.env.PBN_N || 32);
+export const setN = (n) => { N = n; };
 
 /* ── geometry ─────────────────────────────────────────── */
 const inPoly = (pts, x, y) => {
